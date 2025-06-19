@@ -1,6 +1,7 @@
 import { normalizeExpense } from '../utils/normalizeExpense.js';
 import { consumeFromMonthlyBudget } from '../services/consumeFromMonthlyBudget.js';
-import { getNextSalaryDateISO } from '../utils/convertToDate.js'
+import { getNextSalaryDateISO } from '../utils/convertToDate.js';
+import { getAmountComparison } from '../utils/getAmountComparison.js';
 
 /**
  * Log extended expenses over a number of days.
@@ -25,15 +26,20 @@ export function logExtendedExpense(state, expense, currentDate) {
 
   newState.UserDailyExpenses = newState.UserDailyExpenses || [];
 
+  const dailyExpense = newState.DailyBudget.amount;
+
   const userId = newState.User.id;
 
   for (let i = 0; i < duration; i++) {
     const date = new Date(currentDate);
+    const limitStatus = getAmountComparison(dailyExpense, perDay); 
     date.setDate(date.getDate() + i);
     newState.UserDailyExpenses.push({
       id: crypto.randomUUID(),
       userId : userId,
       amount: perDay,
+      amountStatus: limitStatus.amountStatus,
+      amountDifference: limitStatus.amountDifference,
       date: date.toISOString().split('T')[0]
     });
   }
