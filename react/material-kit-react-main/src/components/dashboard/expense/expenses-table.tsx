@@ -5,6 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -18,39 +19,49 @@ import dayjs from 'dayjs';
 
 import { useSelection } from '@/hooks/use-selection';
 
-function noop(): void {
-  // do nothing
-}
+function noop(_event: unknown, _newPage: number) {}
 
-export interface Customer {
+
+const statusMap = {
+  equal: { label: 'on budget', color: 'warning' },
+  below: { label: 'underspent', color: 'success' },
+  above: { label: 'overspent', color: 'error' },
+} as const;
+
+export interface DailyExpense {
   id: string;
-  avatar: string;
-  name: string;
-  email: string;
-  address: { city: string; state: string; country: string; street: string };
-  phone: string;
-  createdAt: Date;
+  userId: number;
+  amount: number;
+  date: string;
+  details: string;
+  balance: number;
+  amountStatus: 'above' | 'equal' | 'below';
+  amountDifference: number;
 }
 
-interface CustomersTableProps {
+interface DailyExpensesTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: DailyExpense[];
   rowsPerPage?: number;
+  onPageChange?: (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
+  onRowsPerPageChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function CustomersTable({
+export function DailyExpensesTable({
   count = 0,
   rows = [],
   page = 0,
   rowsPerPage = 0,
-}: CustomersTableProps): React.JSX.Element {
+  onPageChange = noop,
+  onRowsPerPageChange = () => {},
+}: DailyExpensesTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
+    return rows.map((dailyExpenses) => dailyExpenses.id);
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
-
+  console.warn(selected);
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
 
@@ -73,15 +84,16 @@ export function CustomersTable({
                   }}
                 />
               </TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Signed Up</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Details</TableCell>
+              <TableCell>Amount Spent</TableCell>
+              <TableCell>Amount Status</TableCell>
+              <TableCell>Amount Difference</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => {
+              const { label, color } = statusMap[row.amountStatus] ?? { label: 'Unknown', color: 'default' };
               const isSelected = selected?.has(row.id);
 
               return (
@@ -98,18 +110,13 @@ export function CustomersTable({
                       }}
                     />
                   </TableCell>
+                  <TableCell>{row.date}</TableCell>
+                  <TableCell>{row.details}</TableCell>
+                  <TableCell>{row.amount}</TableCell>
                   <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.name}</Typography>
-                    </Stack>
+                    <Chip color={color} label={label} size="small" />
                   </TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>
-                    {row.address.city}, {row.address.state}, {row.address.country}
-                  </TableCell>
-                  <TableCell>{row.phone}</TableCell>
-                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
+                  <TableCell>{row.amountDifference}</TableCell>
                 </TableRow>
               );
             })}
@@ -120,8 +127,8 @@ export function CustomersTable({
       <TablePagination
         component="div"
         count={count}
-        onPageChange={noop}
-        onRowsPerPageChange={noop}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
