@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Jest Tests",
+      "program": "${workspaceFolder}/shared/shared/node_modules/jest/bin/jest.js",
+      "args": [
+        "--runInBand",
+        "--testPathPattern",
+        "test"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}/shared/shared/",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  ]
+}
