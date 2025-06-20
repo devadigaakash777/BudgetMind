@@ -11,12 +11,19 @@ import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { setPage, setRowsPerPage } from '@/redux/slices/dailyExpensesSlice';
+import AddExpenseModal from '@/components/dashboard/expense/expense-modal'
 
 import { DailyExpensesFilters } from '@/components/dashboard/expense/expenses-filters';
 import { DailyExpensesTable } from '@/components/dashboard/expense/expenses-table';
 import type { DailyExpense } from '@/components/dashboard/expense/expenses-table';
 
 export default function ExpenseContent(): React.JSX.Element {
+  //model toggle
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   const dispatch = useDispatch();
   const handlePageChange = (_event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     dispatch(setPage(newPage));
@@ -58,9 +65,10 @@ export default function ExpenseContent(): React.JSX.Element {
           </Stack>
         </Stack>
         <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
             Add
           </Button>
+          <AddExpenseModal open={open} onClose={handleClose} />
         </div>
       </Stack>
       <DailyExpensesFilters />

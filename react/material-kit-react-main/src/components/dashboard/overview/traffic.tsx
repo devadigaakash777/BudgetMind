@@ -16,7 +16,7 @@ import type { ApexOptions } from 'apexcharts';
 
 import { Chart } from '@/components/core/chart';
 
-const iconMapping = { Desktop: DesktopIcon, Tablet: DeviceTabletIcon, Phone: PhoneIcon } as Record<string, Icon>;
+const iconMapping = { Desktop: DesktopIcon, Tablet: DeviceTabletIcon, Phone: PhoneIcon, Desktops: DesktopIcon } as Record<string, Icon>;
 
 export interface TrafficProps {
   chartSeries: number[];
@@ -43,7 +43,7 @@ export function Traffic({ chartSeries, labels, sx }: TrafficProps): React.JSX.El
                   {Icon ? <Icon fontSize="var(--icon-fontSize-lg)" /> : null}
                   <Typography variant="h6">{label}</Typography>
                   <Typography color="text.secondary" variant="subtitle2">
-                    {item}%
+                    ₹{item}
                   </Typography>
                 </Stack>
               );
@@ -60,7 +60,7 @@ function useChartOptions(labels: string[]): ApexOptions {
 
   return {
     chart: { background: 'transparent' },
-    colors: [theme.palette.primary.main, theme.palette.success.main, theme.palette.warning.main],
+    colors: [theme.palette.primary.main, theme.palette.success.main, theme.palette.warning.main, theme.palette.error.main,],
     dataLabels: { enabled: false },
     labels,
     legend: { show: false },
@@ -68,6 +68,14 @@ function useChartOptions(labels: string[]): ApexOptions {
     states: { active: { filter: { type: 'none' } }, hover: { filter: { type: 'none' } } },
     stroke: { width: 0 },
     theme: { mode: theme.palette.mode },
-    tooltip: { fillSeriesColor: false },
+    tooltip: {
+      fillSeriesColor: false,
+      y: {
+        formatter: (value) => `₹ ${value}`,
+        title: {
+          formatter: (label) => `${label}`,
+        },
+      },
+    },
   };
 }

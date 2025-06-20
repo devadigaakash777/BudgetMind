@@ -5,6 +5,8 @@ import Grid from '@mui/material/Grid';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { filterCurrentMonth } from '@/utils/filter-current-month';
+import { DailyExpense } from '@/redux/slices/dailyExpensesSlice';
 
 import { Budget } from '@/components/dashboard/overview/budget';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
@@ -21,9 +23,22 @@ export default function DashboardContent(): React.JSX.Element {
   const budgetState = useSelector((state: RootState) => state.budget);
   const previewState = useSelector((state: RootState) => state.preview);
   const wishlist = useSelector((state: RootState) => state.wishlist);
+  const dailyExpenseState = useSelector((state: RootState) => state.expense); 
+
+  // Pie chart content
+  const pieChartSeries = {
+    'Secure Saving': walletState.MainWallet.balance,
+    'Spending Wallet': walletState.TemporaryWallet.balance,
+    'Monthly Allowance': walletState.SteadyWallet.balance,
+    'Budget Leftover': walletState.DailyBuffer.balance,
+  };
+
+  //Daily expense Chart
+  const filteredDailyExpenseState: DailyExpense[] = filterCurrentMonth(dailyExpenseState.data);
+  const barChartSeries = filteredDailyExpenseState.map(item => item.amount);
 
   //Fixed Cost
-   const expenses = budgetState.FixedExpenses.expenses.map((expense, index) => ({
+  const expenses = budgetState.FixedExpenses.expenses.map((expense, index) => ({
     id: `BILL-${String(expense.id).padStart(3, '0')}`, // e.g., ORD-001
     billName: expense.billName,
     amount: expense.amount,
@@ -86,8 +101,8 @@ export default function DashboardContent(): React.JSX.Element {
       >
         <Sales
           chartSeries={[
-            { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
-            { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
+            { name: 'This year', data: barChartSeries },
+            // { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
           ]}
           sx={{ height: '100%' }}
         />
@@ -99,7 +114,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
+        <Traffic chartSeries={Object.values(pieChartSeries)} labels={Object.keys(pieChartSeries)} sx={{ height: '100%' }} />
       </Grid>
       <Grid
         size={{

@@ -13,6 +13,9 @@ import { ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwis
 import { ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import type { ApexOptions } from 'apexcharts';
 
+import RouterLink from 'next/link';
+import { paths } from '@/paths';
+
 import { Chart } from '@/components/core/chart';
 
 export interface SalesProps {
@@ -31,14 +34,14 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
             Sync
           </Button>
         }
-        title="Sales"
+        title="Daily Expenses"
       />
       <CardContent>
         <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
       </CardContent>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
+        <Button component={RouterLink} href={paths.dashboard.expenses} color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
           Overview
         </Button>
       </CardActions>
@@ -49,8 +52,15 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
 function useChartOptions(): ApexOptions {
   const theme = useTheme();
 
+  // List of days in current month
+  const days = Array.from(
+    { length: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() },
+    (_, i) => String(i + 1).padStart(2, '0')
+  );
+
+
   return {
-    chart: { background: 'transparent', stacked: false, toolbar: { show: false } },
+    chart: { background: 'transparent', stacked: false, toolbar: { show: true } },
     colors: [theme.palette.primary.main, alpha(theme.palette.primary.main, 0.25)],
     dataLabels: { enabled: false },
     fill: { opacity: 1, type: 'solid' },
@@ -61,20 +71,32 @@ function useChartOptions(): ApexOptions {
       yaxis: { lines: { show: true } },
     },
     legend: { show: false },
-    plotOptions: { bar: { columnWidth: '40px' } },
+    plotOptions: { bar: { columnWidth: '20px' } },
     stroke: { colors: ['transparent'], show: true, width: 2 },
     theme: { mode: theme.palette.mode },
     xaxis: {
       axisBorder: { color: theme.palette.divider, show: true },
       axisTicks: { color: theme.palette.divider, show: true },
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      categories: days,
       labels: { offsetY: 5, style: { colors: theme.palette.text.secondary } },
     },
     yaxis: {
       labels: {
-        formatter: (value) => (value > 0 ? `${value}K` : `${value}`),
+        formatter: (value) => (value > 999 ? `${value/1000}K` : `${value}`),
         offsetX: -10,
         style: { colors: theme.palette.text.secondary },
+      },
+    },
+    tooltip: {
+      enabled: true,
+      y: {
+        formatter: (value) => `₹ ${value}`,
+        title: {
+          formatter: () => 'Spent',
+        },
+      },
+      x: {
+        formatter: (val) => `Day ${val}`,
       },
     },
   };

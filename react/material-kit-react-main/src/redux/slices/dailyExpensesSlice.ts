@@ -20,27 +20,31 @@ interface DailyExpenseState {
 
 const initialState: DailyExpenseState = {
   data: [
-    { id: 1, userId: 1, amount: 110, date: '2025-06-01', details: '', balance: 900, amountStatus: 'above', amountDifference: 10 },
-    { id: 2, userId: 1, amount: 100, date: '2025-06-02', details: '', balance: 800, amountStatus: 'equal', amountDifference: 0 },
-    { id: 3, userId: 1, amount: 50, date: '2025-06-03', details: '', balance: 750, amountStatus: 'below', amountDifference: 50 },
-    { id: 4, userId: 1, amount: 50, date: '2025-06-04', details: '', balance: 700, amountStatus: 'below', amountDifference: 50 },
-    { id: 5, userId: 1, amount: 110, date: '2025-06-05', details: '', balance: 900, amountStatus: 'above', amountDifference: 10 },
-    { id: 6, userId: 1, amount: 100, date: '2025-06-06', details: '', balance: 800, amountStatus: 'equal', amountDifference: 0 },
-    { id: 7, userId: 1, amount: 50, date: '2025-06-07', details: '', balance: 750, amountStatus: 'below', amountDifference: 50 },
-    { id: 8, userId: 1, amount: 50, date: '2025-06-08', details: '', balance: 700, amountStatus: 'below', amountDifference: 50 },
-    { id: 9, userId: 1, amount: 110, date: '2025-06-09', details: '', balance: 900, amountStatus: 'above', amountDifference: 10 },
-    { id: 10, userId: 1, amount: 100, date: '2025-06-10', details: '', balance: 800, amountStatus: 'equal', amountDifference: 0 },
-    { id: 11, userId: 1, amount: 50, date: '2025-06-11', details: '', balance: 750, amountStatus: 'below', amountDifference: 50 },
-    { id: 12, userId: 1, amount: 50, date: '2025-06-12', details: '', balance: 700, amountStatus: 'below', amountDifference: 50 },
-    { id: 13, userId: 1, amount: 110, date: '2025-06-13', details: '', balance: 900, amountStatus: 'above', amountDifference: 10 },
-    { id: 14, userId: 1, amount: 100, date: '2025-06-14', details: '', balance: 800, amountStatus: 'equal', amountDifference: 0 },
-    { id: 15, userId: 1, amount: 50, date: '2025-06-15', details: '', balance: 750, amountStatus: 'below', amountDifference: 50 },
-    { id: 16, userId: 1, amount: 50, date: '2025-06-16', details: '', balance: 700, amountStatus: 'below', amountDifference: 50 }
+    // May 2025
+    { id: 1, userId: 1, amount: 100, date: '2025-05-01', details: '', balance: 900, amountStatus: 'below', amountDifference: 50 },
+    { id: 2, userId: 1, amount: 150, date: '2025-05-02', details: '', balance: 850, amountStatus: 'above', amountDifference: 10 },
+    { id: 3, userId: 1, amount: 90,  date: '2025-05-03', details: '', balance: 810, amountStatus: 'below', amountDifference: 60 },
+    { id: 4, userId: 1, amount: 120, date: '2025-05-04', details: '', balance: 780, amountStatus: 'equal', amountDifference: 0 },
+    { id: 5, userId: 1, amount: 100, date: '2025-05-05', details: '', balance: 750, amountStatus: 'equal', amountDifference: 0 },
+    { id: 6, userId: 1, amount: 70,  date: '2025-05-06', details: '', balance: 720, amountStatus: 'below', amountDifference: 30 },
+    { id: 7, userId: 1, amount: 130, date: '2025-05-07', details: '', balance: 690, amountStatus: 'above', amountDifference: 20 },
+    { id: 8, userId: 1, amount: 90,  date: '2025-05-08', details: '', balance: 660, amountStatus: 'below', amountDifference: 60 },
+
+    // June 2025
+    { id: 9,  userId: 1, amount: 110, date: '2025-06-01', details: '', balance: 900, amountStatus: 'above', amountDifference: 10 },
+    { id: 10, userId: 1, amount: 100, date: '2025-06-02', details: '', balance: 800, amountStatus: 'equal', amountDifference: 0 },
+    { id: 11, userId: 1, amount: 50,  date: '2025-06-03', details: '', balance: 750, amountStatus: 'below', amountDifference: 50 },
+    { id: 12, userId: 1, amount: 50,  date: '2025-06-04', details: '', balance: 700, amountStatus: 'below', amountDifference: 50 },
+    { id: 13, userId: 1, amount: 110, date: '2025-06-05', details: '', balance: 900, amountStatus: 'above', amountDifference: 10 },
+    { id: 14, userId: 1, amount: 100, date: '2025-06-06', details: '', balance: 800, amountStatus: 'equal', amountDifference: 0 },
+    { id: 15, userId: 1, amount: 50,  date: '2025-06-07', details: '', balance: 750, amountStatus: 'below', amountDifference: 50 },
+    { id: 16, userId: 1, amount: 50,  date: '2025-06-08', details: '', balance: 700, amountStatus: 'below', amountDifference: 50 }
   ],
   page: 0,
   rowsPerPage: 5,
   selectedIds: [],
 };
+
 
 const dailyExpenseSlice = createSlice({
   name: 'dailyExpense',

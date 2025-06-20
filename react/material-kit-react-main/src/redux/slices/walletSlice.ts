@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  MainWallet: { balance: 10000 },
+  MainWallet: { balance: 7000 },
   TemporaryWallet: { balance: 1000 },
-  SteadyWallet: { balance: 0, month: 4, date: 1, monthlyAmount: 0 },
-  DailyBuffer: { balance: 0 },
+  SteadyWallet: { balance: 5000, month: 4, date: 1, monthlyAmount: 0 },
+  DailyBuffer: { balance: 1000 },
   TotalWealth: { amount: 0 },
   PendingPayments: { amount: 0 }
 };
