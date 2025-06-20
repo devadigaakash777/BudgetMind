@@ -12,6 +12,8 @@ import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 
+import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
+
 type AddExpenseModalProps = {
   open: boolean;
   onClose: () => void;
@@ -19,6 +21,15 @@ type AddExpenseModalProps = {
 
 export default function AddExpenseModal({ open, onClose }: AddExpenseModalProps) {
   const expenseState = useSelector((state: RootState) => state.expense);
+  const walletState = useSelector((state: RootState) => state.wallet);
+
+  // Pie chart content
+  const pieChartSeries = {
+    'Secure Saving': walletState.MainWallet.balance,
+    'Spending Wallet': walletState.TemporaryWallet.balance,
+    'Monthly Allowance': walletState.SteadyWallet.balance,
+    'Budget Leftover': walletState.DailyBuffer.balance,
+  };
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Add New Expense</DialogTitle>
@@ -42,6 +53,7 @@ export default function AddExpenseModal({ open, onClose }: AddExpenseModalProps)
             variant="outlined"
           />
         </Box>
+        <WalletChart chartSeries={Object.values(pieChartSeries)} labels={Object.keys(pieChartSeries)} sx={{ height: '100%' }} />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

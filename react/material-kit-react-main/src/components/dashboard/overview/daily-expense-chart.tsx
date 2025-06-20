@@ -18,12 +18,12 @@ import { paths } from '@/paths';
 
 import { Chart } from '@/components/core/chart';
 
-export interface SalesProps {
+export interface DailyExpenseProps {
   chartSeries: { name: string; data: number[] }[];
   sx?: SxProps;
 }
 
-export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
+export function DailyExpenseChart({ chartSeries, sx }: DailyExpenseProps): React.JSX.Element {
   const chartOptions = useChartOptions();
 
   return (

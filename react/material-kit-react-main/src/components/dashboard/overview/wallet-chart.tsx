@@ -18,13 +18,13 @@ import { Chart } from '@/components/core/chart';
 
 const iconMapping = { Desktop: DesktopIcon, Tablet: DeviceTabletIcon, Phone: PhoneIcon, Desktops: DesktopIcon } as Record<string, Icon>;
 
-export interface TrafficProps {
+export interface WalletChartProps {
   chartSeries: number[];
   labels: string[];
   sx?: SxProps;
 }
 
-export function Traffic({ chartSeries, labels, sx }: TrafficProps): React.JSX.Element {
+export function WalletChart({ chartSeries, labels, sx }: WalletChartProps): React.JSX.Element {
   const chartOptions = useChartOptions(labels);
 
   return (

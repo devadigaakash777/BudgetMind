@@ -11,11 +11,11 @@ import { DailyExpense } from '@/redux/slices/dailyExpensesSlice';
 import { Budget } from '@/components/dashboard/overview/budget';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
-import { Sales } from '@/components/dashboard/overview/sales';
+import { DailyExpenseChart } from '@/components/dashboard/overview/daily-expense-chart';
 import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
 import { TotalCustomers } from '@/components/dashboard/overview/total-customers';
 import { TotalProfit } from '@/components/dashboard/overview/total-profit';
-import { Traffic } from '@/components/dashboard/overview/traffic';
+import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 
 export default function DashboardContent(): React.JSX.Element {
   const dispatch = useDispatch();
@@ -99,7 +99,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <Sales
+        <DailyExpenseChart
           chartSeries={[
             { name: 'This year', data: barChartSeries },
             // { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
@@ -114,7 +114,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <Traffic chartSeries={Object.values(pieChartSeries)} labels={Object.keys(pieChartSeries)} sx={{ height: '100%' }} />
+        <WalletChart chartSeries={Object.values(pieChartSeries)} labels={Object.keys(pieChartSeries)} sx={{ height: '100%' }} />
       </Grid>
       <Grid
         size={{
