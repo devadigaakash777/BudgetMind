@@ -12,8 +12,11 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
-import { DotsThreeVerticalIcon } from '@phosphor-icons/react/dist/ssr/DotsThreeVertical';
+import { TrashIcon,ShoppingCartIcon } from '@phosphor-icons/react/dist/ssr';
 import dayjs from 'dayjs';
+
+import RouterLink from 'next/link';
+import { paths } from '@/paths';
 
 export interface Product {
   id: string;
@@ -55,9 +58,8 @@ export function LatestProducts({ products = [], sx }: LatestProductsProps): Reac
               secondary={`Cost ${product.cost}`}
               secondaryTypographyProps={{ variant: 'body2' }}
             />
-            <IconButton edge="end">
-              <DotsThreeVerticalIcon weight="bold" />
-            </IconButton>
+            <Button component={RouterLink} href={paths.dashboard.wishlists} color="error" endIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />} size="small" />
+            <Button component={RouterLink} href={paths.dashboard.wishlists} color="success" endIcon={<ShoppingCartIcon fontSize="var(--icon-fontSize-md)" />} size="small" />
           </ListItem>
         ))}
       </List>
@@ -68,6 +70,8 @@ export function LatestProducts({ products = [], sx }: LatestProductsProps): Reac
           endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
           size="small"
           variant="text"
+          component={RouterLink} 
+          href={paths.dashboard.wishlists}
         >
           View all
         </Button>

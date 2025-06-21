@@ -7,7 +7,7 @@ import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { ArrowDownIcon } from '@phosphor-icons/react/dist/ssr/ArrowDown';
 import { ArrowUpIcon } from '@phosphor-icons/react/dist/ssr/ArrowUp';
-import { UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
+import { WalletIcon } from '@phosphor-icons/react/dist/ssr';
 
 export interface TotalCustomersProps {
   diff?: number;
@@ -27,12 +27,12 @@ export function TotalCustomers({ diff, trend, sx, value }: TotalCustomersProps):
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={1}>
               <Typography color="text.secondary" variant="overline">
-                Total Customers
+                Spending Wallet
               </Typography>
-              <Typography variant="h4">{value}</Typography>
+              <Typography variant="h4">₹{value}</Typography>
             </Stack>
             <Avatar sx={{ backgroundColor: 'var(--mui-palette-success-main)', height: '56px', width: '56px' }}>
-              <UsersIcon fontSize="var(--icon-fontSize-lg)" />
+              <WalletIcon fontSize="var(--icon-fontSize-lg)" />
             </Avatar>
           </Stack>
           {diff ? (

@@ -8,7 +8,7 @@ const initialState = {
       description: 'A high-end drone for photography',
       image: '/assets/product-1.png',
       savedAmount: 5000,
-      priority: 3,
+      priority: 1,
       cost: 10000,
       monthLeft: 5,
       isFunded: false
@@ -19,12 +19,58 @@ const initialState = {
       description: 'Luxury wristwatch',
       image: '/assets/product-2.png',
       savedAmount: 1500,
-      priority: 1,
+      priority: 2,
+      cost: 3000,
+      monthLeft: 3,
+      isFunded: false
+    },
+    {
+      id: 'C',
+      name: 'Drone',
+      description: 'A high-end drone for photography',
+      image: '/assets/product-1.png',
+      savedAmount: 5000,
+      priority: 3,
+      cost: 10000,
+      monthLeft: 5,
+      isFunded: false
+    },
+    {
+      id: 'D',
+      name: 'Watch',
+      description: 'Luxury wristwatch',
+      image: '/assets/product-2.png',
+      savedAmount: 1500,
+      priority: 4,
+      cost: 3000,
+      monthLeft: 3,
+      isFunded: false
+    },
+    {
+      id: 'E',
+      name: 'Drone',
+      description: 'A high-end drone for photography',
+      image: '/assets/product-1.png',
+      savedAmount: 5000,
+      priority: 5,
+      cost: 10000,
+      monthLeft: 5,
+      isFunded: true
+    },
+    {
+      id: 'F',
+      name: 'Watch',
+      description: 'Luxury wristwatch',
+      image: '/assets/product-2.png',
+      savedAmount: 1500,
+      priority: 6,
       cost: 3000,
       monthLeft: 3,
       isFunded: false
     }
-  ]
+  ],
+  page: 0,
+  rowsPerPage: 3
 };
 
 const wishlistSlice = createSlice({
@@ -77,6 +123,12 @@ const wishlistSlice = createSlice({
       if (item) {
         item.isFunded = isFunded;
       }
+    },
+    setPage(state, action) {
+      state.page = action.payload;
+    },
+    setRowsPerPage(state, action) {
+      state.rowsPerPage = action.payload;
     }
   }
 });
@@ -89,7 +141,9 @@ export const {
   decreaseMonth,
   changePriority,
   buyItem,
-  updateFundingStatus
+  updateFundingStatus,
+  setPage,
+  setRowsPerPage
 } = wishlistSlice.actions;
 
 export default wishlistSlice.reducer;

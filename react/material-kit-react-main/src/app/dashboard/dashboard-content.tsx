@@ -48,8 +48,10 @@ export default function DashboardContent(): React.JSX.Element {
 
 
   // wishlist items 
-   const products = wishlist.items.map((item, index) => ({
-    id: `WIS-${item.id}`,
+   const products = wishlist.items
+   .slice(-3)
+   .map((item, index) => ({
+    id: `${item.id}`,
     name: `${item.name}`,
     image: `${item.image}`, // Adjust image path logic as needed
     cost: `${item.cost}`,
