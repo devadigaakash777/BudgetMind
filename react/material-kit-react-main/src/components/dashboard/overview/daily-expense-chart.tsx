@@ -12,6 +12,7 @@ import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
 import { ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import type { ApexOptions } from 'apexcharts';
+import { Box } from '@mui/system';
 
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
@@ -37,7 +38,11 @@ export function DailyExpenseChart({ chartSeries, sx }: DailyExpenseProps): React
         title="Daily Expenses"
       />
       <CardContent>
-        <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
+        <Box sx={{ overflowX: 'auto' }}>
+          <Box sx={{ minWidth: 600 }}>
+            <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
+          </Box>
+        </Box>
       </CardContent>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>

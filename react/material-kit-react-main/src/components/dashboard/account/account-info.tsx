@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-
+import { CloudArrowUpIcon } from '@phosphor-icons/react/dist/ssr';
 
 type AccountInfoProps = {
   name: string;
@@ -16,6 +16,7 @@ type AccountInfoProps = {
   city?: string;
   country?: string;
   timezone?: string;
+  onAdd: (item: any) => void;
 };
 
 export function AccountInfo({
@@ -25,6 +26,7 @@ export function AccountInfo({
   city = '',
   country = '',
   timezone = '',
+  onAdd,
 }: AccountInfoProps): React.JSX.Element {
   return (
     <Card>
@@ -45,9 +47,26 @@ export function AccountInfo({
         </Stack>
       </CardContent>
       <Divider />
-      <CardActions>
-        <Button fullWidth variant="text">
+      <CardActions sx={{ justifyContent: 'center' }}>
+        <Button
+          component="label"
+          role={undefined}
+          variant="outlined"
+          startIcon={<CloudArrowUpIcon />}
+        >
           Upload picture
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) {
+                const imageURL = URL.createObjectURL(file);
+                onAdd(imageURL);
+              }
+            }}
+          />
         </Button>
       </CardActions>
     </Card>
