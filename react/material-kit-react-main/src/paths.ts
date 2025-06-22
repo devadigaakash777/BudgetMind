@@ -6,6 +6,7 @@ export const paths = {
     account: '/dashboard/account',
     expenses: '/dashboard/expense',
     wishlists: '/dashboard/wishlists',
+    bills: '/dashboard/bills',
     settings: '/dashboard/settings',
   },
   errors: { notFound: '/errors/not-found' },

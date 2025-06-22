@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
 
+
 export interface Product {
   id: string;
   image: string;

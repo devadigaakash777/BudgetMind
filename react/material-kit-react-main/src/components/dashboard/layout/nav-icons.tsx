@@ -8,8 +8,9 @@ import { HeartIcon, MoneyIcon, ReceiptIcon } from '@phosphor-icons/react/dist/ss
 export const navIcons = {
   'chart-pie': ChartPieIcon,
   'gear-six': GearSixIcon,
-  'plugs-connected': HeartIcon,
+  'heartIcon': HeartIcon,
+  'receipt': ReceiptIcon,
   'x-square': XSquare,
   user: UserIcon,
-  users: MoneyIcon,
+  expense: MoneyIcon,
 } as Record<string, Icon>;

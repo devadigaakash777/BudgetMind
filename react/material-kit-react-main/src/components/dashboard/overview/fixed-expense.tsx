@@ -13,6 +13,9 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
+import { convertExpenseDueDate } from '@/utils/convert-expense-due-date';
+import RouterLink from 'next/link';
+import { paths } from '@/paths';
 import dayjs from 'dayjs';
 
 const statusMap = {
@@ -26,7 +29,7 @@ export interface FixedExpenses {
   billName: string;
   amount: number;
   status: 'pending' | 'paid' | 'expired';
-  dueDate: Date;
+  dueDate: number;
 }
 
 export interface FixedExpenseProps {
@@ -57,7 +60,7 @@ export function FixedExpense({ expenses = [], sx }: FixedExpenseProps): React.JS
                 <TableRow hover key={expense.id}>
                   <TableCell>{expense.id}</TableCell>
                   <TableCell>{expense.billName}</TableCell>
-                  <TableCell>{dayjs(expense.dueDate).format('MMM D, YYYY')}</TableCell>
+                  <TableCell>{convertExpenseDueDate(expense.dueDate, "toString")}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>
@@ -74,6 +77,8 @@ export function FixedExpense({ expenses = [], sx }: FixedExpenseProps): React.JS
           endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
           size="small"
           variant="text"
+          component={RouterLink} 
+          href={paths.dashboard.bills}
         >
           View all
         </Button>

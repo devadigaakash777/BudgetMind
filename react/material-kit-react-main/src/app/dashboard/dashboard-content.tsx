@@ -43,7 +43,7 @@ export default function DashboardContent(): React.JSX.Element {
     billName: expense.billName,
     amount: expense.amount,
     status: expense.status as 'pending' | 'paid' | 'expired',
-    dueDate: new Date(expense.dueDate), // optional time logic
+    dueDate: expense.dueDate, // optional time logic
   }));
 
 
