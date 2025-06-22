@@ -33,6 +33,9 @@ export default function DashboardContent(): React.JSX.Element {
     'Budget Leftover': walletState.DailyBuffer.balance,
   };
 
+  console.log(pieChartSeries);
+  console.log(walletState.threshold);
+
   //Daily expense Chart
   const filteredDailyExpenseState: DailyExpense[] = filterCurrentMonth(dailyExpenseState.data);
   const barChartSeries = filteredDailyExpenseState.map(item => item.amount);
@@ -93,7 +96,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <TotalProfit sx={{ height: '100%' }} value={`${previewState?.processedState?.MainWallet?.balance ?? walletState.MainWallet.balance}`} />
+        <TotalProfit sx={{ height: '100%' }} value={`${walletState.MainWallet.balance}`} />
       </Grid>
       <Grid
         size={{

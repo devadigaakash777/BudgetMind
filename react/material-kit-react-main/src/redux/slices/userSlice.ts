@@ -16,8 +16,7 @@ const initialState = {
     }
   ],
   hasSalary: true,
-  Salary: { amount: 500000, date: 1 },
-  threshold: 0
+  Salary: { amount: 10000, date: 1 },
 };
 
 const userSlice = createSlice({
@@ -27,11 +26,12 @@ const userSlice = createSlice({
     setAvatar(state, action) {
       state.avatar = action.payload;
     },
-    setThreshold(state, action) {
-      state.threshold = action.payload;
-    },
-    setHasSalary(state, action) {
-      state.hasSalary = action.payload;
+    updateSalaryInfo(state, action) {
+      const { jobTitle, hasSalary, salaryAmount, salaryDate, threshold } = action.payload;
+      state.jobTitle = jobTitle;
+      state.hasSalary = hasSalary;
+      state.Salary.amount = salaryAmount;
+      state.Salary.date = salaryDate;
     },
     updateBasicInfo(state, action) {
       const { firstName, lastName, email, phone, city, state: userState } = action.payload;
@@ -47,5 +47,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setAvatar, setThreshold, setHasSalary, updateBasicInfo } = userSlice.actions;
+export const { setAvatar, updateSalaryInfo, updateBasicInfo } = userSlice.actions;
 export default userSlice.reducer;
