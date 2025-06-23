@@ -1,19 +1,35 @@
 import { deepClone } from '../utils/deepClone.js';
 import { consumeFromMainPath } from '../services/fixedExpenses.js';
 import { consumeFromSavingWishlist } from '../services/fixedExpenses.js';
+import { consumeFromMonthlyBudget } from '../services/consumeFromMonthlyBudget.js';
+import { getNextSalaryDateISO } from '../utils/convertToDate.js';
 
 /**
  * Handles requests from TemporaryWallet with fallback to main or saving.
  * @param {object} state - Current state.
  * @param {number} amountRequested - Requested amount.
  * @param {string} sourcePreference - 'main' or 'saving'.
+ * @param {boolean} canDecreaseBudget - Can decrease budget or not 
  * @returns {object} - Updated state, amount collected, and sources used.
  */
-export function handleTemporaryWalletRequest(state, amountRequested, sourcePreference) {
+export function handleTemporaryWalletRequest(state, amountRequested, sourcePreference, canDecreaseBudget) {
   console.debug('handleTemporaryWalletRequest called with:', amountRequested, sourcePreference);
   const newState = deepClone(state);
   const collected = { amountCollected: 0, sources: [] };
 
+  if(canDecreaseBudget){
+        const salaryDay = state.User.hasSalary ? state.Salary.date : state.SteadyWallet.date;
+        const salaryDate = getNextSalaryDateISO(salaryDay);
+        console.debug(salaryDate);
+        try{
+          consumeFromMonthlyBudget(newState, amountRequested, salaryDate);
+          amountRequested = 0;
+        }
+        catch (err){
+          consumeFromMonthlyBudget(newState, null, salaryDate);
+          console.warn("cant satisfy the request go with handleTemporaryWallet"); 
+        }
+  }
   const fromTemp = Math.min(newState.TemporaryWallet.balance, amountRequested);
   if (fromTemp > 0) {
     newState.TemporaryWallet.balance -= fromTemp;

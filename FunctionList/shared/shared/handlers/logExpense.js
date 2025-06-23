@@ -1,6 +1,4 @@
 import { normalizeExpense } from '../utils/normalizeExpense.js';
-import { consumeFromMonthlyBudget } from '../services/consumeFromMonthlyBudget.js';
-import { getNextSalaryDateISO } from '../utils/convertToDate.js';
 import { getAmountComparison } from '../utils/getAmountComparison.js';
 
 /**
@@ -33,7 +31,7 @@ export function logExtendedExpense(state, expense, currentDate) {
   for (let i = 0; i < duration; i++) {
     const date = new Date(currentDate);
     const limitStatus = getAmountComparison(dailyExpense, perDay); 
-    date.setDate(date.getDate() + i);
+    date.setDate(date.getDate() - i);
     newState.UserDailyExpenses.push({
       id: crypto.randomUUID(),
       userId : userId,
@@ -70,19 +68,6 @@ export function logExtendedExpense(state, expense, currentDate) {
         overage -= tempWallet;
         newState.TemporaryWallet.balance = 0;
         console.debug("[logExtendedExpense] overage after took from temp wallet:", overage);
-        const salaryDay = state.User.hasSalary ? state.Salary.date : state.SteadyWallet.date;
-        const salaryDate = getNextSalaryDateISO(salaryDay);
-        console.debug(salaryDate);
-        try{
-          consumeFromMonthlyBudget(newState, overage, salaryDate);
-          newState.TemporaryWallet.balance -= overage;
-          overage = 0;
-        }
-        catch (err){
-          consumeFromMonthlyBudget(newState, null, salaryDate);
-          return {newState, overage};
-          console.warn("cant satisfy the request go with handleTemporaryWallet"); 
-        }
       }
     }
   }
