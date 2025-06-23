@@ -8,5 +8,6 @@ export const navItems = [
   { key: 'bill', title: 'Bills', href: paths.dashboard.bills, icon: 'receipt' },
   { key: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' },
   { key: 'account', title: 'Account', href: paths.dashboard.account, icon: 'user' },
+  { key: 'addExpense', title: 'Add Expense', href: paths.dashboard.addExpense, icon: 'user' },
   { key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
 ] satisfies NavItemConfig[];

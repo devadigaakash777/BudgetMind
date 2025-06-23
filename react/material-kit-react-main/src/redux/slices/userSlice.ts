@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  userid:1,
   firstName: 'Akash',
   lastName: 'Devadiga',
   email: 'akash123@gail.com',
@@ -10,7 +11,7 @@ const initialState = {
   address: [
     {
       city: 'Udupi',
-      state: 'Karnataka',
+      state: 'karnataka',
       country: 'India',
       timezone: 'GMT-7',
     }

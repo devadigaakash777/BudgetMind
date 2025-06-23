@@ -69,6 +69,7 @@ const initialState = {
       isFunded: false
     }
   ],
+  totalSavedAmount: 19500,
   page: 0,
   rowsPerPage: 3
 };

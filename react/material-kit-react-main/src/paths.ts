@@ -7,6 +7,7 @@ export const paths = {
     expenses: '/dashboard/expense',
     wishlists: '/dashboard/wishlists',
     bills: '/dashboard/bills',
+    addExpense: '/dashboard/add-expense',
     settings: '/dashboard/settings',
   },
   errors: { notFound: '/errors/not-found' },

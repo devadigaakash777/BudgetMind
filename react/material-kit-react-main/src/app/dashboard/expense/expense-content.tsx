@@ -6,18 +6,20 @@ import Typography from '@mui/material/Typography';
 import { DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
-import dayjs from 'dayjs';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { setPage, setRowsPerPage } from '@/redux/slices/dailyExpensesSlice';
-import AddExpenseModal from '@/components/dashboard/expense/expense-modal'
+import { setPage, setRowsPerPage, addExpense } from '@/redux/slices/dailyExpensesSlice';
 
 import { DailyExpensesFilters } from '@/components/dashboard/expense/expenses-filters';
 import { DailyExpensesTable } from '@/components/dashboard/expense/expenses-table';
 import type { DailyExpense } from '@/components/dashboard/expense/expenses-table';
 
+import RouterLink from 'next/link';
+import { paths } from '@/paths';
+
 export default function ExpenseContent(): React.JSX.Element {
+
   //model toggle
   const [open, setOpen] = React.useState(false);
 
@@ -65,10 +67,13 @@ export default function ExpenseContent(): React.JSX.Element {
           </Stack>
         </Stack>
         <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
+          <Button 
+            startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} 
+            variant="contained" 
+            component={RouterLink} 
+            href={paths.dashboard.addExpense}>
             Add
           </Button>
-          <AddExpenseModal open={open} onClose={handleClose} />
         </div>
       </Stack>
       <DailyExpensesFilters />

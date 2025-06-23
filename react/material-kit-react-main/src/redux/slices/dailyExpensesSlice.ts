@@ -16,6 +16,7 @@ interface DailyExpenseState {
   page: number;
   rowsPerPage: number;
   selectedIds: number[];
+  numberOfDays: number;
 }
 
 const initialState: DailyExpenseState = {
@@ -43,6 +44,7 @@ const initialState: DailyExpenseState = {
   page: 0,
   rowsPerPage: 5,
   selectedIds: [],
+  numberOfDays: 1,
 };
 
 
@@ -75,6 +77,22 @@ const dailyExpenseSlice = createSlice({
     deselectAll(state) {
       state.selectedIds = [];
     },
+    addExpense(state, action) {
+      const { id, userId, amount, details, numberOfDays } = action.payload;
+
+      for (let i = 0; i < numberOfDays; i++) {
+        state.data.push({
+          id: id + i,
+          userId,
+          amount,
+          date: '',             // to be filled
+          details,
+          balance: 0,           // to be calculated
+          amountStatus: 'equal',// to be calculated
+          amountDifference: 0,  // to be calculated
+        });
+      }
+    }
   },
 });
 
@@ -85,6 +103,7 @@ export const {
   toggleSelection,
   selectAll,
   deselectAll,
+  addExpense
 } = dailyExpenseSlice.actions;
 
 export default dailyExpenseSlice.reducer;

@@ -5,7 +5,7 @@ const initialState = {
     amount: 0
   },
   DailyBudget: {
-    amount: 0,
+    amount: 100,
     min: 0,
     max: 0
   },
@@ -49,6 +49,7 @@ const initialState = {
       }
     ],
     rowsPerPage: 3,
+    totalSavedAmount: 10700,
   }
 };
 
