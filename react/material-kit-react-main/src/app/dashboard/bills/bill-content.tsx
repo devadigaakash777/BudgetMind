@@ -24,10 +24,18 @@ import {
   updateBudgetState
 } from '@/redux/slices/budgetSlice';
 
+import { useEffect } from 'react';
+import { clearPreview } from '@/redux/slices/previewSlice';
+
 export default function FixedExpensesContent(): React.JSX.Element {
   const dispatch = useDispatch();
   const fixedExpenseWallet = useSelector((state: RootState) => state.budget.FixedExpenses);
   const fixedExpenses = fixedExpenseWallet.expenses;
+
+  //clear the preview to reflect any changes happened in this component
+    useEffect(() => {
+      dispatch(clearPreview()); 
+    }, [dispatch]);
 
   // Modal state
   const [open, setOpen] = React.useState(false);

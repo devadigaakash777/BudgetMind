@@ -12,14 +12,17 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { TextField } from '@mui/material';
+import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
-import GaugeSpeedometer from '@/components/dashboard/expense/expense-gauge-chart';
+import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
+import {RequestMoneyModal } from '@/components/dashboard/add-expense/expense-request-model'
 
 type GaugeLimit = { value: number; label?: string };
 
 type AddExpenseFormProps = {
   userid: number;
+  maximumSafeAmount: number;
   onAdd: (payload: {
     id: number;
     userId: number;
@@ -27,15 +30,27 @@ type AddExpenseFormProps = {
     details: string;
     numberOfDays: number;
   }) => void;
+  onAddPreview: (payload: {
+    amount: number; 
+    duration?: number
+  }) =>void;
   pieChartSeries: Record<string, number>;
   gaugeList: Record<string, GaugeLimit>;
+  onSelectSource: (value: 'main' | 'wishlist') => void;
+  onChangeCanBudget: (val: boolean) => void;
+  onRequest: (amount: number, source: 'main' | 'wishlist', canChange: boolean) => void;
 };
 
 export function AddExpenseForm({
   userid,
+  maximumSafeAmount,
   onAdd,
+  onAddPreview,
   pieChartSeries,
-  gaugeList
+  gaugeList,
+  onSelectSource,
+  onChangeCanBudget,
+  onRequest
 }: AddExpenseFormProps): React.JSX.Element {
   
   const [formData, setFormData] = React.useState({
@@ -43,6 +58,17 @@ export function AddExpenseForm({
     numberOfDays: 1,
     details: ''
   });
+
+  //Request Money Model
+  const [open, setOpen] = React.useState(false);
+    
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  //handle buttons depends on amount consumed
+  const [canSave, setCanSave] = React.useState(true);
+  const handleSaveOn = () => setCanSave(true);
+  const handleSaveOff = () => setCanSave(false);
 
   const [lastId, setLastId] = React.useState<number>(1000);
 
@@ -68,6 +94,9 @@ export function AddExpenseForm({
       numberOfDays: formData.numberOfDays
     });
 
+    //Preview mode
+    
+
     // Optional reset:
     setFormData({
       amount: 0,
@@ -76,10 +105,26 @@ export function AddExpenseForm({
     });
   };
 
+  const secureSaving = gaugeList['Spending Wallet'].value;
+
+
   return (
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader subheader="Add a new expense" title="Expense Form" />
+        <RequestMoneyModal
+          open={open}
+          onClose={handleClose}
+          statusList={pieChartSeries}
+          overage={
+            formData.numberOfDays > 0
+              ? Math.max(formData.amount - maximumSafeAmount, 0)
+              : 0
+          }
+          onSelectSource={onSelectSource}
+          onChangeCanBudget={onChangeCanBudget}
+          onRequest={onRequest}
+        />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>
@@ -121,18 +166,43 @@ export function AddExpenseForm({
               </FormControl>
             </Grid>
             <Grid size={{
+              lg: 12,
+              md: 12,
+              xs: 12,
+            }}>
+            {canSave ? (
+                <Button
+                  variant="contained"
+                  startIcon={<PlusIcon />}
+                  disabled={formData.amount <= 0}
+                  onClick={() =>
+                    onAddPreview({
+                      amount: formData.amount,
+                      duration: formData.numberOfDays,
+                    })
+                  }
+                >
+                  Preview
+                </Button>
+              ) : (
+                <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
+                  Add
+                </Button>
+              )}
+
+            </Grid>
+            <Grid size={{
               lg: 6,
               md: 6,
               xs: 12,
             }}>
 
             <GaugeSpeedometer
+                setCanSave={handleSaveOn}
+                setCanNotSave={handleSaveOff}
                 list={gaugeList}
-                value={
-                  formData.numberOfDays > 0
-                    ? formData.amount / formData.numberOfDays
-                    : 0
-                }
+                days={Math.max(formData.numberOfDays, 1)}
+                value={ formData.amount }
               />
             </Grid>
 
@@ -169,7 +239,7 @@ export function AddExpenseForm({
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained" disabled={formData.amount <= 0}>
+          <Button type="submit" variant="contained" disabled={formData.amount <= 0 || formData.amount > secureSaving}>
             Add Expense
           </Button>
         </CardActions>

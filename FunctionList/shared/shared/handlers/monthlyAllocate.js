@@ -24,7 +24,7 @@ export function monthlyAllocate(state, currentDate, salary = null, userDailyBudg
 
   // Safely check if today matches salary day (only if user has salary enabled)
   const hasSalaryEnabled = state.User?.hasSalary === true;
-  const salaryDay = hasSalaryEnabled && state.Salary?.date;
+  const salaryDay = hasSalaryEnabled && state.User.Salary?.date;
   const isSalaryDay = hasSalaryEnabled && today === salaryDay;
 
   // Always safe to check steady wallet day

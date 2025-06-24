@@ -58,6 +58,7 @@ export default function DashboardContent(): React.JSX.Element {
     name: `${item.name}`,
     image: `${item.image}`, // Adjust image path logic as needed
     cost: `${item.cost}`,
+    savedAmount: `${item.savedAmount}`
   }));
 
   return (
@@ -69,7 +70,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <Budget diff={12} trend="up" sx={{ height: '100%' }} value={`${previewState?.processedState?.DailyBudget?.amount ?? budgetState.DailyBudget.amount}`} />
+        <Budget diff={12} trend="up" sx={{ height: '100%' }} value={`${budgetState.DailyBudget.amount}`} />
       </Grid>
       <Grid
         size={{
@@ -78,7 +79,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <TotalCustomers diff={16} trend="down" sx={{ height: '100%' }} value={`${previewState?.processedState?.TemporaryWallet?.balance ?? walletState.TemporaryWallet.balance}`} />
+        <TotalCustomers diff={16} trend="down" sx={{ height: '100%' }} value={`${walletState.TemporaryWallet.balance}`} />
       </Grid>
       <Grid
         size={{

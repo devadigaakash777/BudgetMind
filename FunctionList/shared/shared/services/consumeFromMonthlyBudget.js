@@ -10,6 +10,7 @@ import { smartBudget } from './smartBudget.js';
  * @param {object} state - The application state object.
  * @param {number|null} requiredAmount - Amount to consume, or null to recalculate only.
  * @param {string|null} dateStr - Optional target date in ISO format (e.g., "2025-06-30").
+ * @return {number} - Amount get from the Monthly budget
  */
 export function consumeFromMonthlyBudget(state, requiredAmount = null, dateStr = null) {
   const today = new Date();
@@ -44,7 +45,8 @@ export function consumeFromMonthlyBudget(state, requiredAmount = null, dateStr =
 
   smartBudget(state, usableBudget, daysLeft);
 
-  if (extraAmount > 0) {
-    addToTemporaryWallet(state, extraAmount);
-  }
+  // if (extraAmount > 0) {
+  //   addToTemporaryWallet(state, extraAmount);
+  // }
+  return extraAmount;
 }

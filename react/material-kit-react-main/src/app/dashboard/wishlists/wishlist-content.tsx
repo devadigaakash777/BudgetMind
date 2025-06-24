@@ -28,6 +28,9 @@ import {
   setRowsPerPage
 } from '@/redux/slices/wishlistSlice';
 
+import { useEffect } from 'react';
+import { clearPreview } from '@/redux/slices/previewSlice';
+
 export default function WishlistContent(): React.JSX.Element {
   const [open, setOpen] = React.useState(false);
   
@@ -37,6 +40,13 @@ export default function WishlistContent(): React.JSX.Element {
   const dispatch = useDispatch();
   const wishlist = useSelector((state: RootState) => state.wishlist);
   const wishlists = wishlist.items; 
+
+  //clear the preview to reflect any changes happened in this component
+  useEffect(() => {
+    dispatch(clearPreview()); 
+  }, [dispatch]);
+
+
   // Pagination logic
   const { items, page, rowsPerPage } = wishlist;
 

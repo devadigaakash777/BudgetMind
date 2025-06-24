@@ -8,7 +8,7 @@ import { getNextSalaryDateISO } from '../utils/convertToDate.js';
  * Handles requests from TemporaryWallet with fallback to main or saving.
  * @param {object} state - Current state.
  * @param {number} amountRequested - Requested amount.
- * @param {string} sourcePreference - 'main' or 'saving'.
+ * @param {string} sourcePreference - 'main' or 'wishlist'.
  * @param {boolean} canDecreaseBudget - Can decrease budget or not 
  * @returns {object} - Updated state, amount collected, and sources used.
  */
@@ -18,24 +18,26 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
   const collected = { amountCollected: 0, sources: [] };
 
   if(canDecreaseBudget){
-        const salaryDay = state.User.hasSalary ? state.Salary.date : state.SteadyWallet.date;
+        const salaryDay = state.User.hasSalary ? state.User.Salary.date : state.SteadyWallet.date;
         const salaryDate = getNextSalaryDateISO(salaryDay);
+        let extraAmount = 0;
         console.debug(salaryDate);
         try{
-          consumeFromMonthlyBudget(newState, amountRequested, salaryDate);
+          extraAmount = consumeFromMonthlyBudget(newState, amountRequested, salaryDate);
           amountRequested = 0;
         }
         catch (err){
-          consumeFromMonthlyBudget(newState, null, salaryDate);
+          extraAmount = consumeFromMonthlyBudget(newState, null, salaryDate);
           console.warn("cant satisfy the request go with handleTemporaryWallet"); 
         }
+        collected.amountCollected += extraAmount;
   }
-  const fromTemp = Math.min(newState.TemporaryWallet.balance, amountRequested);
-  if (fromTemp > 0) {
-    newState.TemporaryWallet.balance -= fromTemp;
-    collected.amountCollected += fromTemp;
-    collected.sources.push({ from: 'TemporaryWallet', amount: fromTemp });
-  }
+  // const fromTemp = Math.min(newState.TemporaryWallet.balance, amountRequested);
+  // if (fromTemp > 0) {
+  //   newState.TemporaryWallet.balance -= fromTemp;
+  //   collected.amountCollected += fromTemp;
+  //   collected.sources.push({ from: 'TemporaryWallet', amount: fromTemp });
+  // }
 
   const shortfall = amountRequested - collected.amountCollected;
   if (shortfall > 0) {
@@ -58,7 +60,7 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
     }
   }
 
-  newState.TemporaryWallet.balance = collected.amountCollected;
+  newState.TemporaryWallet.balance += collected.amountCollected;
   console.debug('handleTemporaryWalletRequest returned:', collected);
   return { newState, ...collected };
 }

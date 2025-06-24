@@ -24,6 +24,7 @@ export interface Product {
   image: string;
   name: string;
   cost: string;
+  savedAmount: string;
 }
 
 export interface LatestProductsProps {
@@ -56,7 +57,7 @@ export function LatestProducts({ products = [], sx }: LatestProductsProps): Reac
             <ListItemText
               primary={product.name}
               primaryTypographyProps={{ variant: 'subtitle1' }}
-              secondary={`Cost ${product.cost}`}
+              secondary={`Cost ${product.cost},  Saved Amount ${product.savedAmount}`}
               secondaryTypographyProps={{ variant: 'body2' }}
             />
             <Button component={RouterLink} href={paths.dashboard.wishlists} color="error" endIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />} size="small" />

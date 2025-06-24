@@ -12,21 +12,49 @@ import Tooltip from '@mui/material/Tooltip';
 import { Box } from '@mui/system';
 import { InfoIcon } from '@phosphor-icons/react/dist/ssr';
 import { CircleIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  SmileyIcon,
+  SmileyMehIcon,
+  SmileySadIcon,
+  WarningIcon,
+  WarningCircleIcon,
+  XCircleIcon
+} from '@phosphor-icons/react/dist/ssr';
+
+import { adjustGaugeList } from '@/utils/adjust-gaugeList'
+
 
 type GaugeLimit = { value: number; label?: string };
 
 type GaugeChartProps = {
+  setCanSave: () => void;
+  setCanNotSave: () => void;
   list: Record<string, GaugeLimit>;
+  days: number;
   value: number;
   title?: string;
 };
 
 export default function GaugeChart({
+  setCanSave,
+  setCanNotSave,
   list,
+  days,
   value,
   title = 'Gauge Chart'
 }: GaugeChartProps): React.JSX.Element {
   const theme = useTheme();
+
+  list = adjustGaugeList(list, days);
+
+  React.useEffect(() => {
+    if (list['Spending Wallet'].value > value) {
+      setCanSave();
+    } else {
+      setCanNotSave();
+    }
+  }, [list, value]);
+
 
   const entries = React.useMemo(
     () => Object.entries(list).sort((a, b) => a[1].value - b[1].value),
@@ -37,19 +65,24 @@ export default function GaugeChart({
   const percent = Math.min((value / max) * 100, 100);
 
   const colorList = [
+    theme.palette.primary.main,
+    theme.palette.success.dark,
     theme.palette.success.main,
     theme.palette.warning.main,
     theme.palette.warning.dark,
-    theme.palette.error.main
+    theme.palette.error.main,
+    theme.palette.error.dark,
   ];
 
   let color = colorList[colorList.length - 1];
   let matchedLabel = entries[entries.length - 1]?.[0] ?? '';
+  let message = entries[entries.length - 1]?.[1].label ?? 'Unable To Track';
 
   for (let i = 0; i < entries.length; i++) {
     if (value <= entries[i][1].value) {
       color = colorList[i] ?? colorList[colorList.length - 1];
       matchedLabel = entries[i][0];
+      message = entries[i][1].label ?? 'Unable To Track';
       break;
     }
   }
@@ -58,6 +91,29 @@ export default function GaugeChart({
     <Card>
       <CardHeader title={title} />
       <CardContent>
+        {/* Matched Status Indicator (Above CircularProgress) */}
+        <Stack spacing={1} 
+            alignItems="center"
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              mb: 2,
+              border: '1px solid',
+              borderColor: { color }
+            }}
+        >
+          <Box sx={{ color }}>
+            {matchedLabel === 'Good' && <SmileyIcon size={32} weight="fill" />}
+            {matchedLabel === 'Slightly over' && <SmileyMehIcon size={32} weight="fill" />}
+            {matchedLabel === 'Spending Wallet' && <WarningIcon size={32} weight="fill" />}
+            {matchedLabel === 'Savings Access' && <SmileySadIcon size={32} weight="fill" />}
+            {matchedLabel === 'High Risk' && <WarningCircleIcon size={32} weight="fill" />}
+            {matchedLabel === 'Impossible' && <XCircleIcon size={32} weight="fill" />}
+          </Box>
+          <Typography variant="subtitle1" sx={{ color: '#000000' }}>
+            {message}
+          </Typography>
+        </Stack>
         <Stack spacing={2} alignItems="center">
           {/* CircularProgress (native) */}
           <Box sx={{ position: 'relative', display: 'inline-flex' }}>

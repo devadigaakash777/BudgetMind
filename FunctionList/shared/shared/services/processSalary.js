@@ -30,7 +30,7 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
   const newState = deepClone(state);
 
   const today = currentDate.getDate();
-  const isSalaryDay = today === state.Salary.date;
+  const isSalaryDay = today === state.User.Salary.date;
   const isSteadyDay = today === state.SteadyWallet.date;
 
   // 1. Handle any expired fixed expenses first
@@ -66,7 +66,7 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
     }
   }
 
-  newState.Salary.amount = salary;
+  newState.User.Salary.amount = salary;
   let remaining = salary;
 
   // 2. Move DailyBuffer funds to TemporaryWallet

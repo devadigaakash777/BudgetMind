@@ -32,7 +32,7 @@ export function logExtendedExpense(state, expense, currentDate) {
     const date = new Date(currentDate);
     const limitStatus = getAmountComparison(dailyExpense, perDay); 
     date.setDate(date.getDate() - i);
-    newState.UserDailyExpenses.push({
+    newState.DailyExpense.data.push({
       id: crypto.randomUUID(),
       userId : userId,
       amount: perDay,

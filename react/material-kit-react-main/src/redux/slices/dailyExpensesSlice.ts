@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { stat } from 'fs';
 
 export interface DailyExpense {
   id: number;
@@ -17,6 +18,9 @@ interface DailyExpenseState {
   rowsPerPage: number;
   selectedIds: number[];
   numberOfDays: number;
+  totalAmount: number,
+  canReduceBudget: boolean,
+  source: 'wishlist' | 'main',
 }
 
 const initialState: DailyExpenseState = {
@@ -45,6 +49,9 @@ const initialState: DailyExpenseState = {
   rowsPerPage: 5,
   selectedIds: [],
   numberOfDays: 1,
+  totalAmount: 0,
+  canReduceBudget: true,
+  source: 'main',
 };
 
 
@@ -77,22 +84,28 @@ const dailyExpenseSlice = createSlice({
     deselectAll(state) {
       state.selectedIds = [];
     },
-    addExpense(state, action) {
+    addExpense(state, action: PayloadAction<{ id: number; userId: number; amount: number; details: string; numberOfDays: number }>) {
       const { id, userId, amount, details, numberOfDays } = action.payload;
 
-      for (let i = 0; i < numberOfDays; i++) {
-        state.data.push({
-          id: id + i,
-          userId,
-          amount,
-          date: '',             // to be filled
-          details,
-          balance: 0,           // to be calculated
-          amountStatus: 'equal',// to be calculated
-          amountDifference: 0,  // to be calculated
-        });
-      }
-    }
+      state.data.push({
+        id: id,
+        userId: userId,
+        amount: 0,
+        date: '',             
+        details: details,
+        balance: 0,           
+        amountStatus: 'equal',
+        amountDifference: 0,  
+      });
+      state.totalAmount = amount;
+      state.numberOfDays = numberOfDays;
+    },
+    selectSource(state, action: PayloadAction<'wishlist' | 'main'>) {
+      state.source = action.payload;
+    },
+    reduceBudget(state, action: PayloadAction<boolean>) {
+      state.canReduceBudget = action.payload;
+    },
   },
 });
 
@@ -103,7 +116,9 @@ export const {
   toggleSelection,
   selectAll,
   deselectAll,
-  addExpense
+  addExpense,
+  selectSource,
+  reduceBudget,
 } = dailyExpenseSlice.actions;
 
 export default dailyExpenseSlice.reducer;

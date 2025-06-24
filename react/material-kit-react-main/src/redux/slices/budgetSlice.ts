@@ -19,7 +19,7 @@ const initialState = {
         isPaid: false,
         amount: 1500,
         isPermanent: true,
-        isFunded: false,
+        isFunded: true,
         durationInMonths: 3,
         amountToFund: 1500
       },
@@ -31,7 +31,7 @@ const initialState = {
         dueDate: 18,
         amount: 2000,
         isPermanent: false,
-        isFunded: false,
+        isFunded: true,
         durationInMonths: 1,
         amountToFund: 2000
       },
@@ -49,7 +49,7 @@ const initialState = {
       }
     ],
     rowsPerPage: 3,
-    totalSavedAmount: 10700,
+    totalSavedAmount: 7200,
   }
 };
 

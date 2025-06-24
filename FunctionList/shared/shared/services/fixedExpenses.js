@@ -40,6 +40,10 @@ export function deductFixedExpenses(state, remaining) {
  * @returns {object} Amount deducted and sources.
  */
 export function consumeFromMainPath(state, needed) {
+  console.debug(
+      `[consumeFromMainPath] called with requirement of ₹${needed},`
+    );
+
   let total = 0;
   const sources = [];
 
@@ -60,8 +64,13 @@ export function consumeFromMainPath(state, needed) {
   }
 
   const fx = deductFromFixedExpenses(state.FixedExpenses.expenses, needed - total);
+  state.FixedExpenses.totalSavedAmount -= fx.amount;
   total += fx.amount;
   sources.push(...fx.sources);
+
+  console.debug(
+      `[consumeFromMainPath] returned with ₹${total} requirement of ₹${needed},`
+    );
 
   return { amount: total, sources };
 }
@@ -73,6 +82,9 @@ export function consumeFromMainPath(state, needed) {
  * @returns {object} Deducted amount and sources.
  */
 export function deductFromFixedExpenses(expenses, needed) {
+  console.debug(
+      `[handleFixedExpenseItems] called with requirement of ₹${needed},`
+    );
   let total = 0;
   const sources = [];
 
@@ -89,7 +101,9 @@ export function deductFromFixedExpenses(expenses, needed) {
       }
     }
   }
-
+  console.debug(
+      `[handleFixedExpenseItems] returned ₹${total} and requirement is ₹${needed},`
+    );
   return { amount: total, sources };
 }
 
@@ -115,6 +129,7 @@ export function consumeFromSavingWishlist(state, needed) {
       sources.push({ from: 'Wishlist', id: item.id || i, amount: take });
     }
   }
+  state.Wishlist.totalSavedAmount -= total;
 
   return { amount: total, sources };
 }
