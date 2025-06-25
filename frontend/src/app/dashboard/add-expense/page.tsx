@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import AddExpenseContent from '@/app/dashboard/add-expense/add-expense-content';
 import { config } from '@/config';

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import WishlistContent from './wishlist-content';
 import { config } from '@/config';

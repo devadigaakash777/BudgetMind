@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { BudgetState } from '@/types/budget'; // or same file
 
-const initialState = {
+const initialState: BudgetState = {
   MonthlyBudget: {
     amount: 0
   },
@@ -57,31 +58,27 @@ const budgetSlice = createSlice({
   name: 'budget',
   initialState,
   reducers: {
-    updateBudgetState(state, action) {
+    updateBudgetState(state, action: PayloadAction<Partial<BudgetState>>) {
       return { ...state, ...action.payload };
     },
-    deleteExpense(state, action) {
-      const id = action.payload;
-      state.FixedExpenses.expenses = state.FixedExpenses.expenses.filter(exp => exp.id !== id);
+    deleteExpense(state, action: PayloadAction<number>) {
+      state.FixedExpenses.expenses = state.FixedExpenses.expenses.filter(exp => exp.id !== action.payload);
     },
-    payExpense(state, action) {
-      const id = action.payload;
-      const expense = state.FixedExpenses.expenses.find(exp => exp.id === id);
+    payExpense(state, action: PayloadAction<number>) {
+      const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
       if (expense && expense.isFunded && !expense.isPaid) {
         expense.isPaid = true;
         expense.status = "paid";
       }
     },
-    increaseDuration(state, action) {
-      const id = action.payload;
-      const expense = state.FixedExpenses.expenses.find(exp => exp.id === id);
+    increaseDuration(state, action: PayloadAction<number>) {
+      const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
       if (expense) {
         expense.durationInMonths += 1;
       }
     },
-    decreaseDuration(state, action) {
-      const id = action.payload;
-      const expense = state.FixedExpenses.expenses.find(exp => exp.id === id);
+    decreaseDuration(state, action: PayloadAction<number>) {
+      const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
       if (expense && expense.durationInMonths > 1) {
         expense.durationInMonths -= 1;
       }

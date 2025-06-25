@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import AccountContent from './account-content';
 import { config } from '@/config';

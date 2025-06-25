@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import ExpenseContent from './expense-content';
 import { config } from '@/config';

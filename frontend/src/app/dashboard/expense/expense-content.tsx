@@ -9,7 +9,7 @@ import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { setPage, setRowsPerPage, addExpense } from '@/redux/slices/dailyExpensesSlice';
+import { setPage, setRowsPerPage } from '@/redux/slices/daily-expenses-slice';
 
 import { DailyExpensesFilters } from '@/components/dashboard/expense/expenses-filters';
 import { DailyExpensesTable } from '@/components/dashboard/expense/expenses-table';
@@ -20,24 +20,18 @@ import { paths } from '@/paths';
 
 export default function ExpenseContent(): React.JSX.Element {
 
-  //model toggle
-  const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const dispatch = useDispatch();
   const handlePageChange = (_event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     dispatch(setPage(newPage));
   };
 
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-   dispatch(setRowsPerPage(parseInt(event.target.value, 10)));
+   dispatch(setRowsPerPage(Number.parseInt(event.target.value, 10)));
    dispatch(setPage(0)); // reset to first page
   };
 
   const expenseState = useSelector((state: RootState) => state.expense);
-  const dailyExpenses = expenseState.data.map((expense, index) => ({
+  const dailyExpenses = expenseState.data.map((expense) => ({
     id: `Exp${expense.id}`,
     userId: expense.userId,
     amount: expense.amount,

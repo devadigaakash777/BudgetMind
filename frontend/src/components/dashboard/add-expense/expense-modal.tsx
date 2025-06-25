@@ -12,9 +12,7 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { TextField } from '@mui/material';
-import { VaultIcon } from '@phosphor-icons/react/dist/ssr';
-import { EyeIcon } from '@phosphor-icons/react/dist/ssr';
-
+import { VaultIcon, EyeIcon } from '@phosphor-icons/react/dist/ssr';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
 import {RequestMoneyModal } from '@/components/dashboard/add-expense/expense-request-model'

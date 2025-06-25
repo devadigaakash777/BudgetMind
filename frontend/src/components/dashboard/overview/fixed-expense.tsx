@@ -16,7 +16,6 @@ import { ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date';
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
-import dayjs from 'dayjs';
 
 const statusMap = {
   pending: { label: 'Pending', color: 'warning' },

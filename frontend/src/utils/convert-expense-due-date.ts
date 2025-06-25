@@ -10,41 +10,36 @@
  * convertExpenseDueDate(2, 'toString') → '2025-06-02'
  * convertExpenseDueDate('2025-06-02', 'toNumber') → 2
  */
+
+// 🔁 Moved to outer scope (Fixes: unicorn/consistent-function-scoping)
+const padZero = (num: number): string => (num < 10 ? `0${num}` : `${num}`);
+
 export function convertExpenseDueDate(
   value: number | string,
   mode: 'toString' | 'toNumber'
 ): string | number {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth() + 1; // JS month 0-based → +1
+  const month = now.getMonth() + 1;
 
-  const padZero = (num: number): string => (num < 10 ? '0' + num : '' + num);
-
-  // Get last day of current month
   const lastDayOfMonth = new Date(year, month, 0).getDate();
 
   if (mode === 'toString') {
-    // input: number → output: YYYY-MM-DD
-    let day = typeof value === 'number' ? value : parseInt(value, 10);
-    if (isNaN(day) || day < 1) day = 1;
-    if (day > lastDayOfMonth) day = lastDayOfMonth;
-
+    let day = typeof value === 'number' ? value : Number.parseInt(value, 10);
+    if (Number.isNaN(day) || day < 1) day = 1;
+    day = Math.min(day, lastDayOfMonth);
     return `${year}-${padZero(month)}-${padZero(day)}`;
-  } else if (mode === 'toNumber') {
-    // input: 'YYYY-MM-DD' → output: number
-    if (typeof value !== 'string') {
-      return 1;
-    }
-    const parts = value.split('-');
-    if (parts.length !== 3) {
-      return 1;
-    }
-    const day = parseInt(parts[2], 10);
-    if (isNaN(day) || day < 1) {
-      return 1;
-    }
-    return day > lastDayOfMonth ? lastDayOfMonth : day;
-  } else {
-    throw new Error('Invalid mode: use "toString" or "toNumber"');
   }
+
+  if (mode === 'toNumber') {
+    if (typeof value !== 'string') return 1;
+    const parts = value.split('-');
+    if (parts.length !== 3) return 1;
+
+    const day = Number.parseInt(parts[2], 10);                                
+    if (Number.isNaN(day) || day < 1) return 1;
+    return Math.min(day, lastDayOfMonth);
+  }
+
+  throw new Error('Invalid mode: use "toString" or "toNumber"');
 }

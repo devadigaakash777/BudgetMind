@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { UserState } from '@/types/user';
 
-const initialState = {
-  userid:1,
+const initialState: UserState = {
+  userid: 1,
   firstName: 'Akash',
   lastName: 'Devadiga',
   email: 'akash123@gail.com',
@@ -13,28 +14,46 @@ const initialState = {
       city: 'Udupi',
       state: 'karnataka',
       country: 'India',
-      timezone: 'GMT-7',
+      timezone: 'GMT-7'
     }
   ],
   hasSalary: true,
-  Salary: { amount: 10000, date: 1 },
+  Salary: { amount: 10_000, date: 1 }
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setAvatar(state, action) {
+    setAvatar(state, action: PayloadAction<string>) {
       state.avatar = action.payload;
     },
-    updateSalaryInfo(state, action) {
-      const { jobTitle, hasSalary, salaryAmount, salaryDate, threshold } = action.payload;
+    updateSalaryInfo(
+      state,
+      action: PayloadAction<{
+        jobTitle: string;
+        hasSalary: boolean;
+        salaryAmount: number;
+        salaryDate: number;
+      }>
+    ) {
+      const { jobTitle, hasSalary, salaryAmount, salaryDate } = action.payload;
       state.jobTitle = jobTitle;
       state.hasSalary = hasSalary;
       state.Salary.amount = salaryAmount;
       state.Salary.date = salaryDate;
     },
-    updateBasicInfo(state, action) {
+    updateBasicInfo(
+      state,
+      action: PayloadAction<{
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+        city: string;
+        state: string;
+      }>
+    ) {
       const { firstName, lastName, email, phone, city, state: userState } = action.payload;
       state.firstName = firstName;
       state.lastName = lastName;
@@ -45,7 +64,7 @@ const userSlice = createSlice({
         state.address[0].state = userState;
       }
     }
-  },
+  }
 });
 
 export const { setAvatar, updateSalaryInfo, updateBasicInfo } = userSlice.actions;

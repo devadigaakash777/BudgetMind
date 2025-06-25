@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import FixedExpensesContent from './bill-content';
 import { config } from '@/config';

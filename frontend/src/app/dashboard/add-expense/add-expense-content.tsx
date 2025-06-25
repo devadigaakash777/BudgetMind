@@ -2,23 +2,15 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
-import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/ssr';
-import dayjs from 'dayjs';
 import { Grid } from '@mui/system';
 
 import { useSelector, useDispatch} from 'react-redux';
 import { RootState } from '@/redux/store';
-import { addExpense, selectSource, reduceBudget } from '@/redux/slices/dailyExpensesSlice';
-import { setPreview } from '@/redux/slices/previewSlice';
+import { addExpense, selectSource, reduceBudget } from '@/redux/slices/daily-expenses-slice';
 import { AddExpenseForm } from '@/components/dashboard/add-expense/expense-modal'
-
-import type { DailyExpense } from '@/components/dashboard/expense/expenses-table';
-
 import { useEffect } from 'react';
-import { syncPreview, addPreviewExpense, requestMoney } from '@/redux/thunks/previewThunks'; 
+import { syncPreview, addPreviewExpense, requestMoney } from '@/redux/thunks/preview-thunks'; 
 import type { AppDispatch } from '@/redux/store';
 
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
@@ -178,8 +170,5 @@ export default function AddExpenseContent(): React.JSX.Element {
   );
 }
 
-function applyPagination(rows: DailyExpense[], page: number, rowsPerPage: number): DailyExpense[] {
-  return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-}
 
 

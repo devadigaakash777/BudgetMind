@@ -1,6 +1,7 @@
 // previewThunks.ts
 import { AppDispatch, RootState } from '../store';
-import { setPreview } from '../slices/previewSlice';
+import { setPreview } from '../slices/preview-slice';
+import type { BudgetState } from '@/types/budget';
 import { logExtendedExpense, handleTemporaryWalletRequest } from '@/utils/shared';
 
 type ExpenseInput = {
@@ -24,7 +25,7 @@ export const syncPreview = () => (dispatch: AppDispatch, getState: () => RootSta
   const state = getState();
   const flatPreview = {
     User: state.user,     // user slice
-    ...state.budget,       // budget slice
+    ...state.budget as (BudgetState),       // budget slice
     DailyExpense: state.expense,     // daily expense slice
     ...state.wallet,     // wallets slice
     Wishlist: state.wishlist     // wishlist slice

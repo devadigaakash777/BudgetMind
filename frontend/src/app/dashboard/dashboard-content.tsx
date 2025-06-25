@@ -2,11 +2,10 @@
 
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
-import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { filterCurrentMonth } from '@/utils/filter-current-month';
-import { DailyExpense } from '@/redux/slices/dailyExpensesSlice';
+import { DailyExpense } from '@/redux/slices/daily-expenses-slice';
 
 import { Budget } from '@/components/dashboard/overview/budget';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
@@ -18,10 +17,8 @@ import { TotalProfit } from '@/components/dashboard/overview/total-profit';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 
 export default function DashboardContent(): React.JSX.Element {
-  const dispatch = useDispatch();
   const walletState = useSelector((state: RootState) => state.wallet);
   const budgetState = useSelector((state: RootState) => state.budget);
-  const previewState = useSelector((state: RootState) => state.preview);
   const wishlist = useSelector((state: RootState) => state.wishlist);
   const dailyExpenseState = useSelector((state: RootState) => state.expense); 
 
@@ -41,7 +38,7 @@ export default function DashboardContent(): React.JSX.Element {
   const barChartSeries = filteredDailyExpenseState.map(item => item.amount);
 
   //Fixed Cost
-  const expenses = budgetState.FixedExpenses.expenses.map((expense, index) => ({
+  const expenses = budgetState.FixedExpenses.expenses.map((expense) => ({
     id: `BILL-${String(expense.id).padStart(3, '0')}`, // e.g., ORD-001
     billName: expense.billName,
     amount: expense.amount,
@@ -53,7 +50,7 @@ export default function DashboardContent(): React.JSX.Element {
   // wishlist items 
    const products = wishlist.items
    .slice(-3)
-   .map((item, index) => ({
+   .map((item) => ({
     id: `${item.id}`,
     name: `${item.name}`,
     image: `${item.image}`, // Adjust image path logic as needed

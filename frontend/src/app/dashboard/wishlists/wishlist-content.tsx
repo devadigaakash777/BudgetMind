@@ -12,7 +12,6 @@ import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import  AddWishlistModal from '@/components/dashboard/wishlists/wishlist-model'
 import { WishlistCard } from '@/components/dashboard/wishlists/wishlist-card';
-import type { WishlistItem } from '@/components/dashboard/wishlists/wishlist-card';
 import { CompaniesFilters } from '@/components/dashboard/wishlists/integrations-filters';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -25,11 +24,10 @@ import {
   changePriority,
   buyItem,
   setPage,
-  setRowsPerPage
-} from '@/redux/slices/wishlistSlice';
+} from '@/redux/slices/wishlist-slice';
 
 import { useEffect } from 'react';
-import { clearPreview } from '@/redux/slices/previewSlice';
+import { clearPreview } from '@/redux/slices/preview-slice';
 
 export default function WishlistContent(): React.JSX.Element {
   const [open, setOpen] = React.useState(false);

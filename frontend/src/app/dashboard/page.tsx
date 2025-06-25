@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import DashboardContent from './dashboard-content';
 import { config } from '@/config';

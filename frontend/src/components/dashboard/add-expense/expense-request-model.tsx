@@ -11,16 +11,14 @@ import {
   MenuItem,
   Checkbox,
   FormControlLabel,
-  TextField
-} from '@mui/material';
-
-import {
+  TextField,
   List,
   ListItem,
   ListItemText,
   ListItemAvatar,
   Avatar
 } from '@mui/material';
+
 import { WalletIcon, PiggyBankIcon, ChartPieSliceIcon } from '@phosphor-icons/react/dist/ssr';
 
 type RequestMoneyModalProps = {

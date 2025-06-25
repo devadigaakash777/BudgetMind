@@ -1,27 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { stat } from 'fs';
-
-export interface DailyExpense {
-  id: number;
-  userId: number;
-  amount: number;
-  date: string;
-  details: string;
-  balance: number;
-  amountStatus: 'above' | 'equal' | 'below';
-  amountDifference: number;
-}
-
-interface DailyExpenseState {
-  data: DailyExpense[];
-  page: number;
-  rowsPerPage: number;
-  selectedIds: number[];
-  numberOfDays: number;
-  totalAmount: number,
-  canReduceBudget: boolean,
-  source: 'wishlist' | 'main',
-}
+import type { DailyExpense, DailyExpenseState } from '@/types/daily-expense';
 
 const initialState: DailyExpenseState = {
   data: [

@@ -8,17 +8,11 @@ import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import type { Icon } from '@phosphor-icons/react/dist/lib/types';
-import { DesktopIcon } from '@phosphor-icons/react/dist/ssr/Desktop';
-import { DeviceTabletIcon } from '@phosphor-icons/react/dist/ssr/DeviceTablet';
-import { PhoneIcon } from '@phosphor-icons/react/dist/ssr/Phone';
 import type { ApexOptions } from 'apexcharts';
 import { Box } from '@mui/system';
 import { WalletIcon } from '@phosphor-icons/react/dist/ssr'
 
 import { Chart } from '@/components/core/chart';
-
-const colorMapping = ['primary.main', 'success.main', 'warning.main', 'error.main', 'secondary.main'];
 
 export interface WalletChartProps {
   chartSeries: number[];

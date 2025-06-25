@@ -37,6 +37,7 @@ export function AccountInfo({
           </div>
           <Stack spacing={1} sx={{ textAlign: 'center' }}>
             <Typography variant="h5">{name}</Typography>
+            <Typography variant="h3">{jobTitle}</Typography>
             <Typography color="text.secondary" variant="body2">
               {city} {country}
             </Typography>

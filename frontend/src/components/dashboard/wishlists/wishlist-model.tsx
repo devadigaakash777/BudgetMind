@@ -11,6 +11,20 @@ import { CloudArrowUpIcon, LockIcon } from '@phosphor-icons/react/dist/ssr';
 import { styled } from '@mui/material/styles';
 import { WishlistCard } from '@/components/dashboard/wishlists/wishlist-card';
 
+//wishlist type
+type WishlistItem = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  savedAmount: number;
+  priority: number;
+  cost: number;
+  monthLeft: number;
+  isFunded: boolean;
+};
+
+
 // For hiding default input style
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -27,7 +41,7 @@ const VisuallyHiddenInput = styled('input')({
 type AddWishlistModalProps = {
   open: boolean;
   onClose: () => void;
-  onAdd: (item: any) => void;  // callback with new item
+  onAdd: (item: WishlistItem) => void;
   maxPriority: number;
 };
 
@@ -37,7 +51,7 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
   const [activeStep, setActiveStep] = React.useState(0);
   const [priorityMode, setPriorityMode] = React.useState<'none' | 'low' | 'custom' | 'high'>('none');
 
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = React.useState<WishlistItem>({
     id: '',  // auto generate
     name: '',
     description: '',
@@ -193,12 +207,12 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
             >
               <WishlistCard
                 item={formData}
-                onDelete={(id) => null}
-                onIncreaseMonth={(id) => null}
-                onDecreaseMonth={(id) => null}
-                onBuy={(id) => null}
-                onIncreasePriority={(id) => null}
-                onDecreasePriority={(id) => null}
+                onDelete={(_id) => null}
+                onIncreaseMonth={(_id) => null}
+                onDecreaseMonth={(_id) => null}
+                onBuy={(_id) => null}
+                onIncreasePriority={(_id) => null}
+                onDecreasePriority={(_id) => null}
               />
             </Grid>
           </Stack>

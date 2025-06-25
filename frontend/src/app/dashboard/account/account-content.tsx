@@ -1,19 +1,17 @@
 'use client';
 import * as React from 'react';
-import type { Metadata } from 'next';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { config } from '@/config';
 import { AccountDetailsForm } from '@/components/dashboard/account/account-details-form';
 import { AccountInfo } from '@/components/dashboard/account/account-info';
 import { AccountSalaryForm } from '@/components/dashboard/account/account-salary-form';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { updateBasicInfo, setAvatar, updateSalaryInfo } from '@/redux/slices/userSlice';
-import { updateSteadyWallet, setThreshold } from '@/redux/slices/walletSlice';
+import { updateBasicInfo, setAvatar, updateSalaryInfo } from '@/redux/slices/user-slice';
+import { updateSteadyWallet, setThreshold } from '@/redux/slices/wallet-slice';
 
 export default function AccountContent(): React.JSX.Element {
   const user = useSelector((state: RootState) => state.user);

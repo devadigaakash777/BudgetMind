@@ -1,16 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './slices/userSlice';
-import walletReducer from './slices/walletSlice';
-import budgetReducer from './slices/budgetSlice';
-import wishlistReducer from './slices/wishlistSlice';
-import previewReducer from './slices/previewSlice';
-import expenseReducer from './slices/dailyExpensesSlice';
+import userReducer from './slices/user-slice';
+import walletReducer from './slices/wallet-slice';
+import budgetReducer from './slices/budget-slice';
+import wishlistReducer from './slices/wishlist-slice';
+import previewReducer from './slices/preview-slice';
+import expenseReducer from './slices/daily-expenses-slice';
+
 
 const store = configureStore({
   reducer: {
     user: userReducer,
     wallet: walletReducer,
-    budget: budgetReducer,
+    budget: budgetReducer ,
     wishlist: wishlistReducer,
     expense: expenseReducer,
     preview: previewReducer

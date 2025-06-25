@@ -10,18 +10,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import { Box } from '@mui/system';
-import { InfoIcon } from '@phosphor-icons/react/dist/ssr';
-import { CircleIcon } from '@phosphor-icons/react/dist/ssr';
 import {
   SmileyIcon,
   SmileyMehIcon,
   SmileySadIcon,
   WarningIcon,
   WarningCircleIcon,
-  XCircleIcon
+  XCircleIcon,
+  InfoIcon, 
+  CircleIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
-import { adjustGaugeList } from '@/utils/adjust-gaugeList'
+import { adjustGaugeList } from '@/utils/adjust-gauge-list'
 
 
 type GaugeLimit = { value: number; label?: string };
@@ -53,7 +53,7 @@ export default function GaugeChart({
     } else {
       setCanNotSave();
     }
-  }, [list, value]);
+  }, [list, value, setCanSave, setCanNotSave]); 
 
 
   const entries = React.useMemo(
@@ -61,7 +61,7 @@ export default function GaugeChart({
     [list]
   );
 
-  const max = entries[entries.length - 1]?.[1].value ?? 100;
+  const max = entries.at(-1)?.[1].value ?? 100;;
   const percent = Math.min((value / max) * 100, 100);
 
   const colorList = [
@@ -74,18 +74,19 @@ export default function GaugeChart({
     theme.palette.error.dark,
   ];
 
-  let color = colorList[colorList.length - 1];
-  let matchedLabel = entries[entries.length - 1]?.[0] ?? '';
-  let message = entries[entries.length - 1]?.[1].label ?? 'Unable To Track';
+  let color = colorList.at(-1)!;
+  let matchedLabel = entries.at(-1)?.[0] ?? '';
+  let message = entries.at(-1)?.[1].label ?? 'Unable To Track';
 
-  for (let i = 0; i < entries.length; i++) {
-    if (value <= entries[i][1].value) {
-      color = colorList[i] ?? colorList[colorList.length - 1];
-      matchedLabel = entries[i][0];
-      message = entries[i][1].label ?? 'Unable To Track';
+  for (const [index, [label, gauge]] of entries.entries()) {
+    if (value <= gauge.value) {
+      color = colorList.at(index) ?? colorList.at(-1)!;
+      matchedLabel = label;
+      message = gauge.label ?? 'Unable To Track';
       break;
     }
   }
+
 
   return (
     <Card>

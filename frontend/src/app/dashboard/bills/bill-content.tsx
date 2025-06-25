@@ -22,10 +22,10 @@ import {
   increaseDuration,
   decreaseDuration,
   updateBudgetState
-} from '@/redux/slices/budgetSlice';
+} from '@/redux/slices/budget-slice';
 
 import { useEffect } from 'react';
-import { clearPreview } from '@/redux/slices/previewSlice';
+import { clearPreview } from '@/redux/slices/preview-slice';
 
 export default function FixedExpensesContent(): React.JSX.Element {
   const dispatch = useDispatch();
