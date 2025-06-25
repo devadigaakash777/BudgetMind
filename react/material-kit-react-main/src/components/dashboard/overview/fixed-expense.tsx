@@ -28,6 +28,7 @@ export interface FixedExpenses {
   id: string;
   billName: string;
   amount: number;
+  dueAmount:number;
   status: 'pending' | 'paid' | 'expired';
   dueDate: number;
 }
@@ -46,8 +47,9 @@ export function FixedExpense({ expenses = [], sx }: FixedExpenseProps): React.JS
         <Table sx={{ minWidth: 800 }}>
           <TableHead>
             <TableRow>
-              <TableCell>Bill</TableCell>
               <TableCell>Bill Name</TableCell>
+              <TableCell>Bill Cost(₹)</TableCell>
+              <TableCell>Saved Amount(₹)</TableCell>
               <TableCell sortDirection="desc">Due Date</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
@@ -58,8 +60,9 @@ export function FixedExpense({ expenses = [], sx }: FixedExpenseProps): React.JS
 
               return (
                 <TableRow hover key={expense.id}>
-                  <TableCell>{expense.id}</TableCell>
                   <TableCell>{expense.billName}</TableCell>
+                  <TableCell>{expense.amount}</TableCell>
+                  <TableCell>{expense.amount - expense.dueAmount}</TableCell>
                   <TableCell>{convertExpenseDueDate(expense.dueDate, "toString")}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />

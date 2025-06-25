@@ -57,7 +57,13 @@ export function LatestProducts({ products = [], sx }: LatestProductsProps): Reac
             <ListItemText
               primary={product.name}
               primaryTypographyProps={{ variant: 'subtitle1' }}
-              secondary={`Cost ${product.cost},  Saved Amount ${product.savedAmount}`}
+              secondary={
+              <>
+                Cost: ₹{product.cost}
+                <br />
+                Saved Amount: ₹{product.savedAmount}
+              </>
+              }
               secondaryTypographyProps={{ variant: 'body2' }}
             />
             <Button component={RouterLink} href={paths.dashboard.wishlists} color="error" endIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />} size="small" />

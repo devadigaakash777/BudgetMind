@@ -14,6 +14,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { ArrowDownIcon, ArrowUpIcon, ArrowsLeftRightIcon } from '@phosphor-icons/react/dist/ssr';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 
@@ -23,7 +24,7 @@ function noop(_event: unknown, _newPage: number) {}
 
 
 const statusMap = {
-  equal: { label: 'on budget', color: 'warning' },
+  equal: { label: 'on budget', color: 'warning'},
   below: { label: 'underspent', color: 'success' },
   above: { label: 'overspent', color: 'error' },
 } as const;
@@ -86,9 +87,9 @@ export function DailyExpensesTable({
               </TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Details</TableCell>
-              <TableCell>Amount Spent</TableCell>
+              <TableCell>Amount Spent(₹)</TableCell>
               <TableCell>Amount Status</TableCell>
-              <TableCell>Amount Difference</TableCell>
+              <TableCell>Amount Difference(₹)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -114,9 +115,13 @@ export function DailyExpensesTable({
                   <TableCell>{row.details}</TableCell>
                   <TableCell>{row.amount}</TableCell>
                   <TableCell>
-                    <Chip color={color} label={label} size="small" />
+                    <Chip color={color} label={label} size="small" sx={{}}/>
                   </TableCell>
-                  <TableCell>{row.amountDifference}</TableCell>
+                  <TableCell>
+                    {color == 'success' && <ArrowDownIcon weight='bold' fill='green' />}
+                    {color == 'error' && <ArrowUpIcon weight='bold' fill='red' />}
+                    {row.amountDifference}
+                  </TableCell>
                 </TableRow>
               );
             })}

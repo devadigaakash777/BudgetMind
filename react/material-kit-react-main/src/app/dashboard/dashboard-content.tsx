@@ -45,10 +45,10 @@ export default function DashboardContent(): React.JSX.Element {
     id: `BILL-${String(expense.id).padStart(3, '0')}`, // e.g., ORD-001
     billName: expense.billName,
     amount: expense.amount,
+    dueAmount: expense.amountToFund,
     status: expense.status as 'pending' | 'paid' | 'expired',
-    dueDate: expense.dueDate, // optional time logic
+    dueDate: expense.dueDate, 
   }));
-
 
   // wishlist items 
    const products = wishlist.items

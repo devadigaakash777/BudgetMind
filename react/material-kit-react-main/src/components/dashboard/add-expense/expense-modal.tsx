@@ -12,7 +12,8 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { TextField } from '@mui/material';
-import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+import { VaultIcon } from '@phosphor-icons/react/dist/ssr';
+import { EyeIcon } from '@phosphor-icons/react/dist/ssr';
 
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
@@ -173,7 +174,7 @@ export function AddExpenseForm({
             {canSave ? (
                 <Button
                   variant="contained"
-                  startIcon={<PlusIcon />}
+                  startIcon={<EyeIcon />}
                   disabled={formData.amount <= 0}
                   onClick={() =>
                     onAddPreview({
@@ -185,8 +186,8 @@ export function AddExpenseForm({
                   Preview
                 </Button>
               ) : (
-                <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
-                  Add
+                <Button startIcon={<VaultIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
+                  Take From Secure Saving or Wishlist Item
                 </Button>
               )}
 

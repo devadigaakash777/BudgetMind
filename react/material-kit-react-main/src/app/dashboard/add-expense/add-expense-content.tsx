@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
+import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/ssr';
 import dayjs from 'dayjs';
 import { Grid } from '@mui/system';
 
@@ -50,6 +50,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           id: number;
           billName: string;
           amount: number;
+          amountToFund: number;
           status: 'pending' | 'paid' | 'expired';
           dueDate: string;
         },
@@ -57,10 +58,13 @@ export default function AddExpenseContent(): React.JSX.Element {
         id: `BILL-${String(expense.id).padStart(3, '0')}`,
         billName: expense.billName,
         amount: expense.amount,
+        dueAmount: expense.amountToFund,
         status: expense.status,
         dueDate: expense.dueDate,
       })
     );
+
+    console.log(previewState?.FixedExpenses);
 
 
   // wishlist items 
@@ -110,9 +114,6 @@ export default function AddExpenseContent(): React.JSX.Element {
   const allWallet = mainWallet + fixed;
   const impossible = allWallet + 1;
 
-  const overage = 0;
-
-
   const gaugeList={
       'Neutral': { value: 0, label:"Enter Value"},
       'Good': { value: dailyBudget, label:"Great! Your budget is enough to cover this expense"},
@@ -124,12 +125,11 @@ export default function AddExpenseContent(): React.JSX.Element {
     }
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={2}>
       <div>
-        <Typography variant="h4">Account</Typography>
         <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
-            <Button color="inherit" startIcon={<UploadIcon fontSize="var(--icon-fontSize-md)" />} onClick={() => dispatch(syncPreview())}>
-              Undo
+            <Button color="primary" variant="contained" startIcon={<ArrowCounterClockwiseIcon fontSize="var(--icon-fontSize-md)" />} onClick={() => dispatch(syncPreview())}>
+              Reset
             </Button>
           </Stack>
       </div>

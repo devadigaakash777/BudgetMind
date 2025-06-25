@@ -48,7 +48,7 @@ export default function GaugeChart({
   list = adjustGaugeList(list, days);
 
   React.useEffect(() => {
-    if (list['Spending Wallet'].value > value) {
+    if (list['Spending Wallet'].value >= value) {
       setCanSave();
     } else {
       setCanNotSave();
