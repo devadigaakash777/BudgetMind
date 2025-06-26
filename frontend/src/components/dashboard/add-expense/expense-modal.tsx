@@ -142,6 +142,7 @@ export function AddExpenseForm({
                   onChange={handleInputChange}
                   label="Amount"
                   type="number"
+                  inputProps={{ min: 1 }}
                 />
               </FormControl>
             </Grid>

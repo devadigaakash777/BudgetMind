@@ -44,7 +44,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           amount: number;
           amountToFund: number;
           status: 'pending' | 'paid' | 'expired';
-          dueDate: string;
+          dueDate: number;
         },
       ) => ({
         id: `BILL-${String(expense.id).padStart(3, '0')}`,

@@ -16,7 +16,7 @@ type AccountInfoProps = {
   city?: string;
   country?: string;
   timezone?: string;
-  onAdd: (item: any) => void;
+  onAdd: (item: string) => void;
 };
 
 export function AccountInfo({

@@ -3,6 +3,7 @@ import { AppDispatch, RootState } from '../store';
 import { setPreview } from '../slices/preview-slice';
 import type { BudgetState } from '@/types/budget';
 import { logExtendedExpense, handleTemporaryWalletRequest } from '@/utils/shared';
+import { PreviewState } from '@/types/preview'
 
 type ExpenseInput = {
   amount: number;
@@ -10,12 +11,12 @@ type ExpenseInput = {
 };
 
 type requestMoneyResult = {
-  newState: any;
-  collected: any;
+  newState: PreviewState;
+  collected: number;
 };
 
 type LogExpenseResult = {
-  newState: any;
+  newState: PreviewState;
   overage: number;
 };
 
@@ -39,7 +40,9 @@ export const addPreviewExpense =
     const state = getState().preview;
     const date = new Date();
     const { newState } = logExtendedExpense(state, expense, date) as LogExpenseResult;
-    newState.DailyBudget.amount = Math.max(0, newState.DailyBudget.amount - expense.amount);
+    if (newState.DailyBudget) {
+      newState.DailyBudget.amount = Math.max(0, newState.DailyBudget.amount - expense.amount);
+    }
     console.log(newState);
     dispatch(setPreview(newState));
   };

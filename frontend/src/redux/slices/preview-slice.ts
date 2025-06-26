@@ -1,7 +1,6 @@
 // previewSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-type PreviewState = Record<string, any>; // fully dynamic
+import type { PreviewState } from '@/types/preview';
 
 const initialState: PreviewState = {};
 

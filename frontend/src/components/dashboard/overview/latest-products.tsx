@@ -20,8 +20,8 @@ export interface Product {
   id: string;
   image: string;
   name: string;
-  cost: string;
-  savedAmount: string;
+  cost: number;
+  savedAmount: number;
 }
 
 export interface LatestProductsProps {

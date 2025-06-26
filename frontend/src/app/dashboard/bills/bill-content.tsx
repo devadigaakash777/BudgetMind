@@ -13,7 +13,7 @@ import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import { FixedExpenseCard } from '@/components/dashboard/bills/bill-card';
 import { CompaniesFilters } from '@/components/dashboard/wishlists/integrations-filters'; 
 import AddFixedExpenseModal from '@/components/dashboard/bills/bill-model';
-
+import { Expense } from '@/types/budget'
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import {
@@ -42,7 +42,7 @@ export default function FixedExpensesContent(): React.JSX.Element {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleAddExpense = (newExpense: any) => {
+  const handleAddExpense = (newExpense: Expense) => {
     const updatedExpenses = [...fixedExpenses, newExpense];
     dispatch(updateBudgetState({
         FixedExpenses: {

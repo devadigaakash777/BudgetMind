@@ -160,8 +160,7 @@ export default function GaugeChart({
             }}
           >
             {entries.map(([key, gauge], index) => {
-              const entryColor =
-                colorList[index] ?? colorList[colorList.length - 1];
+              const entryColor = colorList[index] ?? colorList.at(-1);
               return (
                 <Stack key={key} spacing={0.5} alignItems="center">
                   <CircleIcon size={14} weight="fill" color={entryColor} />

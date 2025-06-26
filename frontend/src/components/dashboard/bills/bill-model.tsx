@@ -9,13 +9,14 @@ import {
 import { LockIcon } from '@phosphor-icons/react/dist/ssr';
 import { FixedExpenseCard } from '@/components/dashboard/bills/bill-card';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date';
+import { Expense } from '@/types/budget'
 
 const steps = ['Basic Info', 'Amount & Duration', 'Finish'];
 
 type AddFixedExpenseModalProps = {
   open: boolean;
   onClose: () => void;
-  onAdd: (item: any) => void;
+  onAdd: (item: Expense) => void;
 };
 
 export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedExpenseModalProps) {
@@ -40,7 +41,7 @@ export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedE
       const newItem = {
         ...formData,
         id: Date.now(), // quick id
-        status: 'pending',
+        status: 'pending' as const,
         isPaid: false,
         isFunded: false,
         amountToFund: formData.amount

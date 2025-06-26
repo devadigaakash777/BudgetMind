@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { filterCurrentMonth } from '@/utils/filter-current-month';
-import { DailyExpense } from '@/redux/slices/daily-expenses-slice';
+import { DailyExpense } from '@/types/daily-expense';
 
 import { Budget } from '@/components/dashboard/overview/budget';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
@@ -54,8 +54,8 @@ export default function DashboardContent(): React.JSX.Element {
     id: `${item.id}`,
     name: `${item.name}`,
     image: `${item.image}`, // Adjust image path logic as needed
-    cost: `${item.cost}`,
-    savedAmount: `${item.savedAmount}`
+    cost: item.cost,
+    savedAmount: item.savedAmount
   }));
 
   return (
