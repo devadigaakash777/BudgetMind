@@ -1,4 +1,4 @@
-import { DailyExpense } from '@/redux/slices/dailyExpensesSlice';
+import type { DailyExpense } from '@/types/daily-expense';
 
 /**
  * Filters expenses to return only those from the current month.
