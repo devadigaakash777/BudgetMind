@@ -13,7 +13,7 @@ import { setPage, setRowsPerPage } from '@/redux/slices/daily-expenses-slice';
 
 import { DailyExpensesFilters } from '@/components/dashboard/expense/expenses-filters';
 import { DailyExpensesTable } from '@/components/dashboard/expense/expenses-table';
-import type { DailyExpense } from '@/components/dashboard/expense/expenses-table';
+import type { DailyExpense } from '@/types/daily-expense';
 
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
@@ -32,7 +32,7 @@ export default function ExpenseContent(): React.JSX.Element {
 
   const expenseState = useSelector((state: RootState) => state.expense);
   const dailyExpenses = expenseState.data.map((expense) => ({
-    id: `Exp${expense.id}`,
+    id: expense.id,
     userId: expense.userId,
     amount: expense.amount,
     date: expense.date,

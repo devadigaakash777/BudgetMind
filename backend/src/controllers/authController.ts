@@ -5,7 +5,8 @@ import { generateAccessToken, generateRefreshToken } from '../utils/generateToke
 
 interface User {
   id: string;
-  name: string;
+  firstName: string;
+  lastName?: string;
   email: string;
   password: string;
   avatar: string;
@@ -28,7 +29,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
   const user: User = {
     id: (users.length + 1).toString(),
-    name: `${firstName} ${lastName}`,
+    firstName: `${firstName}`,
+    lastName: `${lastName}`,
     email,
     password: hashedPassword,
     avatar: '/assets/avatar.png',
@@ -59,8 +61,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
+    secure: false,  // ❗ Set to false in localhost (set to true only with HTTPS)
+    sameSite: 'lax', // strict
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
@@ -68,7 +70,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     accessToken,
     user: {
       id: user.id,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       avatar: user.avatar,
     },
@@ -102,29 +105,40 @@ export const logout = (_req: Request, res: Response): void => {
 export const me = (req: Request, res: Response): void => {
   const auth = req.headers.authorization;
   if (!auth) {
+    console.log('❌ No auth header');
     res.sendStatus(401);
     return;
   }
 
   const token = auth.split(' ')[1];
+  console.log('🔑 Incoming token:', token);
+
   try {
     const payload = jwt.verify(token, process.env.ACCESS_SECRET!) as { userId: string };
+    console.log('✅ Payload:', payload);
+
     const user = users.find((u) => u.id === payload.userId);
     if (!user) {
+      console.log(users);
+      console.log('❌ User not found for ID:', payload.userId);
       res.sendStatus(404);
       return;
     }
 
+    console.log('✅ Found user:', user.email);
     res.json({
       id: user.id,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       avatar: user.avatar,
     });
-  } catch {
+  } catch (err) {
+    console.log('❌ JWT verification failed:', err);
     res.sendStatus(403);
   }
 };
+
 
 // Forgot Password
 export const forgotPassword = (req: Request, res: Response): void => {

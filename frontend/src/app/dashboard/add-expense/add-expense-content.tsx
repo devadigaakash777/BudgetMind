@@ -39,7 +39,7 @@ export default function AddExpenseContent(): React.JSX.Element {
   const expenses = (previewState?.FixedExpenses ?? budgetState.FixedExpenses).expenses.map(
       (
         expense: {
-          id: number;
+          id: string;
           billName: string;
           amount: number;
           amountToFund: number;
@@ -47,7 +47,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           dueDate: number;
         },
       ) => ({
-        id: `BILL-${String(expense.id).padStart(3, '0')}`,
+        id: expense.id,
         billName: expense.billName,
         amount: expense.amount,
         dueAmount: expense.amountToFund,
@@ -133,8 +133,9 @@ export default function AddExpenseContent(): React.JSX.Element {
             xs: 12,
           }}
         >
+        { userState?.data?.id &&
           <AddExpenseForm 
-            userid={userState.userid}
+            userid={userState.data.id}
             maximumSafeAmount={tempWallet}
             onAdd={(payload) => dispatch(addExpense(payload))}
             onAddPreview={(value) => dispatch(addPreviewExpense(value))}
@@ -146,6 +147,7 @@ export default function AddExpenseContent(): React.JSX.Element {
               dispatch(requestMoney(amount, source, canReduce))
             }
           />
+        }
         </Grid>
         <Grid
           size={{

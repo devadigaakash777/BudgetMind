@@ -14,6 +14,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { ArrowDownIcon, ArrowUpIcon } from '@phosphor-icons/react/dist/ssr';
 import { useSelection } from '@/hooks/use-selection';
+import type { DailyExpense } from '@/types/daily-expense';
 
 function noop(_event: unknown, _newPage: number) {}
 
@@ -23,17 +24,6 @@ const statusMap = {
   below: { label: 'underspent', color: 'success' },
   above: { label: 'overspent', color: 'error' },
 } as const;
-
-export interface DailyExpense {
-  id: string;
-  userId: number;
-  amount: number;
-  date: string;
-  details: string;
-  balance: number;
-  amountStatus: 'above' | 'equal' | 'below';
-  amountDifference: number;
-}
 
 interface DailyExpensesTableProps {
   count?: number;

@@ -13,7 +13,7 @@ const initialState: BudgetState = {
   FixedExpenses: {
     expenses: [
       {
-        id: 1,
+        id: "1",
         billName: "Electricity Bill",
         status: "pending",
         dueDate: 28,
@@ -25,7 +25,7 @@ const initialState: BudgetState = {
         amountToFund: 1500
       },
       {
-        id: 2,
+        id: "2",
         billName: "Bike EMI",
         status: "paid",
         isPaid: true,
@@ -37,7 +37,7 @@ const initialState: BudgetState = {
         amountToFund: 2000
       },
       {
-        id: 3,
+        id: "3",
         billName: "Rent",
         status: "expired",
         isPaid: false,
@@ -61,23 +61,23 @@ const budgetSlice = createSlice({
     updateBudgetState(state, action: PayloadAction<Partial<BudgetState>>) {
       return { ...state, ...action.payload };
     },
-    deleteExpense(state, action: PayloadAction<number>) {
+    deleteExpense(state, action: PayloadAction<string>) {
       state.FixedExpenses.expenses = state.FixedExpenses.expenses.filter(exp => exp.id !== action.payload);
     },
-    payExpense(state, action: PayloadAction<number>) {
+    payExpense(state, action: PayloadAction<string>) {
       const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
       if (expense && expense.isFunded && !expense.isPaid) {
         expense.isPaid = true;
         expense.status = "paid";
       }
     },
-    increaseDuration(state, action: PayloadAction<number>) {
+    increaseDuration(state, action: PayloadAction<string>) {
       const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
       if (expense) {
         expense.durationInMonths += 1;
       }
     },
-    decreaseDuration(state, action: PayloadAction<number>) {
+    decreaseDuration(state, action: PayloadAction<string>) {
       const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
       if (expense && expense.durationInMonths > 1) {
         expense.durationInMonths -= 1;

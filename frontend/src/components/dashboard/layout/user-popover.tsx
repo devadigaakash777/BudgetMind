@@ -1,4 +1,5 @@
 'use client';
+
 import * as React from 'react';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -16,9 +17,8 @@ import { UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { paths } from '@/paths';
 import { authClient } from '@/lib/auth/client';
 import { logger } from '@/lib/default-logger';
-import { useUser } from '@/hooks/use-user';
-
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser } from '@/redux/slices/user-slice';
 import { RootState } from '@/redux/store';
 
 export interface UserPopoverProps {
@@ -28,10 +28,8 @@ export interface UserPopoverProps {
 }
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
-  const { checkSession } = useUser();
-
   const userState = useSelector((state: RootState) => state.user);
-
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const handleSignOut = React.useCallback(async (): Promise<void> => {
@@ -43,16 +41,13 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
         return;
       }
 
-      // Refresh the auth state
-      await checkSession?.();
+      dispatch(clearUser());
 
-      // UserProvider, for this case, will not refresh the router and we need to do it manually
-      router.refresh();
-      // After refresh, AuthGuard will handle the redirect
+      router.refresh(); // triggers GuestGuard to redirect
     } catch (error) {
       logger.error('Sign out error', error);
     }
-  }, [checkSession, router]);
+  }, [dispatch, router]);
 
   return (
     <Popover
@@ -62,10 +57,10 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       open={open}
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
-      <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">{userState.firstName}</Typography>
+      <Box sx={{ p: '16px 20px' }}>
+        <Typography variant="subtitle1">{userState.data?.firstName ?? ''}</Typography>
         <Typography color="text.secondary" variant="body2">
-          {userState.email}
+          {userState.data?.email ?? ''}
         </Typography>
       </Box>
       <Divider />

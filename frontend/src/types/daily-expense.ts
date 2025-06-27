@@ -1,8 +1,8 @@
 export type AmountStatus = 'above' | 'equal' | 'below';
 
 export interface DailyExpense {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   amount: number;
   date: string;
   details: string;
@@ -15,7 +15,7 @@ export interface DailyExpenseState {
   data: DailyExpense[];
   page: number;
   rowsPerPage: number;
-  selectedIds: number[];
+  selectedIds: string[];
   numberOfDays: number;
   totalAmount: number;
   canReduceBudget: boolean;

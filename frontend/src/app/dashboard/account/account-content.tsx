@@ -31,12 +31,12 @@ export default function AccountContent(): React.JSX.Element {
           }}
         >
           <AccountInfo
-            name={user.firstName}
-            avatar={user.avatar}
+            name={user.data?.firstName ?? ''}
+            avatar={user.data?.avatar ?? ''}
             jobTitle={user.jobTitle}
-            city={user.address[0].city}
-            country={user.address[0].country}
-            timezone={user.address[0].timezone}
+            city={user.address?.[0]?.city ?? ''}
+            country={user.address?.[0]?.country ?? ''}
+            timezone={user.address?.[0]?.timezone ?? ''}
             onAdd={(imageURL) => dispatch(setAvatar(imageURL))}
             />
         </Grid>
@@ -48,9 +48,9 @@ export default function AccountContent(): React.JSX.Element {
           }}
         >
           <AccountDetailsForm
-            firstName={user.firstName}
-            lastName={user.lastName}
-            email={user.email}
+            firstName={user.data?.firstName ?? ''}
+            lastName={user.data?.lastName ?? ''}
+            email={user.data?.email ?? ''}
             phone={user.phone}
             state={user.address[0]?.state}
             city={user.address[0]?.city}

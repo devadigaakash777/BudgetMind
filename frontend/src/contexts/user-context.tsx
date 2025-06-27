@@ -1,10 +1,12 @@
 'use client';
 
 import * as React from 'react';
-
 import type { User } from '@/types/user';
 import { authClient } from '@/lib/auth/client';
 import { logger } from '@/lib/default-logger';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, clearUser, setAccessToken } from '@/redux/slices/user-slice';
+import { RootState } from '@/redux/store';
 
 export interface UserContextValue {
   user: User | null;
@@ -15,43 +17,76 @@ export interface UserContextValue {
 
 export const UserContext = React.createContext<UserContextValue | undefined>(undefined);
 
-export interface UserProviderProps {
-  children: React.ReactNode;
-}
-
-export function UserProvider({ children }: UserProviderProps): React.JSX.Element {
-  const [state, setState] = React.useState<{ user: User | null; error: string | null; isLoading: boolean }>({
-    user: null,
+export function UserProvider({ children }: { children: React.ReactNode }) {
+  const [state, setState] = React.useState<{ error: string | null; isLoading: boolean }>({
     error: null,
     isLoading: true,
   });
 
-  const checkSession = React.useCallback(async (): Promise<void> => {
-    try {
-      const { data, error } = await authClient.getUser();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.data);
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
-      if (error) {
-        logger.error(error);
-        setState((prev) => ({ ...prev, user: null, error: 'Something went wrong', isLoading: false }));
+  const checkSession = React.useCallback(async (): Promise<void> => {
+    setState((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      let token = accessToken;
+
+      if (!token) {
+        const refreshResponse = await authClient.refresh();
+        if (refreshResponse.accessToken) {
+          token = refreshResponse.accessToken;
+          dispatch(setAccessToken(refreshResponse.accessToken));
+        } else {
+          dispatch(clearUser());
+          return;
+        }
+      }
+
+      if (!token) {
+        dispatch(clearUser());
         return;
       }
 
-      setState((prev) => ({ ...prev, user: data ?? null, error: null, isLoading: false }));
-    } catch (error) {
-      logger.error(error);
-      setState((prev) => ({ ...prev, user: null, error: 'Something went wrong', isLoading: false }));
+      const { data, error } = await authClient.getUser(token);
+
+      if (error || !data) {
+        dispatch(clearUser());
+        return;
+      }
+
+      dispatch(setUser(data));
+    } catch (err) {
+      logger.error('checkSession error', err);
+      dispatch(clearUser());
+    } finally {
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
-  }, []);
+  }, [accessToken, dispatch]);
 
+  // Only call checkSession once on first mount
   React.useEffect(() => {
-    checkSession().catch((error) => {
-      logger.error(error);
-      // noop
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- Expected
-  }, []);
+    if (!user) {
+      checkSession().catch((error) => {
+        logger.error(error);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ✅ Only run once on initial load
 
-  return <UserContext.Provider value={{ ...state, checkSession }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider
+      value={{
+        user,
+        error: state.error,
+        isLoading: state.isLoading,
+        checkSession,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 }
 
 export const UserConsumer = UserContext.Consumer;

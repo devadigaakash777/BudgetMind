@@ -10,24 +10,24 @@ export interface Salary {
   date: number;
 }
 
+export interface User {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+  email?: string;
+
+  [key: string]: unknown;
+}
+
+
 export interface UserState {
-  userid: number;
-  firstName: string;
-  lastName: string;
-  email: string;
+  data: User | null;
+  accessToken: string | null,
   phone: string;
-  avatar: string;
   jobTitle: string;
   address: Address[];
   hasSalary: boolean;
   Salary: Salary;
 }
 
-export interface User {
-  id: string;
-  name?: string;
-  avatar?: string;
-  email?: string;
-
-  [key: string]: unknown;
-}

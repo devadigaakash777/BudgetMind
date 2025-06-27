@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { CloudArrowUpIcon } from '@phosphor-icons/react/dist/ssr';
 
 type AccountInfoProps = {
-  name: string;
+  name?: string;
   avatar?: string;
   jobTitle?: string;
   city?: string;

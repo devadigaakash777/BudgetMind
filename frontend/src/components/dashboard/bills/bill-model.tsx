@@ -23,7 +23,7 @@ export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedE
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [formData, setFormData] = React.useState({
-    id: 0, // will be generated
+    id: "", // will be generated
     billName: '',
     status: 'pending',
     dueDate: 1,
@@ -40,7 +40,7 @@ export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedE
       // Generate ID
       const newItem = {
         ...formData,
-        id: Date.now(), // quick id
+        id: Date.now().toString(), // quick id
         status: 'pending' as const,
         isPaid: false,
         isFunded: false,
@@ -50,7 +50,7 @@ export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedE
       onClose();
       setActiveStep(0);
       setFormData({
-        id: 0,
+        id: "",
         billName: '',
         status: 'pending',
         dueDate: 1,

@@ -2,20 +2,6 @@
 
 import type { User } from '@/types/user';
 
-function generateToken(): string {
-  const arr = new Uint8Array(12);
-  globalThis.crypto.getRandomValues(arr);
-  return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
-}
-
-const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
-  firstName: 'Sofia',
-  lastName: 'Rivers',
-  email: 'sofia@devias.io',
-} satisfies User;
-
 export interface SignUpParams {
   firstName: string;
   lastName: string;
@@ -37,61 +23,96 @@ export interface ResetPasswordParams {
 }
 
 class AuthClient {
-  async signUp(_: SignUpParams): Promise<{ error?: string }> {
-    // Make API request
+  async signUp(params: SignUpParams): Promise<{ error?: string }> {
+    console.log(params);
+    try {
+      const res = await fetch('http://localhost:5000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+        credentials: 'include',
+      });
 
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
+      if (!res.ok) {
+        const { message } = await res.json();
+        return { error: message || 'Sign-up failed' };
+      }
 
-    return {};
-  }
-
-  async signInWithOAuth(_: SignInWithOAuthParams): Promise<{ error?: string }> {
-    return { error: 'Social authentication not implemented' };
-  }
-
-  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
-    const { email, password } = params;
-
-    // Make API request
-
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
+      return {};
+    } catch {
+      return { error: 'Network error during sign-up' };
     }
-
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
-    return {};
   }
 
-  async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {
-    return { error: 'Password reset not implemented' };
-  }
+  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ data?: User; accessToken?: string; error?: string }> {
+    try {
+      const res = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+        credentials: 'include',
+      });
 
-  async updatePassword(_: ResetPasswordParams): Promise<{ error?: string }> {
-    return { error: 'Update reset not implemented' };
-  }
+      if (!res.ok) {
+        const { message } = await res.json();
+        return { error: message || 'Login failed' };
+      }
 
-  async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so just check if we have a token in localStorage.
-    const token = localStorage.getItem('custom-auth-token');
-
-    if (!token) {
-      return { data: null };
+      const { user, accessToken } = await res.json();
+      return { data: user, accessToken };
+    } catch {
+      return { error: 'Network error during sign-in' };
     }
+  }
 
-    return { data: user };
+  async getUser(accessToken: string): Promise<{ data?: User | null; error?: string }> {
+    try {
+      console.log("Access token sent to /me: ", accessToken);
+      const res = await fetch('http://localhost:5000/api/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        credentials: 'include',
+      });
+
+      if (!res.ok) return { data: null };
+      const user = await res.json();
+      return { data: user };
+    } catch {
+      return { error: 'Failed to fetch user' };
+    }
+  }
+
+  async refresh(): Promise<{ accessToken?: string; error?: string }> {
+    try {
+      const res = await fetch('http://localhost:5000/api/refresh', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!res.ok) return { error: 'Refresh failed' };
+
+      const { accessToken } = await res.json();
+      return { accessToken };
+    } catch {
+      return { error: 'Refresh network error' };
+    }
   }
 
   async signOut(): Promise<{ error?: string }> {
-    localStorage.removeItem('custom-auth-token');
+    try {
+      await fetch('http://localhost:5000/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      return {};
+    } catch {
+      return { error: 'Failed to logout' };
+    }
+  }
 
-    return {};
+  resetPassword(value: string) {
+    return value;
   }
 }
 

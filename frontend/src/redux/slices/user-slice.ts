@@ -1,13 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { UserState } from '@/types/user';
+import type { UserState, User } from '@/types/user';
 
 const initialState: UserState = {
-  userid: 1,
-  firstName: 'Akash',
-  lastName: 'Devadiga',
-  email: 'akash123@gail.com',
+  data: null,
+  accessToken: null,
   phone: '8973456898',
-  avatar: '/assets/avatar-10.png',
   jobTitle: 'Senior Developer',
   address: [
     {
@@ -25,8 +22,21 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setUser(state, action: PayloadAction<User>) {
+      state.data = action.payload;
+    },
+    setAccessToken(state, action: PayloadAction<string>) {
+      state.accessToken = action.payload;
+    },
+    clearUser(state) {
+      state.data = null;
+      state.accessToken = null;
+    },
     setAvatar(state, action: PayloadAction<string>) {
-      state.avatar = action.payload;
+      const avatar = action.payload;
+      if(state.data != null){
+        state.data.avatar = avatar;
+      }
     },
     updateSalaryInfo(
       state,
@@ -55,9 +65,11 @@ const userSlice = createSlice({
       }>
     ) {
       const { firstName, lastName, email, phone, city, state: userState } = action.payload;
-      state.firstName = firstName;
-      state.lastName = lastName;
-      state.email = email;
+      if(state.data != null){
+        state.data.firstName = firstName;
+        state.data.lastName = lastName;
+        state.data.email = email;
+      }
       state.phone = phone;
       if (state.address.length > 0) {
         state.address[0].city = city;
@@ -67,5 +79,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { setAvatar, updateSalaryInfo, updateBasicInfo } = userSlice.actions;
+export const { setAvatar, updateSalaryInfo, updateBasicInfo, setUser, setAccessToken, clearUser } = userSlice.actions;
 export default userSlice.reducer;

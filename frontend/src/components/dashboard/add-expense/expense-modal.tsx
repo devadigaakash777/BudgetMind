@@ -20,11 +20,11 @@ import {RequestMoneyModal } from '@/components/dashboard/add-expense/expense-req
 type GaugeLimit = { value: number; label?: string };
 
 type AddExpenseFormProps = {
-  userid: number;
+  userid: string;
   maximumSafeAmount: number;
   onAdd: (payload: {
-    id: number;
-    userId: number;
+    id: string;
+    userId: string;
     amount: number;
     details: string;
     numberOfDays: number;
@@ -69,8 +69,6 @@ export function AddExpenseForm({
   const handleSaveOn = () => setCanSave(true);
   const handleSaveOff = () => setCanSave(false);
 
-  const [lastId, setLastId] = React.useState<number>(1000);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -82,11 +80,9 @@ export function AddExpenseForm({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newId = lastId + 1;
-    setLastId(newId);
 
     onAdd({
-      id: newId,
+      id: "",
       userId: userid,
       amount: formData.amount,
       details: formData.details,

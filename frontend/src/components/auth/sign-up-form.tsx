@@ -36,7 +36,6 @@ const defaultValues = { firstName: '', lastName: '', email: '', password: '', te
 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
-
   const { checkSession } = useUser();
 
   const [isPending, setIsPending] = React.useState<boolean>(false);
@@ -60,11 +59,7 @@ export function SignUpForm(): React.JSX.Element {
         return;
       }
 
-      // Refresh the auth state
       await checkSession?.();
-
-      // UserProvider, for this case, will not refresh the router
-      // After refresh, GuestGuard will handle the redirect
       router.refresh();
     },
     [checkSession, router, setError]
@@ -90,7 +85,7 @@ export function SignUpForm(): React.JSX.Element {
               <FormControl error={Boolean(errors.firstName)}>
                 <InputLabel>First name</InputLabel>
                 <OutlinedInput {...field} label="First name" />
-                {errors.firstName ? <FormHelperText>{errors.firstName.message}</FormHelperText> : null}
+                {errors.firstName && <FormHelperText>{errors.firstName.message}</FormHelperText>}
               </FormControl>
             )}
           />
@@ -98,10 +93,10 @@ export function SignUpForm(): React.JSX.Element {
             control={control}
             name="lastName"
             render={({ field }) => (
-              <FormControl error={Boolean(errors.firstName)}>
+              <FormControl error={Boolean(errors.lastName)}>
                 <InputLabel>Last name</InputLabel>
                 <OutlinedInput {...field} label="Last name" />
-                {errors.firstName ? <FormHelperText>{errors.firstName.message}</FormHelperText> : null}
+                {errors.lastName && <FormHelperText>{errors.lastName.message}</FormHelperText>}
               </FormControl>
             )}
           />
@@ -112,7 +107,7 @@ export function SignUpForm(): React.JSX.Element {
               <FormControl error={Boolean(errors.email)}>
                 <InputLabel>Email address</InputLabel>
                 <OutlinedInput {...field} label="Email address" type="email" />
-                {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
+                {errors.email && <FormHelperText>{errors.email.message}</FormHelperText>}
               </FormControl>
             )}
           />
@@ -123,7 +118,7 @@ export function SignUpForm(): React.JSX.Element {
               <FormControl error={Boolean(errors.password)}>
                 <InputLabel>Password</InputLabel>
                 <OutlinedInput {...field} label="Password" type="password" />
-                {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
+                {errors.password && <FormHelperText>{errors.password.message}</FormHelperText>}
               </FormControl>
             )}
           />
@@ -140,11 +135,11 @@ export function SignUpForm(): React.JSX.Element {
                     </React.Fragment>
                   }
                 />
-                {errors.terms ? <FormHelperText error>{errors.terms.message}</FormHelperText> : null}
+                {errors.terms && <FormHelperText error>{errors.terms.message}</FormHelperText>}
               </div>
             )}
           />
-          {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
+          {errors.root && <Alert color="error">{errors.root.message}</Alert>}
           <Button disabled={isPending} type="submit" variant="contained">
             Sign up
           </Button>

@@ -19,7 +19,7 @@ const statusMap = {
 
 
 export interface FixedExpenseItem {
-  id: number;
+  id: string;
   billName: string;
   status: string;
   dueDate: number;
@@ -33,10 +33,10 @@ export interface FixedExpenseItem {
 
 export interface FixedExpenseCardProps {
   item: FixedExpenseItem;
-  onDelete: (id: number) => void;
-  onPay: (id: number) => void;
-  onIncreaseDuration: (id: number) => void;
-  onDecreaseDuration: (id: number) => void;
+  onDelete: (id: string) => void;
+  onPay: (id: string) => void;
+  onIncreaseDuration: (id: string) => void;
+  onDecreaseDuration: (id: string) => void;
 }
 
 export function FixedExpenseCard({

@@ -27,6 +27,8 @@ export function MainNav(): React.JSX.Element {
 
   const userState = useSelector((state: RootState) => state.user);
 
+  const avatar = userState.data?.avatar ?? '';
+  
   return (
     <React.Fragment>
       <Box
@@ -75,7 +77,7 @@ export function MainNav(): React.JSX.Element {
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src={userState.avatar}
+              src={avatar}
               sx={{ cursor: 'pointer' }}
             />
           </Stack>
