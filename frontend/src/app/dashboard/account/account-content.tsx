@@ -7,16 +7,25 @@ import Typography from '@mui/material/Typography';
 import { AccountDetailsForm } from '@/components/dashboard/account/account-details-form';
 import { AccountInfo } from '@/components/dashboard/account/account-info';
 import { AccountSalaryForm } from '@/components/dashboard/account/account-salary-form';
+import { DailyBudgetForm } from '@/components/dashboard/account/set-budget-details'
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { updateBasicInfo, setAvatar, updateSalaryInfo } from '@/redux/slices/user-slice';
 import { updateSteadyWallet, setThreshold } from '@/redux/slices/wallet-slice';
+import { updateDailyBudget } from '@/redux/slices/budget-slice';
 
 export default function AccountContent(): React.JSX.Element {
   const user = useSelector((state: RootState) => state.user);
   const wallet = useSelector((state: RootState) => state.wallet);
+  const budgetState = useSelector((state: RootState) => state.budget);
   const dispatch = useDispatch();
+
+  // specify the limit to setting max Budget 
+  const monthlyAmount = user.hasSalary
+  ? user.Salary.amount
+  : wallet.SteadyWallet.monthlyAmount;
+
   return (
     <Stack spacing={3}>
       <div>
@@ -77,6 +86,22 @@ export default function AccountContent(): React.JSX.Element {
             onSteadySave={(updatedSteadyData) => dispatch(updateSteadyWallet(updatedSteadyData))}
             onThresholdSave={(updatedThreshold) => dispatch(setThreshold(updatedThreshold))}
           />
+        </Grid>
+        <Grid
+          size={{
+            lg: 12,
+            md: 12,
+            xs: 12,
+          }}
+        >
+          <DailyBudgetForm
+            salary = {monthlyAmount}
+            currentAmount = {budgetState.DailyBudget.amount}
+            setAmount = {budgetState.DailyBudget.setAmount}
+            minAmount = {budgetState.DailyBudget.min}
+            maxAmount = {budgetState.DailyBudget.max}
+            onSave={(updatedData) => dispatch(updateDailyBudget(updatedData))}
+            />
         </Grid>
       </Grid>
     </Stack>

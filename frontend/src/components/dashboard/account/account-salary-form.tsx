@@ -17,14 +17,14 @@ import TextField from '@mui/material/TextField';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date';
 
 export type AccountSalaryFormProps = {
-  hasSalary: boolean;
-  salaryAmount: number;
-  salaryDate: number;
-  jobTitle: string;
-  steadyDate: number;
-  steadyMonth: number;
-  steadyMonthlyAmount: number;
-  threshold: number;
+  hasSalary?: boolean;
+  salaryAmount?: number;
+  salaryDate?: number;
+  jobTitle?: string;
+  steadyDate?: number;
+  steadyMonth?: number;
+  steadyMonthlyAmount?: number;
+  threshold?: number;
   onSave?: (values: {
     hasSalary: boolean;
     salaryAmount: number;
@@ -89,26 +89,27 @@ export function AccountSalaryForm({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (formData.hasSalary) {
-      if (onSave) {
-        onSave({
-          hasSalary: formData.hasSalary,
-          salaryAmount: formData.salaryAmount,
-          salaryDate: formData.salaryDate,
-          jobTitle: formData.jobTitle,
-        });
-      }
-    } else {
-      if (onSteadySave) {
-        onSteadySave({
-          month: formData.steadyMonth,
-          date: formData.steadyDate,
-          monthlyAmount: formData.steadyMonthlyAmount,
-        });
-      }
+
+    // Always call onSave with hasSalary true or false
+    if (onSave) {
+      onSave({
+        hasSalary: formData.hasSalary,
+        salaryAmount: formData.salaryAmount,
+        salaryDate: formData.salaryDate,
+        jobTitle: formData.jobTitle,
+      });
     }
 
-    // always call onMainSave
+    // Only call onSteadySave when hasSalary is false
+    if (!formData.hasSalary && onSteadySave) {
+      onSteadySave({
+        month: formData.steadyMonth,
+        date: formData.steadyDate,
+        monthlyAmount: formData.steadyMonthlyAmount,
+      });
+    }
+
+    // Always call threshold update
     if (onThresholdSave) {
       onThresholdSave({ threshold: formData.threshold });
     }

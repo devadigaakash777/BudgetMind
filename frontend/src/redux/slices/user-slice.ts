@@ -14,6 +14,7 @@ const initialState: UserState = {
       timezone: 'GMT-7'
     }
   ],
+  isProfileComplete: null,
   hasSalary: true,
   Salary: { amount: 10_000, date: 1 }
 };
@@ -22,6 +23,9 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    handleModel(state, action: PayloadAction<boolean>){
+      state.isProfileComplete = action.payload;
+    },
     setUser(state, action: PayloadAction<User>) {
       state.data = action.payload;
     },
@@ -79,5 +83,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { setAvatar, updateSalaryInfo, updateBasicInfo, setUser, setAccessToken, clearUser } = userSlice.actions;
+export const { handleModel, setAvatar, updateSalaryInfo, updateBasicInfo, setUser, setAccessToken, clearUser } = userSlice.actions;
 export default userSlice.reducer;

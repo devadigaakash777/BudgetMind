@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { filterCurrentMonth } from '@/utils/filter-current-month';
 import { DailyExpense } from '@/types/daily-expense';
@@ -12,15 +12,34 @@ import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
 import { DailyExpenseChart } from '@/components/dashboard/overview/daily-expense-chart';
 import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
-import { TotalCustomers } from '@/components/dashboard/overview/total-customers';
+import { SpendingWallet } from '@/components/dashboard/overview/spending-wallet';
 import { TotalProfit } from '@/components/dashboard/overview/total-profit';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
+import { TempWalletForm } from '@/components/dashboard/account/expense-wallet-form';
+import { updateSteadyWallet, setThreshold, setTotalWealth, updateTempWallet } from '@/redux/slices/wallet-slice';
+import { updateDailyBudget } from '@/redux/slices/budget-slice';
+import { updateSalaryInfo, handleModel } from '@/redux/slices/user-slice';
+import { BudgetSetupDialog } from '@/components/dashboard/account/budget-setup-dialog';
 
 export default function DashboardContent(): React.JSX.Element {
   const walletState = useSelector((state: RootState) => state.wallet);
   const budgetState = useSelector((state: RootState) => state.budget);
   const wishlist = useSelector((state: RootState) => state.wishlist);
   const dailyExpenseState = useSelector((state: RootState) => state.expense); 
+  const userState = useSelector((state: RootState) => state.user);
+
+  //Budget setup for first time
+  const dispatch = useDispatch();
+
+  const [open, setOpen] = React.useState(false);
+    
+  const handleOpen = () => setOpen(true);
+
+
+  //Add amount to TempWallet
+  const [walletAmount, addWalletAmount] = React.useState(false);
+    
+  const handleWalletOpen = () => addWalletAmount(true);
 
   // Pie chart content
   const pieChartSeries = {
@@ -30,8 +49,16 @@ export default function DashboardContent(): React.JSX.Element {
     'Budget Leftover': walletState.DailyBuffer.balance,
   };
 
-  console.log(pieChartSeries);
-  console.log(walletState.threshold);
+  // Ensure `handleOpen()` is called only once when isProfileComplete === false
+  React.useEffect(() => {
+    if (userState.isProfileComplete === false) {
+      handleOpen();
+    }
+  }, [userState.isProfileComplete]);
+
+  const monthlyAmount = userState.hasSalary
+  ? userState.Salary.amount
+  : walletState.SteadyWallet.monthlyAmount;
 
   //Daily expense Chart
   const filteredDailyExpenseState: DailyExpense[] = filterCurrentMonth(dailyExpenseState.data);
@@ -58,6 +85,13 @@ export default function DashboardContent(): React.JSX.Element {
     savedAmount: item.savedAmount
   }));
 
+  const remainPercentage = Number(
+    (((budgetState.MonthlyBudget.amountFunded - budgetState.MonthlyBudget.amount)
+       / budgetState.MonthlyBudget.amountFunded) * 100).toFixed(2)
+  );
+
+
+
   return (
     <Grid container spacing={3}>
       <Grid
@@ -67,7 +101,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <Budget diff={12} trend="up" sx={{ height: '100%' }} value={`${budgetState.DailyBudget.amount}`} />
+        <Budget sx={{ height: '100%' }} value={`${budgetState.DailyBudget.amount}`} />
       </Grid>
       <Grid
         size={{
@@ -76,7 +110,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <TotalCustomers diff={16} trend="down" sx={{ height: '100%' }} value={`${walletState.TemporaryWallet.balance}`} />
+        <SpendingWallet onOpen={handleWalletOpen} sx={{ height: '100%' }} value={`${walletState.TemporaryWallet.balance}`} />
       </Grid>
       <Grid
         size={{
@@ -85,7 +119,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <TasksProgress sx={{ height: '100%' }} value={100} />
+        <TasksProgress sx={{ height: '100%' }} value={remainPercentage} />
       </Grid>
       <Grid
         size={{
@@ -102,6 +136,23 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
+        <TempWalletForm
+          open={walletAmount}
+          onClose={() => addWalletAmount(false)}
+          currentBalance={walletState.TemporaryWallet.balance} 
+          onSave={(val) => dispatch(updateTempWallet(val))}
+        />
+        <BudgetSetupDialog
+              open={open}
+              onClose={() => setOpen(false)}
+              onComplete={(val) => dispatch(handleModel(val))}
+              salary={monthlyAmount}
+              onTotalWealthSave={(val) => dispatch(setTotalWealth(val))}
+              onSalarySave={(data) => dispatch(updateSalaryInfo(data))}
+              onSteadySave={(data) => dispatch(updateSteadyWallet(data))}
+              onThresholdSave={(data) => dispatch(setThreshold(data))}
+              onDailyBudgetSave={(val) => dispatch(updateDailyBudget(val))}
+          />
         <DailyExpenseChart
           chartSeries={[
             { name: 'This year', data: barChartSeries },

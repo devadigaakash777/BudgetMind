@@ -43,7 +43,18 @@ const walletSlice = createSlice({
       if (typeof action.payload.balance === 'number') {
         state.MainWallet.balance = action.payload.balance;
       }
-    }
+    },
+    setTotalWealth(state, action: PayloadAction<number>) {
+      const balance = action.payload;
+      if (typeof balance === 'number') {
+        state.TotalWealth.amount = action.payload;
+      }
+    },
+    updateTempWallet(state, action: PayloadAction<number>) {
+      if (typeof action.payload === 'number') {
+        state.TemporaryWallet.balance += action.payload;
+      }
+    },
   }
 });
 
@@ -51,7 +62,9 @@ export const {
   updateWalletState,
   updateSteadyWallet,
   updateMainWallet,
-  setThreshold
+  setThreshold,
+  setTotalWealth,
+  updateTempWallet
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

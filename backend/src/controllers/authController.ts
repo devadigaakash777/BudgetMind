@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     lastName: `${lastName}`,
     email,
     password: hashedPassword,
-    avatar: '/assets/avatar.png',
+    avatar: '',
   };
 
   users.push(user);

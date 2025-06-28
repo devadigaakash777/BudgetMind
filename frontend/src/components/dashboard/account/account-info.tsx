@@ -21,7 +21,7 @@ type AccountInfoProps = {
 
 export function AccountInfo({
   name = "User1",
-  avatar = '/assets/avatar.png',
+  avatar = '',
   jobTitle = 'Developer',
   city = '',
   country = '',

@@ -1,8 +1,10 @@
 'use client';
 import * as React from 'react';
 import Button from '@mui/material/Button';
+import { Box, Avatar, Typography, IconButton} from '@mui/material';
 import Stack from '@mui/material/Stack';
-import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/ssr';
+import { ArrowCounterClockwiseIcon, WalletIcon, PlusIcon } from '@phosphor-icons/react/dist/ssr';
+import { deepOrange } from '@mui/material/colors';
 import { Grid } from '@mui/system';
 
 import { useSelector, useDispatch} from 'react-redux';
@@ -12,9 +14,11 @@ import { AddExpenseForm } from '@/components/dashboard/add-expense/expense-modal
 import { useEffect } from 'react';
 import { syncPreview, addPreviewExpense, requestMoney } from '@/redux/thunks/preview-thunks'; 
 import type { AppDispatch } from '@/redux/store';
-
+import { TempWalletForm } from '@/components/dashboard/account/expense-wallet-form';
+import { updateTempWallet } from '@/redux/slices/wallet-slice';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
+
 
 
 
@@ -33,8 +37,10 @@ export default function AddExpenseContent(): React.JSX.Element {
   const wishlistState = useSelector((state: RootState) => state.wishlist);
   const userState = useSelector((state: RootState) => state.user);
 
+  //Add amount to TempWallet
+  const [walletAmount, addWalletAmount] = React.useState(false);    
+  const handleWalletOpen = () => addWalletAmount(true);
   
-
   //Fixed Cost
   const expenses = (previewState?.FixedExpenses ?? budgetState.FixedExpenses).expenses.map(
       (
@@ -118,13 +124,66 @@ export default function AddExpenseContent(): React.JSX.Element {
 
   return (
     <Stack spacing={2}>
-      <div>
-        <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
-            <Button color="primary" variant="contained" startIcon={<ArrowCounterClockwiseIcon fontSize="var(--icon-fontSize-md)" />} onClick={() => dispatch(syncPreview())}>
-              Reset
-            </Button>
-          </Stack>
-      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 2,
+          mb: 3,
+        }}
+      >
+        {/* Left: Reset Button */}
+        <Button
+          color="primary"
+          variant="contained"
+          startIcon={<ArrowCounterClockwiseIcon size={20} />}
+          onClick={() => dispatch(syncPreview())}
+        >
+          Reset
+        </Button>
+
+        {/* Right: Wallet Card */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            p: 2,
+            borderRadius: 2,
+            boxShadow: 1,
+            border: '1px solid #e0e0e0',
+            backgroundColor: 'background.paper',
+            width: '100%',
+            maxWidth: 400,
+          }}
+        >
+          <Avatar sx={{ bgcolor: deepOrange[500], width: 56, height: 56 }}>
+            <WalletIcon size={28} weight="fill" color="white" />
+          </Avatar>
+
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Balance
+            </Typography>
+            <Typography variant="h6" fontWeight={600}>
+              ₹ {walletState.TemporaryWallet.balance.toFixed(2)}
+            </Typography>
+          </Box>
+
+          <IconButton color="primary" onClick={handleWalletOpen}>
+            <PlusIcon size={24} weight="bold" />
+          </IconButton>
+        </Box>
+        <TempWalletForm
+          open={walletAmount}
+          onClose={() => addWalletAmount(false)}
+          currentBalance={walletState.TemporaryWallet.balance} 
+          onAdd={() => dispatch(syncPreview())}
+          onSave={(val) => dispatch(updateTempWallet(val))}
+        />
+      </Box>
       <Grid container spacing={3}>
         <Grid
           size={{

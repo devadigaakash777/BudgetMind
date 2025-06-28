@@ -1,14 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { BudgetState } from '@/types/budget'; // or same file
+import { stat } from 'fs';
 
 const initialState: BudgetState = {
   MonthlyBudget: {
-    amount: 0
+    amount: 200,
+    amountFunded: 3000
   },
   DailyBudget: {
     amount: 100,
-    min: 0,
-    max: 0
+    setAmount: 100,
+    min: 10,
+    max: 200
   },
   FixedExpenses: {
     expenses: [
@@ -54,10 +57,25 @@ const initialState: BudgetState = {
   }
 };
 
+
 const budgetSlice = createSlice({
   name: 'budget',
   initialState,
   reducers: {
+    updateDailyBudget(
+      state, 
+      action: PayloadAction<
+        {
+          setAmount: number;
+          minAmount: number;
+          maxAmount: number;
+        }
+      >) {
+      const {setAmount, minAmount, maxAmount} = action.payload;
+      state.DailyBudget.setAmount = setAmount;
+      state.DailyBudget.min = minAmount;
+      state.DailyBudget.max = maxAmount;
+    },
     updateBudgetState(state, action: PayloadAction<Partial<BudgetState>>) {
       return { ...state, ...action.payload };
     },
@@ -91,7 +109,8 @@ export const {
   deleteExpense,
   payExpense,
   increaseDuration,
-  decreaseDuration
+  decreaseDuration,
+  updateDailyBudget
 } = budgetSlice.actions;
 
 export default budgetSlice.reducer;

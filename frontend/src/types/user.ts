@@ -27,6 +27,7 @@ export interface UserState {
   phone: string;
   jobTitle: string;
   address: Address[];
+  isProfileComplete: boolean | null;
   hasSalary: boolean;
   Salary: Salary;
 }

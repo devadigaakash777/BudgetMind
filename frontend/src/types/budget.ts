@@ -20,9 +20,11 @@ export interface FixedExpensesState {
 export interface BudgetState {
   MonthlyBudget: {
     amount: number;
+    amountFunded: number;
   };
   DailyBudget: {
     amount: number;
+    setAmount: number,
     min: number;
     max: number;
   };
