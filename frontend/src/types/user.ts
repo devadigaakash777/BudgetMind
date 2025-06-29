@@ -28,6 +28,7 @@ export interface UserState {
   jobTitle: string;
   address: Address[];
   isProfileComplete: boolean | null;
+  isSalaryPaid: boolean;
   hasSalary: boolean;
   Salary: Salary;
 }

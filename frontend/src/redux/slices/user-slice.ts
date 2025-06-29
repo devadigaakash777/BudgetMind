@@ -15,6 +15,7 @@ const initialState: UserState = {
     }
   ],
   isProfileComplete: null,
+  isSalaryPaid: true,
   hasSalary: true,
   Salary: { amount: 10_000, date: 1 }
 };
@@ -41,6 +42,9 @@ const userSlice = createSlice({
       if(state.data != null){
         state.data.avatar = avatar;
       }
+    },
+    setSalaryAcknowledged(state, action: PayloadAction<boolean>){
+      state.isSalaryPaid = action.payload;
     },
     updateSalaryInfo(
       state,
@@ -83,5 +87,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { handleModel, setAvatar, updateSalaryInfo, updateBasicInfo, setUser, setAccessToken, clearUser } = userSlice.actions;
+export const { handleModel, setAvatar, updateSalaryInfo, updateBasicInfo, setUser, setAccessToken, clearUser, setSalaryAcknowledged } = userSlice.actions;
 export default userSlice.reducer;
