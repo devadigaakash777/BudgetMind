@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { BudgetState } from '@/types/budget'; // or same file
+import type { BudgetState, Expense } from '@/types/budget'; // or same file
 import { stat } from 'fs';
 
 const initialState: BudgetState = {
@@ -79,6 +79,9 @@ const budgetSlice = createSlice({
     updateBudgetState(state, action: PayloadAction<Partial<BudgetState>>) {
       return { ...state, ...action.payload };
     },
+    addFixedExpense(state, action: PayloadAction<Expense>) {
+      state.FixedExpenses.expenses.push(action.payload);
+    },
     deleteExpense(state, action: PayloadAction<string>) {
       state.FixedExpenses.expenses = state.FixedExpenses.expenses.filter(exp => exp.id !== action.payload);
     },
@@ -110,7 +113,8 @@ export const {
   payExpense,
   increaseDuration,
   decreaseDuration,
-  updateDailyBudget
+  updateDailyBudget,
+  addFixedExpense
 } = budgetSlice.actions;
 
 export default budgetSlice.reducer;

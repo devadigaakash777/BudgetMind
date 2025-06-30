@@ -21,7 +21,7 @@ import {
   payExpense,
   increaseDuration,
   decreaseDuration,
-  updateBudgetState
+  addFixedExpense
 } from '@/redux/slices/budget-slice';
 
 import { useEffect } from 'react';
@@ -43,13 +43,7 @@ export default function FixedExpensesContent(): React.JSX.Element {
   const handleClose = () => setOpen(false);
 
   const handleAddExpense = (newExpense: Expense) => {
-    const updatedExpenses = [...fixedExpenses, newExpense];
-    dispatch(updateBudgetState({
-        FixedExpenses: {
-            ...fixedExpenseWallet,  // keep rowsPerPage and any other fields
-            expenses: updatedExpenses
-        }
-    }));
+     dispatch(addFixedExpense(newExpense));
   };
 
   // Pagination state

@@ -1,0 +1,23 @@
+import express from 'express';
+import { requireAuth } from '../middleware/authMiddleware.js';
+import {
+  updateBasicProfile,
+  updateSalary,
+  updateAvatar,
+  markProfileComplete,
+  markSalaryPaid,
+  getUserProfile
+} from '../controllers/profileController.js';
+
+const router = express.Router();
+
+router.use(requireAuth);
+
+router.get('/', getUserProfile);
+router.put('/basic', updateBasicProfile);
+router.put('/salary', updateSalary);
+router.patch('/avatar', updateAvatar);
+router.patch('/status/profile', markProfileComplete);
+router.patch('/status/salary', markSalaryPaid);
+
+export default router;
