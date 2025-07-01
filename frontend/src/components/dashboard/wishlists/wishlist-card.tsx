@@ -17,7 +17,7 @@ import {
 } from '@phosphor-icons/react/dist/ssr';
 
 export interface WishlistItem {
-  id: string;
+  _id?: string;
   name: string;
   description: string;
   image: string;
@@ -97,7 +97,7 @@ export function WishlistCard({
       {/* Row 2: Action Buttons */}
       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
         <Tooltip title="Delete Item">
-          <IconButton color="error" onClick={() => onDelete(item.id)}>
+          <IconButton color="error" onClick={() => onDelete(item._id ?? 'demo')}>
             <TrashIcon size={20} />
           </IconButton>
         </Tooltip>
@@ -107,8 +107,8 @@ export function WishlistCard({
             variant="outlined"
             aria-label="Disabled button group"
           >
-            <Button onClick={() => onDecreaseMonth(item.id)}>-</Button>
-            <Button onClick={() => onIncreaseMonth(item.id)}>+</Button>
+            <Button onClick={() => onDecreaseMonth(item._id ?? 'demo')}>-</Button>
+            <Button onClick={() => onIncreaseMonth(item._id ?? 'demo')}>+</Button>
           </ButtonGroup>
         </Tooltip>
 
@@ -118,8 +118,8 @@ export function WishlistCard({
             variant="outlined"
             aria-label="Disabled button group"
           >
-            <Button onClick={() => onDecreasePriority(item.id)}>-</Button>
-            <Button onClick={() => onIncreasePriority(item.id)}>+</Button>
+            <Button onClick={() => onDecreasePriority(item._id ?? 'demo')}>-</Button>
+            <Button onClick={() => onIncreasePriority(item._id ?? 'demo')}>+</Button>
           </ButtonGroup>
         </Tooltip>
 
@@ -128,7 +128,7 @@ export function WishlistCard({
             <IconButton
               color="success"
               disabled={!item.isFunded}
-              onClick={() => onBuy(item.id)}
+              onClick={() => onBuy(item._id ?? 'demo')}
             >
               <ShoppingCartIcon size={20} />
             </IconButton>

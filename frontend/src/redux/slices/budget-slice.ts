@@ -16,40 +16,16 @@ const initialState: BudgetState = {
   FixedExpenses: {
     expenses: [
       {
-        id: "1",
-        billName: "Electricity Bill",
+        _id: "unknown",
+        billName: "Bill Name",
         status: "pending",
-        dueDate: 28,
+        dueDate: 1,
         isPaid: false,
-        amount: 1500,
-        isPermanent: true,
-        isFunded: true,
-        durationInMonths: 3,
-        amountToFund: 1500
-      },
-      {
-        id: "2",
-        billName: "Bike EMI",
-        status: "paid",
-        isPaid: true,
-        dueDate: 18,
-        amount: 2000,
+        amount: 0,
         isPermanent: false,
-        isFunded: true,
-        durationInMonths: 1,
-        amountToFund: 2000
-      },
-      {
-        id: "3",
-        billName: "Rent",
-        status: "expired",
-        isPaid: false,
-        dueDate: 16,
-        amount: 8000,
-        isPermanent: true,
         isFunded: false,
-        durationInMonths: 2,
-        amountToFund: 800
+        durationInMonths: 0,
+        amountToFund: 0
       }
     ],
     rowsPerPage: 3,
@@ -76,30 +52,30 @@ const budgetSlice = createSlice({
       state.DailyBudget.min = minAmount;
       state.DailyBudget.max = maxAmount;
     },
-    updateBudgetState(state, action: PayloadAction<Partial<BudgetState>>) {
+    updateBudgetState(state, action: PayloadAction<BudgetState>) {
       return { ...state, ...action.payload };
     },
     addFixedExpense(state, action: PayloadAction<Expense>) {
       state.FixedExpenses.expenses.push(action.payload);
     },
     deleteExpense(state, action: PayloadAction<string>) {
-      state.FixedExpenses.expenses = state.FixedExpenses.expenses.filter(exp => exp.id !== action.payload);
+      state.FixedExpenses.expenses = state.FixedExpenses.expenses.filter(exp => exp._id !== action.payload);
     },
     payExpense(state, action: PayloadAction<string>) {
-      const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
+      const expense = state.FixedExpenses.expenses.find(exp => exp._id === action.payload);
       if (expense && expense.isFunded && !expense.isPaid) {
         expense.isPaid = true;
         expense.status = "paid";
       }
     },
     increaseDuration(state, action: PayloadAction<string>) {
-      const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
+      const expense = state.FixedExpenses.expenses.find(exp => exp._id === action.payload);
       if (expense) {
         expense.durationInMonths += 1;
       }
     },
     decreaseDuration(state, action: PayloadAction<string>) {
-      const expense = state.FixedExpenses.expenses.find(exp => exp.id === action.payload);
+      const expense = state.FixedExpenses.expenses.find(exp => exp._id === action.payload);
       if (expense && expense.durationInMonths > 1) {
         expense.durationInMonths -= 1;
       }

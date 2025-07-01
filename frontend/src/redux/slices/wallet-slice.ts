@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { WalletState } from '@/types/wallet';
 
 const initialState: WalletState = {
-  MainWallet: { balance: 7000 },
-  TemporaryWallet: { balance: 1000 },
-  SteadyWallet: { balance: 5000, month: 4, date: 1, monthlyAmount: 5000 },
-  DailyBuffer: { balance: 100 },
+  MainWallet: { balance: 0 },
+  TemporaryWallet: { balance: 0 },
+  SteadyWallet: { balance: 0, month: 0, date: 0, monthlyAmount: 0 },
+  DailyBuffer: { balance: 0 },
   TotalWealth: { amount: 0 },
   PendingPayments: { amount: 0 },
   threshold: 0

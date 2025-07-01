@@ -9,21 +9,20 @@ import {
 import { LockIcon } from '@phosphor-icons/react/dist/ssr';
 import { FixedExpenseCard } from '@/components/dashboard/bills/bill-card';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date';
-import { Expense } from '@/types/budget'
+import { Expense, ExpenseBase } from '@/types/budget';
 
 const steps = ['Basic Info', 'Amount & Duration', 'Finish'];
 
 type AddFixedExpenseModalProps = {
   open: boolean;
   onClose: () => void;
-  onAdd: (item: Expense) => void;
+  onAdd: (item: ExpenseBase) => void;
 };
 
 export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedExpenseModalProps) {
   const [activeStep, setActiveStep] = React.useState(0);
 
-  const [formData, setFormData] = React.useState({
-    id: "", // will be generated
+  const [formData, setFormData] = React.useState<ExpenseBase>({
     billName: '',
     status: 'pending',
     dueDate: 1,
@@ -37,10 +36,8 @@ export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedE
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      // Generate ID
       const newItem = {
         ...formData,
-        id: Date.now().toString(), // quick id
         status: 'pending' as const,
         isPaid: false,
         isFunded: false,
@@ -50,7 +47,6 @@ export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedE
       onClose();
       setActiveStep(0);
       setFormData({
-        id: "",
         billName: '',
         status: 'pending',
         dueDate: 1,
@@ -151,7 +147,7 @@ export default function AddFixedExpenseModal({ open, onClose, onAdd }: AddFixedE
           <Stack spacing={2} sx={{ mt: 3 }}>
             <div><LockIcon /> This is preview. Actions are disabled:</div>
             <FixedExpenseCard
-              item={formData}
+              item={{ ...formData, _id: 'preview' }}
               onDelete={() => null}
               onPay={() => null}
               onIncreaseDuration={() => null}

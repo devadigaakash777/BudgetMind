@@ -1,5 +1,17 @@
 export interface Expense {
-  id: string;
+  _id: string;
+  billName: string;
+  status: 'pending' | 'paid' | 'expired';
+  dueDate: number;
+  isPaid: boolean;
+  amount: number;
+  isPermanent: boolean;
+  isFunded: boolean;
+  durationInMonths: number;
+  amountToFund: number;
+}
+
+export interface ExpenseBase {
   billName: string;
   status: 'pending' | 'paid' | 'expired';
   dueDate: number;

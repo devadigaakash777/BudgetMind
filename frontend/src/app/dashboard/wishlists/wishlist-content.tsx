@@ -15,16 +15,16 @@ import { WishlistCard } from '@/components/dashboard/wishlists/wishlist-card';
 import { CompaniesFilters } from '@/components/dashboard/wishlists/integrations-filters';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import {
-  addWishlistItem,
-  deleteWishlistItem,
-  increaseMonth,
-  decreaseMonth,
-  changePriority,
-  buyItem,
-  setPage,
-} from '@/redux/slices/wishlist-slice';
+  thunkAddWishlistItem,
+  thunkDeleteWishlistItem,
+  thunkIncreaseMonth,
+  thunkDecreaseMonth,
+  thunkChangePriority,
+  thunkBuyItem,
+} from '@/redux/thunks/wishlist-thunks';
+import { setPage } from '@/redux/slices/wishlist-slice';
 
 import { useEffect } from 'react';
 import { clearPreview } from '@/redux/slices/preview-slice';
@@ -35,9 +35,10 @@ export default function WishlistContent(): React.JSX.Element {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const wishlist = useSelector((state: RootState) => state.wishlist);
   const wishlists = wishlist.items; 
+  
 
   //clear the preview to reflect any changes happened in this component
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function WishlistContent(): React.JSX.Element {
           open={open}
           onClose={handleClose}
           onAdd={(item) => {
-            dispatch(addWishlistItem(item));
+            dispatch(thunkAddWishlistItem(item));
           }}
           maxPriority={wishlists.length > 0 ? Math.max(...wishlists.map(i => i.priority)) : 0}
         />
@@ -86,7 +87,7 @@ export default function WishlistContent(): React.JSX.Element {
       <Grid container spacing={3}>
         {paginatedItems.map((wishlist) => (
           <Grid
-            key={wishlist.id}
+            key={wishlist._id}
             size={{
               lg: 4,
               md: 6,
@@ -95,15 +96,15 @@ export default function WishlistContent(): React.JSX.Element {
           >
             <WishlistCard
               item={wishlist}
-              onDelete={(id) => dispatch(deleteWishlistItem(id))}
-              onIncreaseMonth={(id) => dispatch(increaseMonth(id))}
-              onDecreaseMonth={(id) => dispatch(decreaseMonth(id))}
-              onBuy={(id) => dispatch(buyItem(id))}
+              onDelete={(id) => dispatch(thunkDeleteWishlistItem(id))}
+              onIncreaseMonth={(id) => dispatch(thunkIncreaseMonth(id))}
+              onDecreaseMonth={(id) => dispatch(thunkDecreaseMonth(id))}
+              onBuy={(id) => dispatch(thunkBuyItem(id))}
               onIncreasePriority={(id) =>
-                dispatch(changePriority({ id, newPriority: wishlist.priority + 1 })) // Example logic: +1 priority
+                dispatch(thunkChangePriority({ id, newPriority: wishlist.priority + 1 })) // Example logic: +1 priority
               }
               onDecreasePriority={(id) =>
-                dispatch(changePriority({ id, newPriority: (wishlist.priority > 1) ? wishlist.priority - 1 : wishlist.priority })) // Example logic: +1 priority
+                dispatch(thunkChangePriority({ id, newPriority: (wishlist.priority > 1) ? wishlist.priority - 1 : wishlist.priority })) // Example logic: +1 priority
               }
             />
           </Grid>

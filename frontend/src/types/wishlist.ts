@@ -1,5 +1,5 @@
 export interface WishlistItem {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   image: string;
@@ -15,4 +15,15 @@ export interface WishlistState {
   totalSavedAmount: number;
   page: number;
   rowsPerPage: number;
+}
+
+export interface WishlistItemBase {
+  name: string;
+  description: string;
+  image: string;
+  savedAmount: number;
+  priority: number;
+  cost: number;
+  monthLeft: number;
+  isFunded: boolean;
 }

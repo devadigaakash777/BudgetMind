@@ -45,7 +45,7 @@ export default function AddExpenseContent(): React.JSX.Element {
   const expenses = (previewState?.FixedExpenses ?? budgetState.FixedExpenses).expenses.map(
       (
         expense: {
-          id: string;
+          _id: string;
           billName: string;
           amount: number;
           amountToFund: number;
@@ -53,7 +53,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           dueDate: number;
         },
       ) => ({
-        id: expense.id,
+        id: expense._id,
         billName: expense.billName,
         amount: expense.amount,
         dueAmount: expense.amountToFund,
@@ -69,14 +69,14 @@ export default function AddExpenseContent(): React.JSX.Element {
    const products = (previewState?.Wishlist?.items ?? wishlistState.items).map(
     (
       item: {
-        id: number | string;
+        _id: number | string;
         name: string;
         image: string;
         cost: number;
         savedAmount: number;
       },
     ) => ({
-      id: `WISH-${String(item.id).padStart(3, '0')}`,
+      id: `WISH-${String(item._id).padStart(3, '0')}`,
       name: item.name,
       image: item.image,
       cost: item.cost,

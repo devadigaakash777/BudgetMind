@@ -10,22 +10,9 @@ import Grid from '@mui/material/Grid';
 import { CloudArrowUpIcon, LockIcon } from '@phosphor-icons/react/dist/ssr';
 import { styled } from '@mui/material/styles';
 import { WishlistCard } from '@/components/dashboard/wishlists/wishlist-card';
+import { WishlistItemBase } from '@/types/wishlist';
 
-//wishlist type
-type WishlistItem = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  savedAmount: number;
-  priority: number;
-  cost: number;
-  monthLeft: number;
-  isFunded: boolean;
-};
-
-
-// For hiding default input style
+// Hidden file input style
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -41,7 +28,7 @@ const VisuallyHiddenInput = styled('input')({
 type AddWishlistModalProps = {
   open: boolean;
   onClose: () => void;
-  onAdd: (item: WishlistItem) => void;
+  onAdd: (item: WishlistItemBase) => void;
   maxPriority: number;
 };
 
@@ -51,30 +38,27 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
   const [activeStep, setActiveStep] = React.useState(0);
   const [priorityMode, setPriorityMode] = React.useState<'none' | 'low' | 'custom' | 'high'>('none');
 
-  const [formData, setFormData] = React.useState<WishlistItem>({
-    id: '',  // auto generate
+  const [formData, setFormData] = React.useState<WishlistItemBase>({
     name: '',
     description: '',
     image: '',
-    savedAmount: 0,  // always 0
-    priority: 0,     // based on mode
+    savedAmount: 0,
+    priority: 0,
     cost: 0,
     monthLeft: 1,
-    isFunded: false  // always false
+    isFunded: false
   });
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      // Generate ID
-      const newItem = {
+      const newItem: WishlistItemBase = {
         ...formData,
-        id: crypto.randomUUID(),
         savedAmount: 0,
         isFunded: false
       };
       onAdd(newItem);
       onClose();
-      setActiveStep(0);  // reset
+      setActiveStep(0);
     } else {
       setActiveStep(prev => prev + 1);
     }
@@ -113,7 +97,6 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
             />
             <Button
               component="label"
-              role={undefined}
               variant="outlined"
               startIcon={<CloudArrowUpIcon />}
             >
@@ -121,17 +104,30 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
               <VisuallyHiddenInput
                 type="file"
                 accept="image/*"
-                onChange={(event) => {
+                onChange={async (event) => {
                   const file = event.target.files?.[0];
-                  if (file) {
-                    const imageURL = URL.createObjectURL(file);
-                    setFormData({ ...formData, image: imageURL });
+                  if (!file) return;
+
+                  const data = new FormData();
+                  data.append("file", file);
+                  data.append("upload_preset", "upload_budget_mind");
+                  data.append("cloud_name", "ddmlou0da");
+
+                  try {
+                    const res = await fetch("https://api.cloudinary.com/v1_1/ddmlou0da/image/upload", {
+                      method: "POST",
+                      body: data
+                    });
+
+                    const result = await res.json();
+                    setFormData(prev => ({ ...prev, image: result.secure_url }));
+                  } catch (err) {
+                    console.error("Upload failed", err);
                   }
                 }}
               />
             </Button>
 
-            {/* Preview the uploaded image */}
             {formData.image && (
               <Box
                 component="img"
@@ -196,23 +192,22 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
 
         {activeStep === 2 && (
           <Stack spacing={2} sx={{ mt: 3 }}>
-            <div><LockIcon/> This is non-interactive preview. Buttons are disabled and for display only:</div>
-              <Grid
-              key={formData.id}
-              size={{
+            <Box display="flex" alignItems="center" gap={1}>
+              <LockIcon /> This is a non-interactive preview.
+            </Box>
+            <Grid size={{
                 lg: 4,
                 md: 6,
                 xs: 12,
-              }}
-            >
+              }}>
               <WishlistCard
                 item={formData}
-                onDelete={(_id) => null}
-                onIncreaseMonth={(_id) => null}
-                onDecreaseMonth={(_id) => null}
-                onBuy={(_id) => null}
-                onIncreasePriority={(_id) => null}
-                onDecreasePriority={(_id) => null}
+                onDelete={() => null}
+                onIncreaseMonth={() => null}
+                onDecreaseMonth={() => null}
+                onBuy={() => null}
+                onIncreasePriority={() => null}
+                onDecreasePriority={() => null}
               />
             </Grid>
           </Stack>
@@ -223,14 +218,14 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
         <Button onClick={onClose}>Cancel</Button>
         {activeStep !== 0 && <Button onClick={handleBack}>Back</Button>}
         <Button
-            variant="contained"
-            onClick={handleNext}
-            disabled={
-                (activeStep === 0 && formData.name.trim() === '') ||  // Name required on Step 0
-                (activeStep === 1 && formData.cost <= 0)               // Cost required on Step 1
-            }
+          variant="contained"
+          onClick={handleNext}
+          disabled={
+            (activeStep === 0 && formData.name.trim() === '') ||
+            (activeStep === 1 && formData.cost <= 0)
+          }
         >
-            {activeStep === steps.length - 1 ? 'Add Item' : 'Next'}
+          {activeStep === steps.length - 1 ? 'Add Item' : 'Next'}
         </Button>
       </DialogActions>
     </Dialog>

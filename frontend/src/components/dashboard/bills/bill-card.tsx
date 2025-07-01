@@ -19,7 +19,7 @@ const statusMap = {
 
 
 export interface FixedExpenseItem {
-  id: string;
+  _id: string;
   billName: string;
   status: string;
   dueDate: number;
@@ -99,7 +99,7 @@ export function FixedExpenseCard({
       {/* Row 2: Action Buttons */}
       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
         <Tooltip title="Delete Expense">
-          <IconButton color="error" onClick={() => onDelete(item.id)}>
+          <IconButton color="error" onClick={() => onDelete(item._id)}>
             <TrashIcon size={20} />
           </IconButton>
         </Tooltip>
@@ -108,8 +108,8 @@ export function FixedExpenseCard({
         {!item.isPermanent && (
           <Tooltip title="Change Duration">
             <ButtonGroup disableElevation variant="outlined" aria-label="duration button group">
-              <Button onClick={() => onDecreaseDuration(item.id)}>-</Button>
-              <Button onClick={() => onIncreaseDuration(item.id)}>+</Button>
+              <Button onClick={() => onDecreaseDuration(item._id)}>-</Button>
+              <Button onClick={() => onIncreaseDuration(item._id)}>+</Button>
             </ButtonGroup>
           </Tooltip>
         )}
@@ -119,7 +119,7 @@ export function FixedExpenseCard({
             <IconButton
               color="success"
               disabled={!item.isFunded || item.isPaid}
-              onClick={() => onPay(item.id)}
+              onClick={() => onPay(item._id)}
             >
               <CheckCircleIcon size={20} />
             </IconButton>

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import { filterCurrentMonth } from '@/utils/filter-current-month';
 import { DailyExpense } from '@/types/daily-expense';
 
@@ -16,8 +16,8 @@ import { SpendingWallet } from '@/components/dashboard/overview/spending-wallet'
 import { TotalProfit } from '@/components/dashboard/overview/total-profit';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import { TempWalletForm } from '@/components/dashboard/account/expense-wallet-form';
-import { updateSteadyWallet, setThreshold, setTotalWealth, updateTempWallet } from '@/redux/slices/wallet-slice';
-import { updateDailyBudget } from '@/redux/slices/budget-slice';
+import { thunkUpdateSteadyWallet, thunkUpdateThreshold, thunkUpdateTotalWealth, thunkUpdateTempWallet } from '@/redux/thunks/wallet-thunks';
+import { thunkUpdateDailyBudget } from '@/redux/thunks/budget-thunks';
 import { updateSalaryInfo, handleModel } from '@/redux/slices/user-slice';
 import { BudgetSetupDialog } from '@/components/dashboard/account/budget-setup-dialog';
 
@@ -29,7 +29,7 @@ export default function DashboardContent(): React.JSX.Element {
   const userState = useSelector((state: RootState) => state.user);
 
   //Budget setup for first time
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [open, setOpen] = React.useState(false);
     
@@ -66,7 +66,7 @@ export default function DashboardContent(): React.JSX.Element {
 
   //Fixed Cost
   const expenses = budgetState.FixedExpenses.expenses.map((expense) => ({
-    id: `BILL-${String(expense.id).padStart(3, '0')}`, // e.g., ORD-001
+    id: `BILL-${String(expense._id).padStart(3, '0')}`, // e.g., ORD-001
     billName: expense.billName,
     amount: expense.amount,
     dueAmount: expense.amountToFund,
@@ -78,7 +78,7 @@ export default function DashboardContent(): React.JSX.Element {
    const products = wishlist.items
    .slice(-3)
    .map((item) => ({
-    id: `${item.id}`,
+    id: `${item._id}`,
     name: `${item.name}`,
     image: `${item.image}`, // Adjust image path logic as needed
     cost: item.cost,
@@ -140,18 +140,18 @@ export default function DashboardContent(): React.JSX.Element {
           open={walletAmount}
           onClose={() => addWalletAmount(false)}
           currentBalance={walletState.TemporaryWallet.balance} 
-          onSave={(val) => dispatch(updateTempWallet(val))}
+          onSave={(val) => dispatch(thunkUpdateTempWallet(val))}
         />
         <BudgetSetupDialog
               open={open}
               onClose={() => setOpen(false)}
               onComplete={(val) => dispatch(handleModel(val))}
               salary={monthlyAmount}
-              onTotalWealthSave={(val) => dispatch(setTotalWealth(val))}
+              onTotalWealthSave={(val) => dispatch(thunkUpdateTotalWealth(val))}
               onSalarySave={(data) => dispatch(updateSalaryInfo(data))}
-              onSteadySave={(data) => dispatch(updateSteadyWallet(data))}
-              onThresholdSave={(data) => dispatch(setThreshold(data))}
-              onDailyBudgetSave={(val) => dispatch(updateDailyBudget(val))}
+              onSteadySave={(data) => dispatch(thunkUpdateSteadyWallet(data))}
+              onThresholdSave={(data) => dispatch(thunkUpdateThreshold(data.threshold))}
+              onDailyBudgetSave={(val) => dispatch(thunkUpdateDailyBudget(val))}
           />
         <DailyExpenseChart
           chartSeries={[

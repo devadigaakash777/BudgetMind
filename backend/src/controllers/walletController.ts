@@ -1,51 +1,52 @@
 import { Request, Response } from 'express';
 import { Wallet } from '../models/wallet.model.js';
+import { AuthRequest } from '../middleware/authMiddleware.js';
 
-// Helper to get/create wallet
-const getOrCreateWallet = async () => {
-  let wallet = await Wallet.findOne();
+// Helper: Get or create wallet for specific user
+const getOrCreateWallet = async (userId: string) => {
+  let wallet = await Wallet.findOne({ userId });
   if (!wallet) {
-    wallet = new Wallet();
+    wallet = new Wallet({ userId });
     await wallet.save();
   }
   return wallet;
 };
 
-export const getWallet = async (_req: Request, res: Response) => {
-  const wallet = await getOrCreateWallet();
-  res.json(wallet);
+export const getWallet = async (req: AuthRequest, res: Response) => {
+  const wallet = await getOrCreateWallet(req.userId!);
+  res.json(wallet); 
 };
 
-export const updateMainWallet = async (req: Request, res: Response) => {
-  const wallet = await getOrCreateWallet();
+export const updateMainWallet = async (req: AuthRequest, res: Response) => {
+  const wallet = await getOrCreateWallet(req.userId!);
   wallet.MainWallet.balance = req.body.balance;
   await wallet.save();
   res.sendStatus(200);
 };
 
-export const updateTempWallet = async (req: Request, res: Response) => {
-  const wallet = await getOrCreateWallet();
+export const updateTempWallet = async (req: AuthRequest, res: Response) => {
+  const wallet = await getOrCreateWallet(req.userId!);
   wallet.TemporaryWallet.balance += req.body.delta;
   await wallet.save();
   res.sendStatus(200);
 };
 
-export const updateSteadyWallet = async (req: Request, res: Response) => {
-  const wallet = await getOrCreateWallet();
+export const updateSteadyWallet = async (req: AuthRequest, res: Response) => {
+  const wallet = await getOrCreateWallet(req.userId!);
   Object.assign(wallet.SteadyWallet, req.body);
   await wallet.save();
   res.sendStatus(200);
 };
 
-export const updateTotalWealth = async (req: Request, res: Response) => {
-  const wallet = await getOrCreateWallet();
+export const updateTotalWealth = async (req: AuthRequest, res: Response) => {
+  const wallet = await getOrCreateWallet(req.userId!);
   wallet.TotalWealth.amount = req.body.amount;
   await wallet.save();
   res.sendStatus(200);
 };
 
-export const updateThreshold = async (req: Request, res: Response) => {
-  const wallet = await getOrCreateWallet();
+export const updateThreshold = async (req: AuthRequest, res: Response) => {
+  const wallet = await getOrCreateWallet(req.userId!);
   wallet.threshold = req.body.threshold;
   await wallet.save();
   res.sendStatus(200);

@@ -13,22 +13,22 @@ import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import { FixedExpenseCard } from '@/components/dashboard/bills/bill-card';
 import { CompaniesFilters } from '@/components/dashboard/wishlists/integrations-filters'; 
 import AddFixedExpenseModal from '@/components/dashboard/bills/bill-model';
-import { Expense } from '@/types/budget'
+import { ExpenseBase } from '@/types/budget'
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import {
-  deleteExpense,
-  payExpense,
-  increaseDuration,
-  decreaseDuration,
-  addFixedExpense
-} from '@/redux/slices/budget-slice';
+  thunkDeleteFixedExpense,
+  thunkPayFixedExpense,
+  thunkIncreaseDuration,
+  thunkDecreaseDuration,
+  thunkAddFixedExpense
+} from '@/redux/thunks/budget-thunks';
 
 import { useEffect } from 'react';
 import { clearPreview } from '@/redux/slices/preview-slice';
 
 export default function FixedExpensesContent(): React.JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const fixedExpenseWallet = useSelector((state: RootState) => state.budget.FixedExpenses);
   const fixedExpenses = fixedExpenseWallet.expenses;
 
@@ -42,8 +42,8 @@ export default function FixedExpensesContent(): React.JSX.Element {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleAddExpense = (newExpense: Expense) => {
-     dispatch(addFixedExpense(newExpense));
+  const handleAddExpense = (newExpense: ExpenseBase) => {
+     dispatch(thunkAddFixedExpense(newExpense));
   };
 
   // Pagination state
@@ -93,7 +93,7 @@ export default function FixedExpensesContent(): React.JSX.Element {
       <Grid container spacing={3}>
         {paginatedItems.map((expense) => (
           <Grid
-            key={expense.id}
+            key={expense._id}
             size={{
               lg: 4,
               md: 6,
@@ -102,10 +102,10 @@ export default function FixedExpensesContent(): React.JSX.Element {
             >
             <FixedExpenseCard
               item={expense}
-              onDelete={(id) => dispatch(deleteExpense(id))}
-              onPay={(id) => dispatch(payExpense(id))}
-              onIncreaseDuration={(id) => dispatch(increaseDuration(id))}
-              onDecreaseDuration={(id) => dispatch(decreaseDuration(id))}
+              onDelete={(id) => dispatch(thunkDeleteFixedExpense(id))}
+              onPay={(id) => dispatch(thunkPayFixedExpense(id))}
+              onIncreaseDuration={(id) => dispatch(thunkIncreaseDuration(id))}
+              onDecreaseDuration={(id) => dispatch(thunkDecreaseDuration(id))}
             />
           </Grid>
         ))}

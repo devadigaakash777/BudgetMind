@@ -32,8 +32,8 @@ export const getBudgetSummary = async (req: AuthRequest, res: Response) => {
 
   // Merge summary and expenses correctly
   const fullSummary = {
-    monthlyBudget: summary.monthlyBudget,
-    dailyBudget: summary.dailyBudget,
+    MonthlyBudget: summary.monthlyBudget,
+    DailyBudget: summary.dailyBudget,
     FixedExpenses: {
       expenses,
       rowsPerPage: summary.FixedExpenses?.rowsPerPage || 3,
