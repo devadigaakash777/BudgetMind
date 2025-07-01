@@ -146,6 +146,12 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
     }
   });
 
+  newState.Wishlist.items.forEach(item => {
+    if (item.priority > 0 && item.monthLeft > 0) {
+      item.monthLeft = Math.max(0, item.monthLeft - 1);
+    }
+  });
+
   console.log("[processSalary] returning updated state:", newState);
   return newState;
 }

@@ -108,31 +108,81 @@ export function deductFromFixedExpenses(expenses, needed) {
 }
 
 /**
- * Deducts money from wishlist savings.
- * @param {object} state - Current state.
- * @param {number} needed - Amount required.
- * @returns {object} Deducted amount and sources.
+ * Calculates how much can be deducted from a wishlist item.
+ * @param {object} item - Wishlist item.
+ * @returns {number} Monthly share amount (rounded to 2 decimal places).
+ */
+function getMonthlyShare(item) {
+  const remaining = item.cost - item.savedAmount;
+  const months = item.monthLeft || 1; // Prevent division by 0
+  return parseFloat((remaining / months).toFixed(2));
+}
+
+/**
+ * Deducts money from wishlist savings following priority and monthlyShare rules.
+ * @param {object} state - Redux state.
+ * @param {number} needed - Required amount.
+ * @returns {object} Object with deducted amount and sources.
  */
 export function consumeFromSavingWishlist(state, needed) {
-  const items = state.Wishlist.items.filter(i => i.savedAmount > 0)
+  const items = state.Wishlist.items
+    .filter(i => i.savedAmount > 0 && !i.isSelected)
     .sort((a, b) => a.priority - b.priority);
 
-  let total = 0;
-  const sources = [];
+  let totalDeducted = 0;
+  const deductionSources = [];
 
-  for (let i = 0; i < items.length && total < needed; i++) {
-    const item = items[i];
-    if (!item.isSelected) {
-      const take = Math.min(item.savedAmount, needed - total);
+  // First handle priority 0 items - take all savedAmount at once
+  for (const item of items) {
+    if (item.priority === 0 && totalDeducted < needed) {
+      const take = Math.min(item.savedAmount, needed - totalDeducted);
       item.savedAmount -= take;
-      total += take;
-      sources.push({ from: 'Wishlist', id: item.id || i, amount: take });
+      totalDeducted += take;
+      deductionSources.push({ from: 'Wishlist', id: item.id, amount: take });
     }
   }
-  state.Wishlist.totalSavedAmount -= total;
 
-  return { amount: total, sources };
+  // Handle other priorities in rounds (multiple passes)
+  while (totalDeducted < needed) {
+    let deductedThisRound = 0;
+
+    for (const item of items) {
+      if (item.priority !== 0 && item.savedAmount > 0 && totalDeducted < needed) {
+        const monthlyShare = getMonthlyShare(item);
+        if (monthlyShare <= 0) continue; // skip broken logic
+
+        const amountToTake = Math.min(monthlyShare, item.savedAmount, needed - totalDeducted);
+
+        item.savedAmount -= amountToTake;
+        totalDeducted += amountToTake;
+        deductedThisRound += amountToTake;
+
+        // If already deducted before, increase amount; else add new entry
+        const existing = deductionSources.find(src => src.id === item.id);
+        if (existing) {
+          existing.amount += amountToTake;
+        } else {
+          deductionSources.push({ from: 'Wishlist', id: item.id, amount: amountToTake });
+        }
+
+        if (amountToTake >= monthlyShare / 2) {
+          item.monthLeft = (item.monthLeft || 0) + 1;
+        }
+      }
+    }
+
+    // If no progress in a round, break to avoid infinite loop
+    if (deductedThisRound === 0) break;
+  }
+
+  state.Wishlist.totalSavedAmount -= totalDeducted;
+
+  return {
+    amount: totalDeducted,
+    sources: deductionSources
+  };
 }
+
 
 /**
  * Handles expired and non-permanent fixed expense items.
