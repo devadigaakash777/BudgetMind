@@ -22,12 +22,6 @@ export default function AccountContent(): React.JSX.Element {
   const budgetState = useSelector((state: RootState) => state.budget);
   const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
   
-  if (isAppLoading) {
-    return (
-      <FullScreenLoader />
-    );
-  }
-
   const dispatch = useDispatch<AppDispatch>();
 
   // specify the limit to setting max Budget 
@@ -35,6 +29,11 @@ export default function AccountContent(): React.JSX.Element {
   ? user.Salary.amount
   : wallet.SteadyWallet.monthlyAmount;
 
+  if (isAppLoading) {
+    return (
+      <FullScreenLoader />
+    );
+  }
   return (
     <Stack spacing={3}>
       <div>

@@ -7,6 +7,7 @@ import { logger } from '@/lib/default-logger';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, clearUser, setAccessToken } from '@/redux/slices/user-slice';
 import { RootState } from '@/redux/store';
+import { refreshTokenIfNeeded } from '@/utils/refresh-token';
 
 export interface UserContextValue {
   user: User | null;
@@ -74,6 +75,22 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ✅ Only run once on initial load
+
+
+  React.useEffect(() => {
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') {
+        refreshTokenIfNeeded()
+          .then(() => console.warn("refreshed inside"))
+          .catch((err) => console.error("refresh failed", err));
+      }
+    };
+
+    const interval = setInterval(refreshIfVisible, 7 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+
 
   return (
     <UserContext.Provider
