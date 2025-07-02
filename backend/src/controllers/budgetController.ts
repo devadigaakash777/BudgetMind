@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BudgetSummary, FixedExpense } from '../models/budget.model.js';
 import { AuthRequest } from '../middleware/authMiddleware.js';
+import { settlePayback } from '../utils/payback.js'
 import { updateFixedExpenseSavedAmount } from '../utils/updateFixedExpenseSavedAmount.js'
 
 // --- Budget Summary ---
@@ -101,11 +102,17 @@ export const addFixedExpense = async (req: AuthRequest, res: Response) => {
   res.status(201).json(expense);
 };
 
-export const deleteFixedExpense = async (req: AuthRequest, res: Response) => {
+export const deleteFixedExpense = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId!;
   const { id } = req.params;
+  const expense = await FixedExpense.findOne({ _id: req.params.id, userId: req.userId });
+  if(!expense){
+    res.status(404).json("Expense item not found");
+    return;
+  }
+  const savedAmount = expense.amount - expense.amountToFund
   await FixedExpense.deleteOne({ _id: id, userId });
-  await updateFixedExpenseSavedAmount(userId);
+  await settlePayback(req.userId!, savedAmount, "wishlist");
   res.sendStatus(204);
 };
 
@@ -121,7 +128,9 @@ export const payFixedExpense = async (req: AuthRequest, res: Response) => {
     if (expense.isFunded && !expense.isPaid) {
         expense.isPaid = true;
         expense.status = 'paid';
+        expense.amountToFund = expense.amount;
         await expense.save();
+        await updateFixedExpenseSavedAmount(userId);
     }
     res.sendStatus(204);
   }

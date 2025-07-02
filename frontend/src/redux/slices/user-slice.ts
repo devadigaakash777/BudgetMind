@@ -24,6 +24,44 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setProfileDetails(
+      state,
+      action: PayloadAction<{
+        phone: string;
+        jobTitle: string;
+        address: {
+          city: string;
+          state: string;
+          country: string;
+          timezone: string;
+        }[];
+        isProfileComplete: boolean;
+        isSalaryPaid: boolean;
+        hasSalary: boolean;
+        Salary: {
+          amount: number;
+          date: number;
+        };
+      }>
+    ) {
+      const {
+        phone,
+        jobTitle,
+        address,
+        isProfileComplete,
+        isSalaryPaid,
+        hasSalary,
+        Salary
+      } = action.payload;
+
+      state.phone = phone;
+      state.jobTitle = jobTitle;
+      state.address = address;
+      state.isProfileComplete = isProfileComplete;
+      state.isSalaryPaid = isSalaryPaid;
+      state.hasSalary = hasSalary;
+      state.Salary = Salary;
+    },
     handleModel(state, action: PayloadAction<boolean>){
       state.isProfileComplete = action.payload;
     },
@@ -87,5 +125,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { handleModel, setAvatar, updateSalaryInfo, updateBasicInfo, setUser, setAccessToken, clearUser, setSalaryAcknowledged } = userSlice.actions;
+export const { setProfileDetails, handleModel, setAvatar, updateSalaryInfo, updateBasicInfo, setUser, setAccessToken, clearUser, setSalaryAcknowledged } = userSlice.actions;
 export default userSlice.reducer;

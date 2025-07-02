@@ -2,25 +2,29 @@ import { Request, Response } from 'express';
 import Profile from '../models/profile.model.js';
 import User from '../models/User.js';
 
+const getOrCreateProfile = async (userId: string) => {
+  let profile = await Profile.findOne({ userId });
+  if (!profile) {
+    profile = new Profile({ userId });
+    await profile.save();
+  }
+  return profile;
+};
+
 export const getUserProfile = async (req: Request, res: Response) => {
   const { userId } = req as any;
 
-  const profile = await Profile.findOne({ userId });
+  const profile = await getOrCreateProfile(userId);
 
-  if (!profile){
-    res.status(404).json({ message: 'Profile not found' });
-  }
-  else{
-    res.status(200).json({
-        phone: profile.phone,
-        jobTitle: profile.jobTitle,
-        address: profile.address,
-        isProfileComplete: profile.isProfileComplete,
-        isSalaryPaid: profile.isSalaryPaid,
-        hasSalary: profile.hasSalary,
-        Salary: profile.salary
-    });
-  }
+  res.status(200).json({
+    phone: profile.phone,
+    jobTitle: profile.jobTitle,
+    address: profile.address,
+    isProfileComplete: profile.isProfileComplete,
+    isSalaryPaid: profile.isSalaryPaid,
+    hasSalary: profile.hasSalary,
+    Salary: profile.salary
+  });
 };
 
 export const updateBasicProfile = async (req: Request, res: Response): Promise<void> => {
@@ -28,29 +32,23 @@ export const updateBasicProfile = async (req: Request, res: Response): Promise<v
   const { firstName, lastName, email, phone, city, state } = req.body;
 
   try {
-    // Update User model (firstName, lastName, email)
     await User.findByIdAndUpdate(userId, {
       firstName,
       lastName,
       email
     });
 
-    // Update Profile model (phone + address)
-    await Profile.findOneAndUpdate(
-      { userId },
+    const profile = await getOrCreateProfile(userId);
+    profile.phone = phone;
+    profile.address = [
       {
-        phone,
-        address: [
-          {
-            city,
-            state,
-            country: 'India',
-            timezone: 'GMT+5:30'
-          }
-        ]
-      },
-      { upsert: true, new: true }
-    );
+        city,
+        state,
+        country: 'India',
+        timezone: 'GMT+5:30'
+      }
+    ];
+    await profile.save();
 
     res.json({ message: 'Profile info updated successfully' });
   } catch (error) {
@@ -63,15 +61,11 @@ export const updateSalary = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
   const { jobTitle, hasSalary, salaryAmount, salaryDate } = req.body;
 
-  await Profile.findOneAndUpdate(
-    { userId },
-    {
-      jobTitle,
-      hasSalary,
-      salary: { amount: salaryAmount, date: salaryDate }
-    },
-    { upsert: true }
-  );
+  const profile = await getOrCreateProfile(userId);
+  profile.jobTitle = jobTitle;
+  profile.hasSalary = hasSalary;
+  profile.salary = { amount: salaryAmount, date: salaryDate };
+  await profile.save();
 
   res.json({ message: 'Salary info updated' });
 };
@@ -84,20 +78,16 @@ export const updateAvatar = async (req: Request, res: Response) => {
 
 export const markProfileComplete = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
-  await Profile.findOneAndUpdate(
-    { userId },
-    { isProfileComplete: req.body.isProfileComplete },
-    { upsert: true }
-  );
+  const profile = await getOrCreateProfile(userId);
+  profile.isProfileComplete = req.body.isProfileComplete;
+  await profile.save();
   res.json({ message: 'Profile status updated' });
 };
 
 export const markSalaryPaid = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
-  await Profile.findOneAndUpdate(
-    { userId },
-    { isSalaryPaid: req.body.isSalaryPaid },
-    { upsert: true }
-  );
+  const profile = await getOrCreateProfile(userId);
+  profile.isSalaryPaid = req.body.isSalaryPaid;
+  await profile.save();
   res.json({ message: 'Salary status updated' });
 };

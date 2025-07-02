@@ -18,8 +18,9 @@ import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import { TempWalletForm } from '@/components/dashboard/account/expense-wallet-form';
 import { thunkUpdateSteadyWallet, thunkUpdateThreshold, thunkUpdateTotalWealth, thunkUpdateTempWallet } from '@/redux/thunks/wallet-thunks';
 import { thunkUpdateDailyBudget } from '@/redux/thunks/budget-thunks';
-import { updateSalaryInfo, handleModel } from '@/redux/slices/user-slice';
+import { setProfileStatus, updateUserSalaryInfo } from '@/redux/thunks/profile-thunks';
 import { BudgetSetupDialog } from '@/components/dashboard/account/budget-setup-dialog';
+import FullScreenLoader from '@/components/dashboard/loader';
 
 export default function DashboardContent(): React.JSX.Element {
   const walletState = useSelector((state: RootState) => state.wallet);
@@ -90,6 +91,13 @@ export default function DashboardContent(): React.JSX.Element {
        / budgetState.MonthlyBudget.amountFunded) * 100).toFixed(2)
   );
 
+  const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
+  
+  if (isAppLoading) {
+    return (
+      <FullScreenLoader />
+    );
+  }
 
 
   return (
@@ -145,10 +153,10 @@ export default function DashboardContent(): React.JSX.Element {
         <BudgetSetupDialog
               open={open}
               onClose={() => setOpen(false)}
-              onComplete={(val) => dispatch(handleModel(val))}
+              onComplete={(val) => dispatch(setProfileStatus(val))}
               salary={monthlyAmount}
               onTotalWealthSave={(val) => dispatch(thunkUpdateTotalWealth(val))}
-              onSalarySave={(data) => dispatch(updateSalaryInfo(data))}
+              onSalarySave={(data) => dispatch(updateUserSalaryInfo(data))}
               onSteadySave={(data) => dispatch(thunkUpdateSteadyWallet(data))}
               onThresholdSave={(data) => dispatch(thunkUpdateThreshold(data.threshold))}
               onDailyBudgetSave={(val) => dispatch(thunkUpdateDailyBudget(val))}

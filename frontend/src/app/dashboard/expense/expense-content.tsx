@@ -10,7 +10,7 @@ import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { setPage, setRowsPerPage } from '@/redux/slices/daily-expenses-slice';
-
+import FullScreenLoader from '@/components/dashboard/loader';
 import { DailyExpensesFilters } from '@/components/dashboard/expense/expenses-filters';
 import { DailyExpensesTable } from '@/components/dashboard/expense/expenses-table';
 import type { DailyExpense } from '@/types/daily-expense';
@@ -45,6 +45,13 @@ export default function ExpenseContent(): React.JSX.Element {
   const rowsPerPage = expenseState.rowsPerPage;
 
   const paginatedDailyExpenses = applyPagination(dailyExpenses, page, rowsPerPage);
+  const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
+  
+  if (isAppLoading) {
+    return (
+      <FullScreenLoader />
+    );
+  }
 
   return (
     <Stack spacing={3}>

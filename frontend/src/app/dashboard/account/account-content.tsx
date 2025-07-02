@@ -10,16 +10,25 @@ import { AccountSalaryForm } from '@/components/dashboard/account/account-salary
 import { DailyBudgetForm } from '@/components/dashboard/account/set-budget-details'
 
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { updateBasicInfo, setAvatar, updateSalaryInfo } from '@/redux/slices/user-slice';
-import { updateSteadyWallet, setThreshold } from '@/redux/slices/wallet-slice';
-import { updateDailyBudget } from '@/redux/slices/budget-slice';
+import { RootState, AppDispatch } from '@/redux/store';
+import { updateUserBasicInfo, updateUserAvatar, updateUserSalaryInfo } from '@/redux/thunks/profile-thunks';
+import { thunkUpdateSteadyWallet, thunkUpdateThreshold } from '@/redux/thunks/wallet-thunks';
+import { thunkUpdateDailyBudget } from '@/redux/thunks/budget-thunks';
+import FullScreenLoader from '@/components/dashboard/loader';
 
 export default function AccountContent(): React.JSX.Element {
   const user = useSelector((state: RootState) => state.user);
   const wallet = useSelector((state: RootState) => state.wallet);
   const budgetState = useSelector((state: RootState) => state.budget);
-  const dispatch = useDispatch();
+  const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
+  
+  if (isAppLoading) {
+    return (
+      <FullScreenLoader />
+    );
+  }
+
+  const dispatch = useDispatch<AppDispatch>();
 
   // specify the limit to setting max Budget 
   const monthlyAmount = user.hasSalary
@@ -46,7 +55,7 @@ export default function AccountContent(): React.JSX.Element {
             city={user.address?.[0]?.city ?? ''}
             country={user.address?.[0]?.country ?? ''}
             timezone={user.address?.[0]?.timezone ?? ''}
-            onAdd={(imageURL) => dispatch(setAvatar(imageURL))}
+            onAdd={(imageURL) => dispatch(updateUserAvatar(imageURL))}
             />
         </Grid>
         <Grid
@@ -63,7 +72,7 @@ export default function AccountContent(): React.JSX.Element {
             phone={user.phone}
             state={user.address[0]?.state}
             city={user.address[0]?.city}
-            onSave={(updatedData) => dispatch(updateBasicInfo(updatedData))}
+            onSave={(updatedData) => dispatch(updateUserBasicInfo(updatedData))}
             />
         </Grid>
         <Grid
@@ -82,9 +91,9 @@ export default function AccountContent(): React.JSX.Element {
             steadyMonth={wallet.SteadyWallet.month}
             steadyMonthlyAmount={wallet.SteadyWallet.monthlyAmount}
             threshold={wallet.threshold}
-            onSave={(updatedData) => dispatch(updateSalaryInfo(updatedData))}
-            onSteadySave={(updatedSteadyData) => dispatch(updateSteadyWallet(updatedSteadyData))}
-            onThresholdSave={(updatedThreshold) => dispatch(setThreshold(updatedThreshold))}
+            onSave={(updatedData) => dispatch(updateUserSalaryInfo(updatedData))}
+            onSteadySave={(updatedSteadyData) => dispatch(thunkUpdateSteadyWallet(updatedSteadyData))}
+            onThresholdSave={(updatedThreshold) => dispatch(thunkUpdateThreshold(updatedThreshold.threshold))}
           />
         </Grid>
         <Grid
@@ -100,7 +109,7 @@ export default function AccountContent(): React.JSX.Element {
             setAmount = {budgetState.DailyBudget.setAmount}
             minAmount = {budgetState.DailyBudget.min}
             maxAmount = {budgetState.DailyBudget.max}
-            onSave={(updatedData) => dispatch(updateDailyBudget(updatedData))}
+            onSave={(updatedData) => dispatch(thunkUpdateDailyBudget(updatedData))}
             />
         </Grid>
       </Grid>

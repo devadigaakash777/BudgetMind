@@ -60,11 +60,29 @@ export function AccountInfo({
             type="file"
             accept="image/*"
             hidden
-            onChange={(event) => {
+            onChange={async (event) => {
               const file = event.target.files?.[0];
-              if (file) {
-                const imageURL = URL.createObjectURL(file);
-                onAdd(imageURL);
+              if (!file) return;
+
+              const data = new FormData();
+              data.append("file", file);
+              data.append("upload_preset", "upload_budget_mind");
+              data.append("cloud_name", "ddmlou0da");
+
+              try {
+                const res = await fetch("https://api.cloudinary.com/v1_1/ddmlou0da/image/upload", {
+                  method: "POST",
+                  body: data
+                });
+
+                const result = await res.json();
+                if (result.secure_url) {
+                  onAdd(result.secure_url); // send cloud-hosted URL to parent
+                } else {
+                  console.error("Cloudinary upload failed", result);
+                }
+              } catch (err) {
+                console.error("Upload error:", err);
               }
             }}
           />

@@ -23,7 +23,7 @@ import {
   thunkDecreaseDuration,
   thunkAddFixedExpense
 } from '@/redux/thunks/budget-thunks';
-
+import FullScreenLoader from '@/components/dashboard/loader';
 import { useEffect } from 'react';
 import { clearPreview } from '@/redux/slices/preview-slice';
 
@@ -31,6 +31,8 @@ export default function FixedExpensesContent(): React.JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const fixedExpenseWallet = useSelector((state: RootState) => state.budget.FixedExpenses);
   const fixedExpenses = fixedExpenseWallet.expenses;
+
+  
 
   //clear the preview to reflect any changes happened in this component
     useEffect(() => {
@@ -57,6 +59,13 @@ export default function FixedExpensesContent(): React.JSX.Element {
   );
   const totalPages = Math.ceil(fixedExpenses.length / rowsPerPage);
   
+  const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
+  
+  if (isAppLoading) {
+    return (
+      <FullScreenLoader />
+    );
+  }
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>

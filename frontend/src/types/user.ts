@@ -11,7 +11,7 @@ export interface Salary {
 }
 
 export interface User {
-  id: string;
+  _id: string;
   firstName?: string;
   lastName?: string;
   avatar?: string;
@@ -33,3 +33,12 @@ export interface UserState {
   Salary: Salary;
 }
 
+export interface UserProfile {
+  phone: string;
+  jobTitle: string;
+  address: Address[];
+  isProfileComplete: boolean;
+  isSalaryPaid: boolean;
+  hasSalary: boolean;
+  Salary: Salary;
+}

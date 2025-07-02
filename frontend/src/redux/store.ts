@@ -5,7 +5,7 @@ import budgetReducer from './slices/budget-slice';
 import wishlistReducer from './slices/wishlist-slice';
 import previewReducer from './slices/preview-slice';
 import expenseReducer from './slices/daily-expenses-slice';
-
+import loaderReducer from './slices/loader-slice';
 
 const store = configureStore({
   reducer: {
@@ -14,7 +14,8 @@ const store = configureStore({
     budget: budgetReducer ,
     wishlist: wishlistReducer,
     expense: expenseReducer,
-    preview: previewReducer
+    preview: previewReducer,
+    loader: loaderReducer
   },
 });
 

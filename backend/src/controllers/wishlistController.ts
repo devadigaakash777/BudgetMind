@@ -3,6 +3,7 @@ import { WishlistItem } from '../models/wishlist.model.js';
 import { WishlistSummary } from '../models/wishlist.model.js';
 import { AuthRequest } from '../middleware/authMiddleware.js';
 import { updateTotalSavedAmount } from '../utils/updateWishlistSummary.js'
+import { settlePayback } from '../utils/payback.js'
 
 export const getWishlist = async (req: AuthRequest, res: Response) => {
   const page = Number(req.query.page) || 0;
@@ -33,9 +34,14 @@ export const addWishlistItem = async (req: AuthRequest, res: Response) => {
   res.status(201).json(item);
 };
 
-export const deleteWishlistItem = async (req: AuthRequest, res: Response) => {
+export const deleteWishlistItem = async (req: AuthRequest, res: Response): Promise<void> => {
+  const item = await WishlistItem.findOne({ _id: req.params.id, userId: req.userId });
+  if(!item){
+    res.status(404).json("Item not found");
+    return;
+  }
   await WishlistItem.deleteOne({ _id: req.params.id, userId: req.userId });
-  await updateTotalSavedAmount(req.userId!);
+  await settlePayback(req.userId!, item.savedAmount!, "wishlist");
   res.sendStatus(204);
 };
 
@@ -81,14 +87,25 @@ export const updateMonthLeft = async (req: AuthRequest, res: Response) => {
   res.sendStatus(200);
 };
 
-export const buyItem = async (req: AuthRequest, res: Response) => {
-  const item = await WishlistItem.findOne({ _id: req.params.id, userId: req.userId });
+export const buyItem = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const item = await WishlistItem.findOne({ _id: req.params.id, userId: req.userId });
 
-  if (item?.isFunded) {
+    if (!item) {
+      res.status(404).json({ message: 'Item not found' });
+      return;
+    }
+
+    if (item.savedAmount !== item.cost) {
+      res.status(400).json({ message: 'Item is not fully funded' });
+      return;
+    }
     await item.deleteOne();
+    await updateTotalSavedAmount(req.userId!);
     res.sendStatus(200);
-  } else {
-    res.status(400).json({ message: 'Item is not funded' });
+  } catch (err) {
+    console.error('Error in buyItem:', err);
+    res.status(500).json({ message: 'Server error while buying item' });
   }
 };
 

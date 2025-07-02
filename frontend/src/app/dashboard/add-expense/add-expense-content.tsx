@@ -37,6 +37,7 @@ export default function AddExpenseContent(): React.JSX.Element {
   const wishlistState = useSelector((state: RootState) => state.wishlist);
   const userState = useSelector((state: RootState) => state.user);
 
+  
   //Add amount to TempWallet
   const [walletAmount, addWalletAmount] = React.useState(false);    
   const handleWalletOpen = () => addWalletAmount(true);
@@ -192,9 +193,9 @@ export default function AddExpenseContent(): React.JSX.Element {
             xs: 12,
           }}
         >
-        { userState?.data?.id &&
+        { userState?.data?._id &&
           <AddExpenseForm 
-            userid={userState.data.id}
+            userid={userState.data._id}
             maximumSafeAmount={tempWallet}
             onAdd={(payload) => dispatch(addExpense(payload))}
             onAddPreview={(value) => dispatch(addPreviewExpense(value))}

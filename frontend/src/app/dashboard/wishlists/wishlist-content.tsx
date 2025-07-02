@@ -25,7 +25,7 @@ import {
   thunkBuyItem,
 } from '@/redux/thunks/wishlist-thunks';
 import { setPage } from '@/redux/slices/wishlist-slice';
-
+import FullScreenLoader from '@/components/dashboard/loader';
 import { useEffect } from 'react';
 import { clearPreview } from '@/redux/slices/preview-slice';
 
@@ -55,6 +55,13 @@ export default function WishlistContent(): React.JSX.Element {
   );
   const totalPages = Math.ceil(items.length / rowsPerPage);
 
+  const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
+  
+  if (isAppLoading) {
+    return (
+      <FullScreenLoader />
+    );
+  }
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
