@@ -16,6 +16,16 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
   console.debug('handleTemporaryWalletRequest called with:', amountRequested, sourcePreference);
   const newState = deepClone(state);
   const collected = { amountCollected: 0, sources: [] };
+  
+  if (!state.DailyBuffer.isSelected) {
+    const db = Math.min(state.DailyBuffer.balance, amountRequested);
+    if (db > 0) {
+      state.DailyBuffer.balance -= db;
+      collected.amountCollected += db;
+      amountRequested -= db;
+      collected.sources.push({ from: 'DailyBuffer', amount: db });
+    }
+  }
 
   if(canDecreaseBudget){
         const salaryDay = state.User.hasSalary ? state.User.Salary.date : state.SteadyWallet.date;

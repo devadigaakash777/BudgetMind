@@ -44,16 +44,18 @@ export function distributeWishlistFunds(sortedItems, available) {
         const excess = newSaved - item.cost;
         item.savedAmount = item.cost;
         item.monthLeft = 0;
+        item.isFunded = true;
         // item.status = 'Ready to Buy';
         available -= (monthlyShare - excess);
       } else {
         item.savedAmount = newSaved;
         available -= monthlyShare;
+        item.isFunded = true;
       }
-    } else {
-      item.savedAmount += available;
-      available = 0;
-      break;
+    // } else {
+    //   item.savedAmount += available;
+    //   available = 0;
+    //   break;
     }
   }
   console.debug('distributeWishlistFunds returned:', available);
@@ -70,7 +72,7 @@ export function fundWishlistItems(state, remaining) {
   console.log("[fundWishlistItems] called with:", { remaining });
 
   const sortedItems = state.Wishlist.items
-    .filter(i => i.priority > 0 && i.savedAmount < i.cost && i.monthLeft > 0)
+    .filter(i => i.priority > 0 && !i.isFunded && i.savedAmount < i.cost && i.monthLeft > 0)
     .sort((a, b) => a.priority - b.priority);
 
   const updatedRemaining = distributeWishlistFunds(sortedItems, remaining);

@@ -1,4 +1,8 @@
+import { smartBudget } from '../services/smartBudget.js';
 import { deepClone } from '../utils/deepClone.js';
+import { getDaysRemaining } from '../utils/dateUtils.js';
+import { getNextSalaryDateISO } from '../utils/convertToDate.js';
+
 
 /**
  * Initialize the system with total wealth and threshold
@@ -36,7 +40,20 @@ export function initializeState(initialState, totalWealth, threshold) {
       }
     }
 
-    state.TemporaryWallet.balance = remaining;
+    // check whether today is salary day if not add budget till next salary day
+    const today = new Date().getDate();
+    const isSalaryDay = today === state.User.Salary.date;
+    const isSteadyDay = today === state.SteadyWallet.date;
+
+    // If today is not salary day or steady day, do nothing
+    if (!(isSalaryDay || isSteadyDay)) {
+      const salaryDay = state.User.hasSalary ? state.User.Salary.date : state.SteadyWallet.date;
+      const salaryDate = getNextSalaryDateISO(salaryDay);
+      const daysLeft = getDaysRemaining(salaryDate);
+      const result = smartBudget(state ,remaining, daysLeft);
+      state.TemporaryWallet.balance = result.remaining;
+    }   
+
   } else {
     if (!state.User.hasSalary) {
       console.warn("Insufficient wealth and no salary. Cannot initialize.");

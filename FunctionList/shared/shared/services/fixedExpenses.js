@@ -54,15 +54,6 @@ export function consumeFromMainPath(state, needed) {
     sources.push({ from: 'MainWallet', amount: mw });
   }
 
-  if (!state.DailyBuffer.isSelected) {
-    const db = Math.min(state.DailyBuffer.balance, needed - total);
-    if (db > 0) {
-      state.DailyBuffer.balance -= db;
-      total += db;
-      sources.push({ from: 'DailyBuffer', amount: db });
-    }
-  }
-
   const fx = deductFromFixedExpenses(state.FixedExpenses.expenses, needed - total);
   state.FixedExpenses.totalSavedAmount -= fx.amount;
   total += fx.amount;
@@ -96,6 +87,7 @@ export function deductFromFixedExpenses(expenses, needed) {
         const amountFunded = item.amount - item.amountToFund;
         const take = Math.min(amountFunded, needed - total);
         item.amountToFund += take;
+        item.isFunded = false;
         total += take;
         sources.push({ from: 'FixedExpenses', id: item.id || i, amount: take });
       }

@@ -11,9 +11,10 @@ import { addDailyBufferToTemporaryWallet } from './dailyBufferService.js';
  * Steps:
  * 1. Handles expired fixed expenses
  * 2. Adds DailyBuffer to TemporaryWallet
- * 3. Deducts fixed expenses
+ * 3.Deduct amount from Temporary Wallet
  * 4. Calculates and funds the Monthly Budget (DailyBudget)
- * 5. Allocates any leftover salary to Wishlist items
+ * 5. Deducts fixed expenses
+ * 6. Allocates any leftover salary to Wishlist items
  * 
  * Why needed:
  * This is the core monthly budgeting process — ensures all wallets and budgets are balanced each salary cycle.
@@ -29,18 +30,18 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
 
   const newState = deepClone(state);
 
-  const today = currentDate.getDate();
-  const isSalaryDay = today === state.User.Salary.date;
-  const isSteadyDay = today === state.SteadyWallet.date;
+  // const today = currentDate.getDate();
+  // const isSalaryDay = today === state.User.Salary.date;
+  // const isSteadyDay = today === state.SteadyWallet.date;
 
   // 1. Handle any expired fixed expenses first
   handleFixedExpenseItems(newState);
 
-  // If today is not salary day or steady day, do nothing
-  if (!(isSalaryDay || isSteadyDay)) {
-    console.log("[processSalary] not a salary/steady day, returning unchanged state");
-    return newState;
-  }
+  // // If today is not salary day or steady day, do nothing
+  // if (!(isSalaryDay || isSteadyDay)) {
+  //   console.log("[processSalary] not a salary/steady day, returning unchanged state");
+  //   return newState;
+  // }
 
   // Determine actual salary to use
   if (!state.User.hasSalary) {
@@ -57,6 +58,7 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
     salary = state.SteadyWallet.monthlyAmount;
 
     // Deduct month and balance only if enough balance exists
+    console.log("[processSalary] SteadyWallet balance = "+newState.SteadyWallet.balance+"and Salary= "+salary );
     if (newState.SteadyWallet.balance >= salary) {
       newState.SteadyWallet.month--;
       newState.SteadyWallet.balance -= salary;
@@ -66,20 +68,20 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
     }
   }
 
-  newState.User.Salary.amount = salary;
+  // newState.User.Salary.amount = salary;
   let remaining = salary;
 
   // 2. Move DailyBuffer funds to TemporaryWallet
   addDailyBufferToTemporaryWallet(newState);
 
-  // 3. Deduct fixed expenses first
+  // 3.Deduct amount from Temporary Wallet
   deductTemporaryWallet(newState);
-  remaining = deductFixedExpenses(newState, remaining);
 
+
+  // 4. Process DailyBudget
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   let monthlyBudget = 0;
 
-  // 4. Process DailyBudget
   if (userDailyBudget !== null) {
     console.debug("[DailyBudget] Input userDailyBudget:", userDailyBudget);
 
@@ -122,7 +124,10 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
     console.debug("[DailyBudget] Final remaining after budget:", remaining);
   }
 
-  // 5. Allocate leftover funds to Wishlist items
+  // 5. Deduct fixed expenses 
+  remaining = deductFixedExpenses(newState, remaining);
+
+  // 6. Allocate leftover funds to Wishlist items
   remaining = fundWishlistItems(newState, remaining);
 
   // If no userDailyBudget provided, fallback to smartBudget calculation
@@ -147,8 +152,11 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
   });
 
   newState.Wishlist.items.forEach(item => {
-    if (item.priority > 0 && item.monthLeft > 0) {
+    if (item.priority > 0 && item.monthLeft > 0 && item.isFunded) {
       item.monthLeft = Math.max(0, item.monthLeft - 1);
+      if(item.savedAmount != item.cost){
+          item.isFunded = false;
+      }
     }
   });
 
@@ -171,6 +179,7 @@ export function extendSteadyWalletMonth(state, topUp) {
 
   if (state.TemporaryWallet.balance >= topUp) {
     state.TemporaryWallet.balance -= topUp;
+    state.SteadyWallet.balance = topUp;
     state.SteadyWallet.month++;
     console.warn("[extendSteadyWalletMonth] Extended month using TemporaryWallet");
     return true;
@@ -178,6 +187,7 @@ export function extendSteadyWalletMonth(state, topUp) {
 
   if (state.MainWallet.balance >= topUp) {
     state.MainWallet.balance -= topUp;
+    state.SteadyWallet.balance = topUp;
     state.SteadyWallet.month++;
     console.warn("[extendSteadyWalletMonth] Extended month using MainWallet");
     return true;

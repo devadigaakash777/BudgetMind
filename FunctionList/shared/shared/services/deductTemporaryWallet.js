@@ -1,4 +1,4 @@
-import { fundAllWishlistItems } from './fundWishlist.js';
+import { fundWishlistItems } from './fundWishlist.js';
 import { deductFixedExpenses } from './fixedExpenses.js';
 
 /**
@@ -9,7 +9,7 @@ export function deductTemporaryWallet(state) {
   console.debug('deductTemporaryWallet called');
   let remaining = state.TemporaryWallet.balance;
   remaining = deductFixedExpenses(state, remaining);
-  remaining = fundAllWishlistItems(state, remaining);
+  remaining = fundWishlistItems(state, remaining);
   state.TemporaryWallet.balance = remaining;
   console.debug('deductTemporaryWallet updated balance:', remaining);
 }

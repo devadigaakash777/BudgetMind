@@ -1,47 +1,47 @@
 // ========================
 // STATE REPRESENTATION
 // ========================
-const initialState = {
-  User: { hasSalary: false },
-  MainWallet: { balance: 0 },
-  TemporaryWallet: { balance: 0 },
-  SteadyWallet: { balance: 0, month: 4, date: 1, monthlyAmount: 4000 },
-  Wishlist: { items: [] },
-  DailyBuffer: { balance: 0 },
-  FixedExpenses: { expenses: [] },
-  MonthlyBudget: { amount: 0 },
-  DailyBudget: { amount: 0, min: 0, max: 0 },
-  TotalWealth: { amount: 0 },
-  Salary: { amount: 0, date: 1 }, // date: day of month (1-31)
-  PendingPayments: { amount: 0 },
-  threshold: 0 // User-defined threshold for MainWallet
-};
 // const initialState = {
-//   User: { hasSalary: true },
-//   MainWallet: { balance: 50000, isSelected: false },
-//   TemporaryWallet: { balance: 50000 },
-//   SteadyWallet: { balance: 0, month: 12, date: 1, monthlyAmount: 5000, isSelected: false },
-//   Wishlist: {
-//     items: [
-//       { id: 'A', savedAmount: 5000, priority: 3, cost: 10000, monthsToBuy: 5, isFunded: false, isSelected: false },
-//       { id: 'B', savedAmount: 1500, priority: 1, cost: 3000, monthsToBuy: 3, isFunded: false, isSelected: true}
-//     ]
-//   },
-//   DailyBuffer: { balance: 0, isSelected: false },
-//   FixedExpenses: {
-//     expenses: [
-//       { id: 1, isPaid: false, amount: 1500, isPermanent: true, isFunded: true, durationInMonths: 3, amountToFund: 0, isSelected: true },
-//       { id: 2, isPaid: true, amount: 2000, isPermanent: true, isFunded: true, durationInMonths: 1, amountToFund: 2000, isSelected: false },
-//       { id: 3, isPaid: false, amount: 800, isPermanent: true, isFunded: true, durationInMonths: 2, amountToFund: 300, isSelected: false }
-//     ]
-//   },
+//   User: { hasSalary: false },
+//   MainWallet: { balance: 0 },
+//   TemporaryWallet: { balance: 0 },
+//   SteadyWallet: { balance: 0, month: 4, date: 1, monthlyAmount: 4000 },
+//   Wishlist: { items: [] },
+//   DailyBuffer: { balance: 0 },
+//   FixedExpenses: { expenses: [] },
 //   MonthlyBudget: { amount: 0 },
-//   DailyBudget: { amount: 0, min: 100, max: 500 }, // added min and max
-//   TotalWealth: { amount: 100000 },
-//   Salary: { amount: 0, date: 1 }, // today is salary day
+//   DailyBudget: { amount: 0, min: 0, max: 0 },
+//   TotalWealth: { amount: 0 },
+//   Salary: { amount: 0, date: 1 }, // date: day of month (1-31)
 //   PendingPayments: { amount: 0 },
-//   threshold: 50000
+//   threshold: 0 // User-defined threshold for MainWallet
 // };
+const initialState = {
+  User: { hasSalary: true },
+  MainWallet: { balance: 50000, isSelected: false },
+  TemporaryWallet: { balance: 50000 },
+  SteadyWallet: { balance: 50000, month: 12, date: 1, monthlyAmount: 5000, isSelected: false },
+  Wishlist: {
+    items: [
+      { id: 'A', savedAmount: 5000, priority: 3, cost: 10000, monthLeft: 5, isFunded: false, isSelected: false },
+      { id: 'B', savedAmount: 1500, priority: 1, cost: 3000, monthLeft: 3, isFunded: false, isSelected: true}
+    ]
+  },
+  DailyBuffer: { balance: 0, isSelected: false },
+  FixedExpenses: {
+    expenses: [
+      { id: 1, isPaid: false, amount: 1500, isPermanent: true, isFunded: true, durationInMonths: 3, amountToFund: 0, isSelected: true },
+      { id: 2, isPaid: true, amount: 2000, isPermanent: true, isFunded: true, durationInMonths: 1, amountToFund: 2000, isSelected: false },
+      { id: 3, isPaid: false, amount: 800, isPermanent: true, isFunded: true, durationInMonths: 2, amountToFund: 300, isSelected: false }
+    ]
+  },
+  MonthlyBudget: { amount: 0 },
+  DailyBudget: { amount: 0, min: 100, max: 500 }, // added min and max
+  TotalWealth: { amount: 100000 },
+  Salary: { amount: 0, date: 1 }, // today is salary day
+  PendingPayments: { amount: 0 },
+  threshold: 50000
+};
 
 
 // ========================

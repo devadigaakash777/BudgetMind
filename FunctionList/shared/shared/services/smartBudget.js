@@ -10,8 +10,8 @@ import { splitAmountByDays } from '../utils/splitAmountByDays.js';
 export function smartBudget(state, remaining, daysInMonth) {
   console.log("[smartBudget] called with:", { remaining, daysInMonth });
 
-  const dayBudget = splitAmountByDays(remaining, daysInMonth);
-  state.TemporaryWallet.balance += dayBudget.leftoverAmount;
+  const dayBudget = splitAmountByDays(state.DailyBudget.max, remaining, daysInMonth);
+  // state.TemporaryWallet.balance += dayBudget.leftoverAmount;
   let ideal = dayBudget.dailyAmount;
   ideal = Math.max(state.DailyBudget.min, Math.min(ideal, state.DailyBudget.max));
   const monthlyBudget = parseFloat((ideal * daysInMonth).toFixed(2));
@@ -19,9 +19,10 @@ export function smartBudget(state, remaining, daysInMonth) {
   if (monthlyBudget > remaining) {
     throw new Error("Not enough funds for minimum daily budget.");
   }
-  remaining = remaining - (monthlyBudget + dayBudget.leftoverAmount);
+  remaining = dayBudget.leftoverAmount;
   state.DailyBudget.amount = ideal;
   console.debug("[smartBudget] remaining:", remaining);
   console.debug("[smartBudget] returning:", monthlyBudget);
+
   return { monthlyBudget, remaining };
 }
