@@ -34,6 +34,7 @@ type BudgetSetupDialogProps = {
     minAmount: number;
     maxAmount: number;
   }) => void;
+  onCalculateBudget: () => void
 };
 
 const steps = ['Total Wealth', 'Salary Info', 'Daily Budget'];
@@ -48,6 +49,7 @@ export function BudgetSetupDialog({
   onSteadySave,
   onThresholdSave,
   onDailyBudgetSave,
+  onCalculateBudget
 }: BudgetSetupDialogProps) {
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -82,6 +84,7 @@ export function BudgetSetupDialog({
     maxAmount: number;
   }) => {
     onDailyBudgetSave(value);
+    onCalculateBudget();
     handleNext();
   };
 

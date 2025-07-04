@@ -35,7 +35,6 @@ export function consumeFromMonthlyBudget(state, requiredAmount = null, dateStr =
   }
 
   // Apply updates
-  state.MonthlyBudget.amount = usableBudget;
 
   const expectedDailyTotal = dailyActual * daysLeft;
   const extraAmount = expectedDailyTotal - usableBudget;
@@ -44,6 +43,8 @@ export function consumeFromMonthlyBudget(state, requiredAmount = null, dateStr =
   console.debug('[consumeFromMonthlyBudget] extraAmount:', extraAmount);
 
   const result = smartBudget(state, usableBudget, daysLeft);
+
+  state.MonthlyBudget.amount = result.monthlyBudget;
 
   state.TemporaryWallet.balance += result.remaining;
 

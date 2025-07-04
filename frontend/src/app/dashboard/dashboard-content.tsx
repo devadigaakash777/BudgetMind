@@ -18,7 +18,7 @@ import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import { TempWalletForm } from '@/components/dashboard/account/expense-wallet-form';
 import { thunkUpdateSteadyWallet, thunkUpdateThreshold, thunkUpdateTotalWealth, thunkUpdateTempWallet } from '@/redux/thunks/wallet-thunks';
 import { thunkUpdateDailyBudget } from '@/redux/thunks/budget-thunks';
-import { setProfileStatus, updateUserSalaryInfo } from '@/redux/thunks/profile-thunks';
+import { setProfileStatus, updateUserSalaryInfo, calculateBudget } from '@/redux/thunks/profile-thunks';
 import { BudgetSetupDialog } from '@/components/dashboard/account/budget-setup-dialog';
 import FullScreenLoader from '@/components/dashboard/loader';
 
@@ -160,6 +160,7 @@ export default function DashboardContent(): React.JSX.Element {
               onSteadySave={(data) => dispatch(thunkUpdateSteadyWallet(data))}
               onThresholdSave={(data) => dispatch(thunkUpdateThreshold(data.threshold))}
               onDailyBudgetSave={(val) => dispatch(thunkUpdateDailyBudget(val))}
+              onCalculateBudget={() => dispatch(calculateBudget())}
           />
         <DailyExpenseChart
           chartSeries={[

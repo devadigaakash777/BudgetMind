@@ -42,15 +42,17 @@ export function initializeState(initialState, totalWealth, threshold) {
 
     // check whether today is salary day if not add budget till next salary day
     const today = new Date().getDate();
-    const isSalaryDay = today === state.User.Salary.date;
+    const isSalaryDay = today === state.User.salary.date;
     const isSteadyDay = today === state.SteadyWallet.date;
 
     // If today is not salary day or steady day, do nothing
     if (!(isSalaryDay || isSteadyDay)) {
-      const salaryDay = state.User.hasSalary ? state.User.Salary.date : state.SteadyWallet.date;
+      const salaryDay = state.User.hasSalary ? state.User.salary.date : state.SteadyWallet.date;
       const salaryDate = getNextSalaryDateISO(salaryDay);
       const daysLeft = getDaysRemaining(salaryDate);
       const result = smartBudget(state ,remaining, daysLeft);
+      state.MonthlyBudget.amount = result.monthlyBudget;
+      state.MonthlyBudget.amountFunded = result.monthlyBudget;
       state.TemporaryWallet.balance = result.remaining;
     }   
 

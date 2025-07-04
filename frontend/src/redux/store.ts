@@ -6,6 +6,7 @@ import wishlistReducer from './slices/wishlist-slice';
 import previewReducer from './slices/preview-slice';
 import expenseReducer from './slices/daily-expenses-slice';
 import loaderReducer from './slices/loader-slice';
+import snackbarReducer from "./slices/snackbar-slice";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
     wishlist: wishlistReducer,
     expense: expenseReducer,
     preview: previewReducer,
-    loader: loaderReducer
+    loader: loaderReducer,
+    snackbar: snackbarReducer,
   },
 });
 

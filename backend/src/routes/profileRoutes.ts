@@ -6,7 +6,8 @@ import {
   updateAvatar,
   markProfileComplete,
   markSalaryPaid,
-  getUserProfile
+  getUserProfile,
+  calculateProfile
 } from '../controllers/profileController.js';
 
 const router = express.Router();
@@ -14,6 +15,7 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.get('/', getUserProfile);
+router.post('/calculate', calculateProfile);
 router.put('/basic', updateBasicProfile);
 router.put('/salary', updateSalary);
 router.patch('/avatar', updateAvatar);

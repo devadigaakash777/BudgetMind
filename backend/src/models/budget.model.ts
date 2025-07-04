@@ -17,11 +17,11 @@ export interface IExpense extends Document {
 // --- Summary Interface (BudgetState format) ---
 export interface IBudgetSummary extends Document {
   userId: string;
-  monthlyBudget: {
+  MonthlyBudget: {
     amount: number;
     amountFunded: number;
   };
-  dailyBudget: {
+  DailyBudget: {
     amount: number;
     setAmount: number;
     min: number;
@@ -50,11 +50,11 @@ const ExpenseSchema = new Schema<IExpense>({
 // --- Summary Schema (nested FixedExpenses) ---
 const BudgetSummarySchema = new Schema<IBudgetSummary>({
   userId: { type: String, required: true, unique: true },
-  monthlyBudget: {
+  MonthlyBudget: {
     amount: { type: Number, default: 0 },
     amountFunded: { type: Number, default: 0 }
   },
-  dailyBudget: {
+  DailyBudget: {
     amount: { type: Number, default: 0 },
     setAmount: { type: Number, default: 0 },
     min: { type: Number, default: 0 },

@@ -28,6 +28,7 @@ export const fetchBudgetSummary = createAsyncThunk(
   async (_, { dispatch }) => {
     const res = await axios.get<BudgetSummaryResponse>(`${BASE_URL}/budget/summary`);
     const { summary } = res.data;
+    console.debug("fetchBudgetSummary "+res.status);
     dispatch(updateBudgetState({
       MonthlyBudget: summary.MonthlyBudget,
       DailyBudget: summary.DailyBudget,
@@ -41,6 +42,7 @@ export const thunkAddFixedExpense = createAsyncThunk(
   'budget/addFixedExpense',
   async (expense: ExpenseBase, { dispatch }) => {
     const res = await axios.post<Expense>(`${BASE_URL}/budget/expenses`, expense);
+    console.debug("addFixedExpense "+res.status);
     dispatch(addFixedExpense(res.data));
   }
 );
@@ -58,7 +60,8 @@ export const thunkDeleteFixedExpense = createAsyncThunk(
 export const thunkPayFixedExpense = createAsyncThunk(
   'budget/payFixedExpense',
   async (id: string, { dispatch }) => {
-    await axios.patch(`${BASE_URL}/budget/expenses/${id}/pay`);
+    const res = await axios.patch(`${BASE_URL}/budget/expenses/${id}/pay`);
+    console.debug("payFixedExpense "+res.status);
     dispatch(payExpense(id));
   }
 );
@@ -67,7 +70,8 @@ export const thunkPayFixedExpense = createAsyncThunk(
 export const thunkIncreaseDuration = createAsyncThunk(
   'budget/increaseDuration',
   async (id: string, { dispatch }) => {
-    await axios.patch(`${BASE_URL}/budget/expenses/${id}/duration`, { type: 'increase' });
+    const res = await axios.patch(`${BASE_URL}/budget/expenses/${id}/duration`, { type: 'increase' });
+    console.debug("increaseDuration "+res.status);
     dispatch(increaseDuration(id));
   }
 );
@@ -76,7 +80,8 @@ export const thunkIncreaseDuration = createAsyncThunk(
 export const thunkDecreaseDuration = createAsyncThunk(
   'budget/decreaseDuration',
   async (id: string, { dispatch }) => {
-    await axios.patch(`${BASE_URL}/budget/expenses/${id}/duration`, { type: 'decrease' });
+    const res = await axios.patch(`${BASE_URL}/budget/expenses/${id}/duration`, { type: 'decrease' });
+    console.debug("decreaseDuration "+res.status);
     dispatch(decreaseDuration(id));
   }
 );
@@ -88,6 +93,7 @@ export const thunkUpdateDailyBudget = createAsyncThunk(
     { dispatch }
   ) => {
     const res = await axios.patch(`${BASE_URL}/budget/daily-budget`, data);
+    console.debug("updateDailyBudget "+res.status);
     // dispatch local Redux update only after success
     dispatch(updateDailyBudget(data));
   }

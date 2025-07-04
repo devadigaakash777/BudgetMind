@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Profile from '../models/profile.model.js';
 import User from '../models/User.js';
+import { finalizeProfile } from "../services/profile.service.js";
 
 const getOrCreateProfile = async (userId: string) => {
   let profile = await Profile.findOne({ userId });
@@ -90,4 +91,15 @@ export const markSalaryPaid = async (req: Request, res: Response) => {
   profile.isSalaryPaid = req.body.isSalaryPaid;
   await profile.save();
   res.json({ message: 'Salary status updated' });
+};
+
+export const calculateProfile = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).userId; // from JWT or session
+        const newState = await finalizeProfile(userId);
+        res.status(200).json({ message: newState });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to calculate profile" });
+    }
 };

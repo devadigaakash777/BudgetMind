@@ -33,8 +33,8 @@ export const getBudgetSummary = async (req: AuthRequest, res: Response) => {
 
   // Merge summary and expenses correctly
   const fullSummary = {
-    MonthlyBudget: summary.monthlyBudget,
-    DailyBudget: summary.dailyBudget,
+    MonthlyBudget: summary.MonthlyBudget,
+    DailyBudget: summary.DailyBudget,
     FixedExpenses: {
       expenses,
       rowsPerPage: summary.FixedExpenses?.rowsPerPage || 3,
@@ -75,9 +75,9 @@ export const updateDailyBudget = async (req: AuthRequest, res: Response) => {
     { userId },
     {
       $set: {
-        'dailyBudget.setAmount': setAmount,
-        'dailyBudget.min': minAmount,
-        'dailyBudget.max': maxAmount
+        'DailyBudget.setAmount': setAmount,
+        'DailyBudget.min': minAmount,
+        'DailyBudget.max': maxAmount
       }
     },
     { new: true, upsert: true }

@@ -6,6 +6,7 @@ import type { BudgetState } from '@/types/budget';
 import { logExtendedExpense, handleTemporaryWalletRequest } from '@/utils/shared';
 import { PreviewState } from '@/types/preview'
 
+
 type ExpenseInput = {
   amount: number;
   duration?: number;
