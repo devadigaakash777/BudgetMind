@@ -32,7 +32,7 @@ export default function ExpenseContent(): React.JSX.Element {
 
   const expenseState = useSelector((state: RootState) => state.expense);
   const dailyExpenses = expenseState.data.map((expense) => ({
-    id: expense.id,
+    _id: expense._id,
     userId: expense.userId,
     amount: expense.amount,
     date: expense.date,

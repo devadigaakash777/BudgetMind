@@ -43,7 +43,7 @@ export function DailyExpensesTable({
   onRowsPerPageChange = () => {},
 }: DailyExpensesTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
-    return rows.map((dailyExpenses) => dailyExpenses.id);
+    return rows.map((dailyExpenses) => dailyExpenses._id);
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -80,18 +80,18 @@ export function DailyExpensesTable({
           <TableBody>
             {rows.map((row) => {
               const { label, color } = statusMap[row.amountStatus] ?? { label: 'Unknown', color: 'default' };
-              const isSelected = selected?.has(row.id);
+              const isSelected = selected?.has(row._id);
 
               return (
-                <TableRow hover key={row.id} selected={isSelected}>
+                <TableRow hover key={row._id} selected={isSelected}>
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={isSelected}
                       onChange={(event) => {
                         if (event.target.checked) {
-                          selectOne(row.id);
+                          selectOne(row._id);
                         } else {
-                          deselectOne(row.id);
+                          deselectOne(row._id);
                         }
                       }}
                     />

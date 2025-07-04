@@ -7,6 +7,7 @@ import walletRoutes from './routes/walletRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import dailyExpenseRoutes from './routes/dailyExpenseRoutes.js';
 import connectDB from './config/db.js';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api/wallet', walletRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/budget', budgetRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/expense', dailyExpenseRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

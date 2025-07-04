@@ -1,7 +1,7 @@
 export type AmountStatus = 'above' | 'equal' | 'below';
 
 export interface DailyExpense {
-  id: string;
+  _id: string;
   userId: string;
   amount: number;
   date: string;

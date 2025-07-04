@@ -67,7 +67,7 @@ export default function DashboardContent(): React.JSX.Element {
 
   //Fixed Cost
   const expenses = budgetState.FixedExpenses.expenses.map((expense) => ({
-    id: `BILL-${String(expense._id).padStart(3, '0')}`, // e.g., ORD-001
+    id: expense._id,
     billName: expense.billName,
     amount: expense.amount,
     dueAmount: expense.amountToFund,

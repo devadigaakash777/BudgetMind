@@ -8,6 +8,7 @@ import { fetchWishlist } from '@/redux/thunks/wishlist-thunks';
 import { fetchBudgetSummary } from '@/redux/thunks/budget-thunks';
 import { fetchUserProfile } from '@/redux/thunks/profile-thunks';
 import { setAppLoading } from '@/redux/slices/loader-slice';
+import { thunkFetchDailyExpenses } from '@/redux/thunks/expense-thunks'
 
 const AppInitLoader = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,7 +23,8 @@ const AppInitLoader = () => {
           dispatch(fetchUserProfile()).unwrap(),
           dispatch(fetchWallet()).unwrap(),
           dispatch(fetchWishlist()).unwrap(),
-          dispatch(fetchBudgetSummary()).unwrap()
+          dispatch(fetchBudgetSummary()).unwrap(),
+          dispatch(thunkFetchDailyExpenses()).unwrap()
         ]);
         dispatch(setAppLoading(false));
       } catch (error) {

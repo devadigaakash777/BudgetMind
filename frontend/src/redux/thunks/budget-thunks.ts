@@ -28,7 +28,6 @@ export const fetchBudgetSummary = createAsyncThunk(
   async (_, { dispatch }) => {
     const res = await axios.get<BudgetSummaryResponse>(`${BASE_URL}/budget/summary`);
     const { summary } = res.data;
-    console.log(summary);
     dispatch(updateBudgetState({
       MonthlyBudget: summary.MonthlyBudget,
       DailyBudget: summary.DailyBudget,
