@@ -10,6 +10,8 @@ import profileRoutes from './routes/profileRoutes.js';
 import dailyExpenseRoutes from './routes/dailyExpenseRoutes.js';
 import connectDB from './config/db.js';
 
+import { finalizeSalary } from "./services/profile.service.js";
+
 dotenv.config();
 
 connectDB();

@@ -43,7 +43,7 @@ export const addPreviewExpense = function (expense: ExpenseInput) {
   return function (dispatch: AppDispatch, getState: () => RootState) {
     const state = getState().preview;
     const date = new Date();
-    const { newState } = logExtendedExpense(state, expense, date) as LogExpenseResult;
+    const { newState } = logExtendedExpense(state, expense, date,  "user", " ") as LogExpenseResult;
     if (newState.DailyBudget) {
       newState.DailyBudget.amount = Math.max(0, newState.DailyBudget.amount - expense.amount);
     }

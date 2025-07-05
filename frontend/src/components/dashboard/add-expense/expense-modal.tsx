@@ -23,11 +23,12 @@ type AddExpenseFormProps = {
   userid: string;
   maximumSafeAmount: number;
   onAdd: (payload: {
-    id: string;
-    userId: string;
-    amount: number;
+    totalAmount: number;
     details: string;
     numberOfDays: number;
+    source: 'main' | 'wishlist';
+    canReduceBudget: boolean;
+    usedBoth: boolean;
   }) => void;
   onAddPreview: (payload: {
     amount: number; 
@@ -38,6 +39,14 @@ type AddExpenseFormProps = {
   onSelectSource: (value: 'main' | 'wishlist') => void;
   onChangeCanBudget: (val: boolean) => void;
   onRequest: (amount: number, source: 'main' | 'wishlist', canChange: boolean) => void;
+  sourceSelections: {
+    main: boolean;
+    wishlist: boolean;
+  };
+  setSourceSelections: React.Dispatch<React.SetStateAction<{
+    main: boolean;
+    wishlist: boolean;
+  }>>;
 };
 
 export function AddExpenseForm({
@@ -49,7 +58,9 @@ export function AddExpenseForm({
   gaugeList,
   onSelectSource,
   onChangeCanBudget,
-  onRequest
+  onRequest,
+  sourceSelections,
+  setSourceSelections,
 }: AddExpenseFormProps): React.JSX.Element {
   
   const [formData, setFormData] = React.useState({
@@ -57,6 +68,20 @@ export function AddExpenseForm({
     numberOfDays: 1,
     details: ''
   });
+
+  // Update source and budget status
+  const [selectedSource, setSelectedSource] = React.useState<'main' | 'wishlist'>('main');
+  const [canReduceBudget, setCanReduceBudget] = React.useState(false);
+
+
+  // To check whether both selected
+  const [usedBoth, setUsedBoth] = React.useState(false);
+  React.useEffect(() => {
+    if (sourceSelections.main && sourceSelections.wishlist) {
+      setUsedBoth(true);
+      console.log("✅ Both 'main' and 'wishlist' have been selected at least once.");
+    }
+  }, [sourceSelections]);
 
   //Request Money Model
   const [open, setOpen] = React.useState(false);
@@ -82,11 +107,12 @@ export function AddExpenseForm({
 
 
     onAdd({
-      id: "",
-      userId: userid,
-      amount: formData.amount,
+      totalAmount: formData.amount,
       details: formData.details,
-      numberOfDays: formData.numberOfDays
+      numberOfDays: formData.numberOfDays,
+      source: selectedSource,
+      canReduceBudget: canReduceBudget,
+      usedBoth: usedBoth
     });
 
     //Preview mode
@@ -116,8 +142,15 @@ export function AddExpenseForm({
               ? Math.max(formData.amount - maximumSafeAmount, 0)
               : 0
           }
-          onSelectSource={onSelectSource}
-          onChangeCanBudget={onChangeCanBudget}
+          onSelectSource={(value) => {
+            setSelectedSource(value);
+            onSelectSource(value); 
+            setSourceSelections((prev) => ({ ...prev, [value]: true })); // still increments normally
+          }}
+          onChangeCanBudget={(val) => {
+            setCanReduceBudget(val);
+            onChangeCanBudget(val); 
+          }}
           onRequest={onRequest}
         />
         <Divider />

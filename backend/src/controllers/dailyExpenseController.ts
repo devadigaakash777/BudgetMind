@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import DailyExpense, { IDailyExpense } from '../models/expense.model.js';
 import mongoose from 'mongoose';
+import { BudgetSummary } from "../models/budget.model.js";
+import { processDailyExpense, handleTempWallet } from "../services/dailyExpense.service.js";
+import { Wallet } from "../models/wallet.model.js";
 
 // 1. Fetch user expenses
 export const getUserDailyExpenses = async (req: Request, res: Response) => {
@@ -41,34 +44,42 @@ export const generateAndAddExpenses = async (req: Request, res: Response) => {
       details,
       source,
       canReduceBudget,
+      usedBoth
     }: {
       totalAmount: number;
       numberOfDays: number;
       details: string;
       source: 'wishlist' | 'main';
       canReduceBudget: boolean;
+      usedBoth: boolean;
     } = req.body;
+    const generatedExpenses = req.body;
+    // Checking whether take money from wishlist or main
+    // const budget = await BudgetSummary.findOne({ userId }).lean();
+    // if (!budget) throw new Error(`BudgetSummary not found for user ${userId}`);
+    // const actualDailyBudget = budget.DailyBudget.amount * numberOfDays;
 
-    const today = new Date();
-    const perDayAmount = totalAmount / numberOfDays;
+    // const wallet = await Wallet.findOne({ userId }).lean();
+    // if (!wallet) throw new Error(`Wallet not found for user ${userId}`);
+    // const walletBudget = wallet.TemporaryWallet.balance;
 
-    const generatedExpenses: Partial<IDailyExpense>[] = Array.from({ length: numberOfDays }, (_, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + index);
-      const isoDate = date.toISOString().split('T')[0];
+    // const totalBudget = actualDailyBudget + walletBudget;
 
-      return {
-        userId: new mongoose.Types.ObjectId(userId),
-        amount: Math.round(perDayAmount),
-        date: isoDate,
-        details,
-        balance: 0,
-        amountStatus: 'equal',
-        amountDifference: 0,
-      };
-    });
+    // let prefer = source;
+    // for(let i=0; i<2; i++){
+    //   if(totalAmount < totalBudget){
+    //     handleTempWallet(userId, 100, prefer, canReduceBudget)
+    //   }
+    //   prefer = "main";
+    // }
 
-    await DailyExpense.insertMany(generatedExpenses);
+    // const today = new Date();
+    // const expense = {amount: totalAmount, duration: numberOfDays}
+
+    // const generatedExpenses = processDailyExpense(expense, today, userId, details)
+
+    console.log(JSON.stringify(generatedExpenses, null, 2));
+    // await DailyExpense.insertMany(generatedExpenses);
     res.status(201).json({ message: 'Generated and added expenses', data: generatedExpenses });
   } catch (error) {
     res.status(500).json({ error: 'Failed to generate/add expenses', details: error });

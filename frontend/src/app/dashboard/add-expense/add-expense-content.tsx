@@ -9,7 +9,8 @@ import { Grid } from '@mui/system';
 
 import { useSelector, useDispatch} from 'react-redux';
 import { RootState } from '@/redux/store';
-import { addExpense, selectSource, reduceBudget } from '@/redux/slices/daily-expenses-slice';
+import { selectSource, reduceBudget } from '@/redux/slices/daily-expenses-slice';
+import { thunkGenerateAndAddExpenses } from '@/redux/thunks/expense-thunks'
 import { AddExpenseForm } from '@/components/dashboard/add-expense/expense-modal'
 import { useEffect } from 'react';
 import { syncPreview, addPreviewExpense, requestMoney } from '@/redux/thunks/preview-thunks'; 
@@ -29,6 +30,7 @@ export default function AddExpenseContent(): React.JSX.Element {
 
   useEffect(() => {
     dispatch(syncPreview());
+    setSourceSelections({ main: false, wishlist: false });
   }, [dispatch]);
 
   const previewState = useSelector((state: RootState) => state.preview);
@@ -65,6 +67,15 @@ export default function AddExpenseContent(): React.JSX.Element {
 
     console.log(previewState?.FixedExpenses);
 
+  //check whether both selected to fetch money
+  const [sourceSelections, setSourceSelections] = React.useState({
+    main: false,
+    wishlist: false
+  });
+  const handleReset = () => {
+    dispatch(syncPreview());
+    setSourceSelections({ main: false, wishlist: false }); // 🔄 reset
+  };
 
   // wishlist items 
    const products = (previewState?.Wishlist?.items ?? wishlistState.items).map(
@@ -140,7 +151,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           color="primary"
           variant="contained"
           startIcon={<ArrowCounterClockwiseIcon size={20} />}
-          onClick={() => dispatch(syncPreview())}
+          onClick={handleReset}
         >
           Reset
         </Button>
@@ -197,7 +208,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           <AddExpenseForm 
             userid={userState.data._id}
             maximumSafeAmount={tempWallet}
-            onAdd={(payload) => dispatch(addExpense(payload))}
+            onAdd={(payload) => dispatch(thunkGenerateAndAddExpenses(payload))}
             onAddPreview={(value) => dispatch(addPreviewExpense(value))}
             pieChartSeries={pieChartSeries} 
             gaugeList={gaugeList}
@@ -206,6 +217,8 @@ export default function AddExpenseContent(): React.JSX.Element {
             onRequest={(amount, source, canReduce) =>
               dispatch(requestMoney(amount, source, canReduce))
             }
+            sourceSelections={sourceSelections}
+            setSourceSelections={setSourceSelections}
           />
         }
         </Grid>

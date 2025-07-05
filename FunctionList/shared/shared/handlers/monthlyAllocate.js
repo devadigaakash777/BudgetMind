@@ -20,22 +20,6 @@ import { processSalary } from '../services/processSalary.js';
 export function monthlyAllocate(state, currentDate, salary = null, userDailyBudget = null) {
   console.log("[monthlyAllocate] called with:", { state, currentDate, salary, userDailyBudget });
 
-  // const today = currentDate.getDate();
-
-  // // Safely check if today matches salary day (only if user has salary enabled)
-  // const hasSalaryEnabled = state.User?.hasSalary === true;
-  // const salaryDay = hasSalaryEnabled && state.User.Salary?.date;
-  // const isSalaryDay = hasSalaryEnabled && today === salaryDay;
-
-  // // Always safe to check steady wallet day
-  // const steadyWalletDay = state.SteadyWallet?.date;
-  // const isSteadyDay = today === steadyWalletDay;
-
-  // // If today is a salary day or steady wallet day, process funds
-  // const shouldAllocate = isSalaryDay || isSteadyDay;
-  // const updatedState = shouldAllocate
-  //   ? processSalary(state, salary, currentDate, userDailyBudget)
-  //   : state; // no allocation today — return state unchanged
   let updatedState 
   try{
     updatedState = processSalary(state, salary, currentDate, userDailyBudget)

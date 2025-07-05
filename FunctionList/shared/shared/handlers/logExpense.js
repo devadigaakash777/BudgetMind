@@ -10,7 +10,7 @@ import { getAmountComparison } from '../utils/getAmountComparison.js';
  * @param {Date} currentDate - Date the expense starts
  * @returns {object} Updated state object
  */
-export function logExtendedExpense(state, expense, currentDate) {
+export function logExtendedExpense(state, expense, currentDate, userId, details) {
   const newState = structuredClone(state);
   const dailyBudget = newState.DailyBudget.amount;
 
@@ -26,17 +26,23 @@ export function logExtendedExpense(state, expense, currentDate) {
 
   const dailyExpense = newState.DailyBudget.amount;
 
-  const userId = newState.User.id;
+  // const userId = newState.User.id;
+  let balance = newState.MonthlyBudget.amount;
 
+  const data = [];
   for (let i = 0; i < duration; i++) {
     const date = new Date(currentDate);
     const limitStatus = getAmountComparison(dailyExpense, perDay); 
+    balance -= perDay;
     date.setDate(date.getDate() - i);
-    newState.DailyExpense.data.push({
+    data.push({
+      userId: userId,
       amount: perDay,
+      date: date.toISOString().split('T')[0],
+      details: details,
+      balance: balance,
       amountStatus: limitStatus.amountStatus,
       amountDifference: limitStatus.amountDifference,
-      date: date.toISOString().split('T')[0]
     });
   }
 
@@ -70,6 +76,7 @@ export function logExtendedExpense(state, expense, currentDate) {
     }
   }
 
+  newState.DailyBuffer.balance += Math.max(dailyTotal - expense.amount, 0);
   console.debug("[logExtendedExpense] Final state:", newState);
-  return {newState, overage};
+  return {newState, overage, data};
 }

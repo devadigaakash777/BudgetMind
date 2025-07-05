@@ -142,15 +142,20 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
   newState.TemporaryWallet.balance += remaining;
   // Finalize MonthlyBudget fields
   newState.MonthlyBudget.amount = monthlyBudget;
-  newState.MonthlyBudget.fundedAmount = monthlyBudget;
+  newState.MonthlyBudget.amountFunded = monthlyBudget;
 
   // At end of process — decrement duration on one-time (non-permanent) fixed expenses
+  let totalExpenseSavedAmount = newState.FixedExpenses.totalSavedAmount;
   newState.FixedExpenses.expenses.forEach(expense => {
     if (!expense.isPermanent) {
       expense.durationInMonths = Math.max(0, expense.durationInMonths - 1);
     }
+    totalExpenseSavedAmount += (expense.amount - expense.amountToFund);
   });
+  newState.FixedExpenses.totalSavedAmount = totalExpenseSavedAmount;
 
+  // wishlist item final update
+  let totalItemsSavedAmount = newState.Wishlist.totalSavedAmount;
   newState.Wishlist.items.forEach(item => {
     if (item.priority > 0 && item.monthLeft > 0 && item.isFunded) {
       item.monthLeft = Math.max(0, item.monthLeft - 1);
@@ -158,7 +163,9 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
           item.isFunded = false;
       }
     }
+    totalItemsSavedAmount += item.savedAmount;
   });
+  newState.Wishlist.totalSavedAmount = totalItemsSavedAmount;
 
   console.log("[processSalary] returning updated state:", newState);
   return newState;

@@ -26,6 +26,7 @@ interface GenerateExpensePayload {
   details: string;
   source: 'wishlist' | 'main';
   canReduceBudget: boolean;
+  usedBoth: boolean;
 }
 
 // Generate and add expenses to DB

@@ -49,33 +49,95 @@ console.debug('🧠 Wallet Debug Tools Loaded');
 //   threshold: 0 // User-defined threshold for MainWallet
 // };
 
+// window.state = {
+//   User: {
+//     salary: { amount: 15000, date: 1 },
+//     _id: '686290df1104b063309591d8',
+//     userId: '686115e1a30a4213cafd297a',
+//     __v: 3,
+//     address: [ [Object] ],
+//     hasSalary: true,
+//     isProfileComplete: true,
+//     isSalaryPaid: false,
+//     jobTitle: 'Senior Developer',
+//     phone: '9876543210'
+//   },
+//   MainWallet: { balance: 15000 },
+//   TemporaryWallet: { balance: 3000 },
+//   SteadyWallet: { balance: 0, month: 5, date: 15, monthlyAmount: 3000 },
+//   DailyBuffer: { balance: 0 },
+//   TotalWealth: { amount: 32000 },
+//   PendingPayments: { amount: 0 },
+//   _id: '68638fc3f6e180b1f3d76961',
+//   userId: '686115e1a30a4213cafd297a',
+//   threshold: 1000,
+//   __v: 0,
+//   MonthlyBudget: { amount: 0, amountFunded: 0 },
+//   DailyBudget: { amount: 0, setAmount: 0, min: 150, max: 300 },
+//   FixedExpenses: { rowsPerPage: 3, totalSavedAmount: 900 },
+//   _id: '6862548c0b5237f0785ebd6d',
+//   userId: '686115e1a30a4213cafd297a',
+//   __v: 0
+// }
+
 window.state = {
   User: {
-    salary: { amount: 15000, date: 1 },
     _id: '686290df1104b063309591d8',
     userId: '686115e1a30a4213cafd297a',
-    __v: 3,
-    address: [ [Object] ],
+    __v: 7,
+    address: "nothing",
     hasSalary: true,
     isProfileComplete: true,
     isSalaryPaid: false,
     jobTitle: 'Senior Developer',
+    salary: { amount: 50000, date: 2 },
     phone: '9876543210'
   },
-  MainWallet: { balance: 15000 },
-  TemporaryWallet: { balance: 3000 },
-  SteadyWallet: { balance: 0, month: 5, date: 15, monthlyAmount: 3000 },
-  DailyBuffer: { balance: 0 },
-  TotalWealth: { amount: 32000 },
-  PendingPayments: { amount: 0 },
   _id: '68638fc3f6e180b1f3d76961',
   userId: '686115e1a30a4213cafd297a',
-  threshold: 1000,
+  MainWallet: { balance: 10000 },
+  TemporaryWallet: { balance: 8 },
+  SteadyWallet: { balance: 0, month: 5, date: 15, monthlyAmount: 3000 },
+  DailyBuffer: { balance: 0 },
+  TotalWealth: { amount: 30000 },
+  PendingPayments: { amount: 0 },
+  threshold: 10000,
   __v: 0,
-  MonthlyBudget: { amount: 0, amountFunded: 0 },
-  DailyBudget: { amount: 0, setAmount: 0, min: 150, max: 300 },
-  FixedExpenses: { rowsPerPage: 3, totalSavedAmount: 900 },
-  _id: '6862548c0b5237f0785ebd6d',
-  userId: '686115e1a30a4213cafd297a',
-  __v: 0
+  MonthlyBudget: { amount: 19992, amountFunded: 19992 },
+  DailyBudget: { amount: 714, setAmount: 0, min: 125, max: 1025 },
+  FixedExpenses: {
+    expenses: [ {
+      _id: '6867bf7e5ac13c14bd0148dc',
+      userId: '686115e1a30a4213cafd297a',
+      billName: 'Electricity Bill',
+      status: 'pending',
+      dueDate: 9,
+      isPaid: false,
+      amount: 1500,
+      isPermanent: true,
+      isFunded: false,
+      durationInMonths: 1,
+      amountToFund: 1500,
+      __v: 0
+    } ],
+    totalSavedAmount: 0
+  },
+  Wishlist: {
+    items: [{
+      _id: '6863c365f6e180b1f3d769c3',
+      userId: '686115e1a30a4213cafd297a',
+      name: 'Mobile',
+      description: 'Gaming mobile',
+      image: 'https://res.cloudinary.com/ddmlou0da/image/upload/v1751368444/py8gjmvmvnxtlpijo7ej.jpg',
+      savedAmount: 0,
+      priority: 7,
+      cost: 50000,
+      monthLeft: 10,
+      isFunded: false,
+      __v: 0
+    } ],
+    totalSavedAmount: 0
+  }
 }
+
+// [], Whishlist
