@@ -24,7 +24,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
     isProfileComplete: profile.isProfileComplete,
     isSalaryPaid: profile.isSalaryPaid,
     hasSalary: profile.hasSalary,
-    Salary: profile.salary
+    salary: profile.salary
   });
 };
 

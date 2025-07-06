@@ -46,11 +46,16 @@ export function consumeFromMonthlyBudget(state, requiredAmount = null, dateStr =
 
   state.MonthlyBudget.amount = result.monthlyBudget;
 
-  state.TemporaryWallet.balance += result.remaining;
+  const smartDailyBudget =  result.monthlyBudget / daysLeft;
+  const totalRemaining = extraAmount + result.remaining;
 
+  // state.TemporaryWallet.balance += result.remaining;
+
+  console.debug('[consumeFromMonthlyBudget] Result From smart budget: ', result);
   console.debug('[consumeFromMonthlyBudget] TemporaryWallet:', extraAmount);
   // if (extraAmount > 0) {
   //   addToTemporaryWallet(state, extraAmount);
   // }
-  return extraAmount;
+
+  return {totalRemaining, smartDailyBudget};
 }

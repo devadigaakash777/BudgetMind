@@ -17,7 +17,7 @@ const initialState: UserState = {
   isProfileComplete: null,
   isSalaryPaid: true,
   hasSalary: true,
-  Salary: { amount: 10_000, date: 1 }
+  salary: { amount: 10_000, date: 1 }
 };
 
 const userSlice = createSlice({
@@ -38,7 +38,7 @@ const userSlice = createSlice({
         isProfileComplete: boolean;
         isSalaryPaid: boolean;
         hasSalary: boolean;
-        Salary: {
+        salary: {
           amount: number;
           date: number;
         };
@@ -51,7 +51,7 @@ const userSlice = createSlice({
         isProfileComplete,
         isSalaryPaid,
         hasSalary,
-        Salary
+        salary
       } = action.payload;
 
       state.phone = phone;
@@ -60,7 +60,7 @@ const userSlice = createSlice({
       state.isProfileComplete = isProfileComplete;
       state.isSalaryPaid = isSalaryPaid;
       state.hasSalary = hasSalary;
-      state.Salary = Salary;
+      state.salary = salary;
     },
     handleModel(state, action: PayloadAction<boolean>){
       state.isProfileComplete = action.payload;
@@ -96,8 +96,8 @@ const userSlice = createSlice({
       const { jobTitle, hasSalary, salaryAmount, salaryDate } = action.payload;
       state.jobTitle = jobTitle;
       state.hasSalary = hasSalary;
-      state.Salary.amount = salaryAmount;
-      state.Salary.date = salaryDate;
+      state.salary.amount = salaryAmount;
+      state.salary.date = salaryDate;
     },
     updateBasicInfo(
       state,

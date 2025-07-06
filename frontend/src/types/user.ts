@@ -5,7 +5,7 @@ export interface Address {
   timezone: string;
 }
 
-export interface Salary {
+export interface salary {
   amount: number;
   date: number;
 }
@@ -30,7 +30,7 @@ export interface UserState {
   isProfileComplete: boolean | null;
   isSalaryPaid: boolean;
   hasSalary: boolean;
-  Salary: Salary;
+  salary: salary;
 }
 
 export interface UserProfile {
@@ -40,5 +40,5 @@ export interface UserProfile {
   isProfileComplete: boolean;
   isSalaryPaid: boolean;
   hasSalary: boolean;
-  Salary: Salary;
+  salary: salary;
 }

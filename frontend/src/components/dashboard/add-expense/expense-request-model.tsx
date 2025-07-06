@@ -46,6 +46,7 @@ export function RequestMoneyModal({
   const handleSubmit = () => {
     onSelectSource(source);
     onChangeCanBudget(canChange);
+    console.log(overage);
     onRequest(overage, source, canChange);
     onClose();
   };

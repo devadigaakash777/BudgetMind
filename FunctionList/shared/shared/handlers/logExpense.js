@@ -1,5 +1,6 @@
 import { normalizeExpense } from '../utils/normalizeExpense.js';
 import { getAmountComparison } from '../utils/getAmountComparison.js';
+import { splitAmountByDays } from '../utils/splitAmountByDays.js'
 
 /**
  * Log extended expenses over a number of days.
@@ -16,7 +17,9 @@ export function logExtendedExpense(state, expense, currentDate, userId, details)
 
   const duration = (typeof expense.duration === 'number' && expense.duration > 0) ? expense.duration : 1;
   // const normalizedTotal = normalizeExpense(expense, currentDate);
-  const perDay = normalizeExpense(expense, currentDate);
+  const expectedCost = normalizeExpense(expense, currentDate);
+  const perDayCost = splitAmountByDays(expense.amount, expectedCost, duration);
+  let perDay = perDayCost.dailyAmount;
 
   console.debug("[logExtendedExpense] Normalized total:", expense);
   console.debug("[logExtendedExpense] Per day amount:", perDay);
@@ -31,6 +34,9 @@ export function logExtendedExpense(state, expense, currentDate, userId, details)
 
   const data = [];
   for (let i = 0; i < duration; i++) {
+    if(duration === (i+1)){
+      perDay = perDay + perDayCost.leftoverAmount;
+    }
     const date = new Date(currentDate);
     const limitStatus = getAmountComparison(dailyExpense, perDay); 
     balance -= perDay;

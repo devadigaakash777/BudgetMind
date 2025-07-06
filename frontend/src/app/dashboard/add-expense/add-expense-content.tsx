@@ -65,8 +65,6 @@ export default function AddExpenseContent(): React.JSX.Element {
       })
     );
 
-    console.log(previewState?.FixedExpenses);
-
   //check whether both selected to fetch money
   const [sourceSelections, setSourceSelections] = React.useState({
     main: false,

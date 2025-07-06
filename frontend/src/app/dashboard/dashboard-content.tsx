@@ -29,6 +29,8 @@ export default function DashboardContent(): React.JSX.Element {
   const dailyExpenseState = useSelector((state: RootState) => state.expense); 
   const userState = useSelector((state: RootState) => state.user);
 
+  console.log(userState);
+
   //Budget setup for first time
   const dispatch = useDispatch<AppDispatch>();
 
@@ -58,7 +60,7 @@ export default function DashboardContent(): React.JSX.Element {
   }, [userState.isProfileComplete]);
 
   const monthlyAmount = userState.hasSalary
-  ? userState.Salary.amount
+  ? userState.salary.amount
   : walletState.SteadyWallet.monthlyAmount;
 
   //Daily expense Chart

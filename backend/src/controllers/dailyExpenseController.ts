@@ -53,35 +53,53 @@ export const generateAndAddExpenses = async (req: Request, res: Response) => {
       canReduceBudget: boolean;
       usedBoth: boolean;
     } = req.body;
-    const generatedExpenses = req.body;
+    // const generatedExpenses = req.body;
     // Checking whether take money from wishlist or main
-    // const budget = await BudgetSummary.findOne({ userId }).lean();
-    // if (!budget) throw new Error(`BudgetSummary not found for user ${userId}`);
-    // const actualDailyBudget = budget.DailyBudget.amount * numberOfDays;
+    
+    const budget = await BudgetSummary.findOne({ userId }).lean();
+    if (!budget) throw new Error(`BudgetSummary not found for user ${userId}`);
+    const actualDailyBudget = budget.DailyBudget.amount * numberOfDays;
 
-    // const wallet = await Wallet.findOne({ userId }).lean();
-    // if (!wallet) throw new Error(`Wallet not found for user ${userId}`);
-    // const walletBudget = wallet.TemporaryWallet.balance;
+    const wallet = await Wallet.findOne({ userId }).lean();
+    if (!wallet) throw new Error(`Wallet not found for user ${userId}`);
 
-    // const totalBudget = actualDailyBudget + walletBudget;
+    const tempWalletBudget = wallet.TemporaryWallet.balance;
+    const bufferWalletBudget = wallet.DailyBuffer.balance;
+    const walletBudget = tempWalletBudget + bufferWalletBudget;
 
-    // let prefer = source;
-    // for(let i=0; i<2; i++){
-    //   if(totalAmount < totalBudget){
-    //     handleTempWallet(userId, 100, prefer, canReduceBudget)
-    //   }
-    //   prefer = "main";
-    // }
+    const totalBudget = actualDailyBudget + walletBudget;
 
-    // const today = new Date();
-    // const expense = {amount: totalAmount, duration: numberOfDays}
+    let count = 1;
+    let preference = source;
+    if(usedBoth){
+      preference = (preference === 'main') ? 'wishlist' : 'main';
+      count = 2;
+    }
 
-    // const generatedExpenses = processDailyExpense(expense, today, userId, details)
+    if(totalAmount > totalBudget){
+      let required = totalAmount - totalBudget;
+      for(let i=0; i<count ; i++){
+        const newState = await handleTempWallet(userId, required, preference, canReduceBudget);
+        required -= (newState.amountCollected - newState.freedBudget);
+        preference = (preference === 'main') ? 'wishlist' : 'main';
+        console.warn("Required ",required);
+      }
+      if(required > 0){
+        throw new Error("Insufficient balance");
+      }
+    }
 
+    const today = new Date();
+    const expense = {amount: totalAmount, duration: numberOfDays}
+
+    const generatedState = await processDailyExpense(expense, today, userId, details);
+
+    const generatedExpenses = generatedState.data;
     console.log(JSON.stringify(generatedExpenses, null, 2));
     // await DailyExpense.insertMany(generatedExpenses);
     res.status(201).json({ message: 'Generated and added expenses', data: generatedExpenses });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Failed to generate/add expenses', details: error });
   }
 };

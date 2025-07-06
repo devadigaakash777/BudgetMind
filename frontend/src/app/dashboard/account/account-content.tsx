@@ -26,7 +26,7 @@ export default function AccountContent(): React.JSX.Element {
 
   // specify the limit to setting max Budget 
   const monthlyAmount = user.hasSalary
-  ? user.Salary.amount
+  ? user.salary.amount
   : wallet.SteadyWallet.monthlyAmount;
 
   if (isAppLoading) {
@@ -83,8 +83,8 @@ export default function AccountContent(): React.JSX.Element {
         >
           <AccountSalaryForm
             hasSalary={user.hasSalary}
-            salaryAmount={user.Salary.amount}
-            salaryDate={user.Salary.date}
+            salaryAmount={user.salary.amount}
+            salaryDate={user.salary.date}
             jobTitle={user.jobTitle}
             steadyDate={wallet.SteadyWallet.date}
             steadyMonth={wallet.SteadyWallet.month}

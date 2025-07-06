@@ -85,6 +85,5 @@ export const processWithMutator = async (
 //   await Wallet.updateOne({ userId }, { $set: walletToUpdate });
 //   await FixedExpense.bulkWrite(updatedExpensesArray);
 //   await WishlistItem.bulkWrite(updatedItemsArray);
-
-  return newState.data ?? newState;
+  return newState;
 };

@@ -15,32 +15,35 @@ import { getNextSalaryDateISO } from '../utils/convertToDate.js';
 export function handleTemporaryWalletRequest(state, amountRequested, sourcePreference, canDecreaseBudget) {
   console.debug('handleTemporaryWalletRequest called with:', amountRequested, sourcePreference);
   const newState = deepClone(state);
-  const collected = { amountCollected: 0, sources: [] };
+  const collected = { amountCollected: 0, freedBudget: 0, sources: [] };
   
-  if (!state.DailyBuffer.isSelected) {
-    const db = Math.min(state.DailyBuffer.balance, amountRequested);
-    if (db > 0) {
-      state.DailyBuffer.balance -= db;
-      collected.amountCollected += db;
-      amountRequested -= db;
-      collected.sources.push({ from: 'DailyBuffer', amount: db });
-    }
-  }
+  // if (!newState.DailyBuffer.isSelected) {
+  //   const db = Math.min(newState.DailyBuffer.balance, amountRequested);
+  //   if (db > 0) {
+  //     newState.DailyBuffer.balance -= db;
+  //     collected.amountCollected += db;
+  //     amountRequested -= db;
+  //     collected.sources.push({ from: 'DailyBuffer', amount: db });
+  //   }
+  // }
 
-  if(canDecreaseBudget){
-        const salaryDay = state.User.hasSalary ? state.User.Salary.date : state.SteadyWallet.date;
+  if(canDecreaseBudget && sourcePreference === 'main'){
+        const salaryDay = newState.User.hasSalary ? newState.User.salary.date : newState.steadyWallet.date;
         const salaryDate = getNextSalaryDateISO(salaryDay);
         let extraAmount = 0;
         console.debug(salaryDate);
         try{
           extraAmount = consumeFromMonthlyBudget(newState, amountRequested, salaryDate);
-          amountRequested = 0;
         }
         catch (err){
           extraAmount = consumeFromMonthlyBudget(newState, null, salaryDate);
           console.warn("cant satisfy the request go with handleTemporaryWallet"); 
         }
-        collected.amountCollected += extraAmount;
+        // amount requirement changes after changing dailyBudget
+        const releasedAmount = state.DailyBudget.amount - extraAmount.smartDailyBudget;
+        collected.amountCollected += extraAmount.totalRemaining;
+        collected.freedBudget = releasedAmount;
+        amountRequested -= (extraAmount.totalRemaining - releasedAmount);
   }
   // const fromTemp = Math.min(newState.TemporaryWallet.balance, amountRequested);
   // if (fromTemp > 0) {
@@ -49,7 +52,8 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
   //   collected.sources.push({ from: 'TemporaryWallet', amount: fromTemp });
   // }
 
-  const shortfall = amountRequested - collected.amountCollected;
+  const shortfall = amountRequested;
+  console.debug("[handleTemporaryWalletRequest] shortfall ",shortfall);
   if (shortfall > 0) {
     let result = { amount: 0, sources: [] };
 

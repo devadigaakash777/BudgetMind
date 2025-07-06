@@ -20,9 +20,9 @@ export const fetchUserProfile = createAsyncThunk(
         isProfileComplete,
         isSalaryPaid,
         hasSalary,
-        Salary
+        salary
       } = res.data;
-
+      console.warn(salary);
       dispatch(
         setProfileDetails({
           phone,
@@ -31,7 +31,7 @@ export const fetchUserProfile = createAsyncThunk(
           isProfileComplete,
           isSalaryPaid,
           hasSalary,
-          Salary
+          salary
         })
       );
     } catch (err: any) {

@@ -15,6 +15,7 @@ import { TextField } from '@mui/material';
 import { VaultIcon, EyeIcon } from '@phosphor-icons/react/dist/ssr';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
+import {adjustGaugeList} from '@/utils/adjust-gauge-list';
 import {RequestMoneyModal } from '@/components/dashboard/add-expense/expense-request-model'
 
 type GaugeLimit = { value: number; label?: string };
@@ -126,8 +127,8 @@ export function AddExpenseForm({
     });
   };
 
-  const secureSaving = gaugeList['Spending Wallet'].value;
-
+  const secureSaving = adjustGaugeList(gaugeList, formData.numberOfDays)
+  const moneyToAsk = secureSaving['Spending Wallet'].value
 
   return (
     <form onSubmit={handleSubmit}>
@@ -139,7 +140,7 @@ export function AddExpenseForm({
           statusList={pieChartSeries}
           overage={
             formData.numberOfDays > 0
-              ? Math.max(formData.amount - maximumSafeAmount, 0)
+              ? Math.max(formData.amount - moneyToAsk, 0)
               : 0
           }
           onSelectSource={(value) => {
@@ -268,7 +269,7 @@ export function AddExpenseForm({
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained" disabled={formData.amount <= 0 || formData.amount > secureSaving}>
+          <Button type="submit" variant="contained" disabled={!canSave || formData.amount <= 0}>
             Add Expense
           </Button>
         </CardActions>
