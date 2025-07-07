@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import { ArrowCounterClockwiseIcon, WalletIcon, PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import { deepOrange } from '@mui/material/colors';
 import { Grid } from '@mui/system';
-
+import FullScreenLoader from '@/components/dashboard/loader';
 import { useSelector, useDispatch} from 'react-redux';
 import { RootState } from '@/redux/store';
 import { selectSource, reduceBudget } from '@/redux/slices/daily-expenses-slice';
@@ -19,10 +19,7 @@ import { TempWalletForm } from '@/components/dashboard/account/expense-wallet-fo
 import { updateTempWallet } from '@/redux/slices/wallet-slice';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
-
-
-
-
+import { simulateMonthlyAllocation, calculateRequiredAmount } from '@/utils/preview-utils';
 
 export default function AddExpenseContent(): React.JSX.Element {
 
@@ -38,12 +35,15 @@ export default function AddExpenseContent(): React.JSX.Element {
   const budgetState = useSelector((state: RootState) => state.budget);
   const wishlistState = useSelector((state: RootState) => state.wishlist);
   const userState = useSelector((state: RootState) => state.user);
-
+  const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
   
-  //Add amount to TempWallet
+  // Add amount to TempWallet
   const [walletAmount, addWalletAmount] = React.useState(false);    
   const handleWalletOpen = () => addWalletAmount(true);
   
+  // To give the safer value to the user
+  const [maximumSafeAmount, setMaximumSafeAmount] = React.useState(0);
+
   //Fixed Cost
   const expenses = (previewState?.FixedExpenses ?? budgetState.FixedExpenses).expenses.map(
       (
@@ -70,11 +70,7 @@ export default function AddExpenseContent(): React.JSX.Element {
     main: false,
     wishlist: false
   });
-  const handleReset = () => {
-    dispatch(syncPreview());
-    setSourceSelections({ main: false, wishlist: false }); // 🔄 reset
-  };
-
+  
   // wishlist items 
    const products = (previewState?.Wishlist?.items ?? wishlistState.items).map(
     (
@@ -132,6 +128,22 @@ export default function AddExpenseContent(): React.JSX.Element {
       'Impossible': { value: impossible, label:"This expense is too high. It's not possible to proceed. Please update the available funds above if you still wish to spend."},
     }
 
+    calculateRequiredAmount(previewState);
+    const handleReset = () => {
+      dispatch(syncPreview());
+      const simulated = calculateRequiredAmount(previewState);
+      console.log("simulated "+simulated);
+      const safe = temp >= simulated ? temp - simulated : 0;
+      setMaximumSafeAmount(safe);
+      setSourceSelections({ main: false, wishlist: false }); // 🔄 reset
+    };
+
+  if (isAppLoading) {
+    return (
+      <FullScreenLoader />
+    );
+  }
+ 
   return (
     <Stack spacing={2}>
       <Box
@@ -205,7 +217,7 @@ export default function AddExpenseContent(): React.JSX.Element {
         { userState?.data?._id &&
           <AddExpenseForm 
             userid={userState.data._id}
-            maximumSafeAmount={tempWallet}
+            maximumSafeAmount={maximumSafeAmount}
             onAdd={(payload) => dispatch(thunkGenerateAndAddExpenses(payload))}
             onAddPreview={(value) => dispatch(addPreviewExpense(value))}
             pieChartSeries={pieChartSeries} 

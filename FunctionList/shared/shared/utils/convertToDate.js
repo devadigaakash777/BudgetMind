@@ -6,7 +6,8 @@
  * @param {Date} [baseDate=new Date()] - The base date to calculate from (default is today).
  * @returns {string} ISO formatted date string of the next salary date.
  */
-export function getNextSalaryDateISO(salaryDay, baseDate = new Date()) {
+export function getNextSalaryDateISO(salaryDate, baseDate = new Date()) {
+  const salaryDay = salaryDate + 1;
   const currentDay = baseDate.getDate();
   let year = baseDate.getFullYear();
   let month = currentDay > salaryDay ? baseDate.getMonth() + 1 : baseDate.getMonth();

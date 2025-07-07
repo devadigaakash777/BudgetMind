@@ -4,6 +4,7 @@ import Profile from "../models/profile.model.js";
 import { Wallet } from "../models/wallet.model.js";
 import { WishlistSummary, WishlistItem } from "../models/wishlist.model.js";
 import { mergeByExistingKeys } from "./sanitizeByType.js";
+import mongoose from 'mongoose';
 
 export const processWithMutator = async (
   userId: string,
@@ -42,48 +43,79 @@ export const processWithMutator = async (
     }
   };
 
-  const newState = mutator(state, ...mutatorArgs);
+  const result = mutator(state, ...mutatorArgs);
+  const newState = result.newState || result;
+  console.log(newState);
 
-//   const updatedBudget = mergeByExistingKeys(budgetDetails, newState);
-//   const updatedWallet = mergeByExistingKeys(walletDetails, newState);
+  const updatedBudget = mergeByExistingKeys(budgetDetails, newState);
+  const updatedWallet = mergeByExistingKeys(walletDetails, newState);
 
-//   const updatedExpensesArray = expenses.map(exp => {
-//     const updated = mergeByExistingKeys(
-//       exp,
-//       newState.FixedExpenses.expenses.find((e: { _id: { toString: () => string; }; }) => e._id.toString() === exp._id.toString()) || {}
-//     );
-//     const { _id, ...rest } = updated;
-//     return {
-//       updateOne: {
-//         filter: { _id },
-//         update: { $set: rest }
-//       }
-//     };
-//   });
+  const updatedExpensesArray = expenses.map(exp => {
+    const updated = mergeByExistingKeys(
+      exp,
+      newState.FixedExpenses.expenses.find((e: { _id: { toString: () => string; }; }) => e._id.toString() === exp._id.toString()) || {}
+    );
+    const { _id, ...rest } = updated;
+    return {
+      updateOne: {
+        filter: { _id },
+        update: { $set: rest }
+      }
+    };
+  });
 
-//   const updatedItemsArray = items.map(item => {
-//     const updated = mergeByExistingKeys(
-//       item,
-//       newState.Wishlist.items.find((i: { _id: { toString: () => string; }; }) => i._id.toString() === item._id.toString()) || {}
-//     );
-//     const { _id, ...rest } = updated;
-//     return {
-//       updateOne: {
-//         filter: { _id },
-//         update: { $set: rest }
-//       }
-//     };
-//   });
+  const updatedItemsArray = items.map(item => {
+    const updated = mergeByExistingKeys(
+      item,
+      newState.Wishlist.items.find((i: { _id: { toString: () => string; }; }) => i._id.toString() === item._id.toString()) || {}
+    );
+    const { _id, ...rest } = updated;
+    return {
+      updateOne: {
+        filter: { _id },
+        update: { $set: rest }
+      }
+    };
+  });
 
-//   const { _id: _, ...budgetToUpdate } = updatedBudget;
-//   const { _id: __, ...walletToUpdate } = updatedWallet;
+  const { _id: _, ...budgetToUpdate } = updatedBudget;
+  const { _id: __, ...walletToUpdate } = updatedWallet;
 
-//   const totalSavedAmount = newState.Wishlist.totalSavedAmount;
+  const totalSavedAmount = newState.Wishlist.totalSavedAmount;
 
-//   await WishlistSummary.updateOne({ userId },{ $set: { totalSavedAmount } });
-//   await BudgetSummary.updateOne({ userId }, { $set: budgetToUpdate });
-//   await Wallet.updateOne({ userId }, { $set: walletToUpdate });
-//   await FixedExpense.bulkWrite(updatedExpensesArray);
-//   await WishlistItem.bulkWrite(updatedItemsArray);
-  return newState;
+  // const session = await mongoose.startSession();
+  // session.startTransaction();
+  // try {
+  //   await WishlistSummary.updateOne(
+  //     { userId },
+  //     { $set: { totalSavedAmount } },
+  //     { session }
+  //   );
+
+  //   await BudgetSummary.updateOne(
+  //     { userId },
+  //     { $set: budgetToUpdate },
+  //     { session }
+  //   );
+
+  //   await Wallet.updateOne(
+  //     { userId },
+  //     { $set: walletToUpdate },
+  //     { session }
+  //   );
+
+  //   await FixedExpense.bulkWrite(updatedExpensesArray, { session });
+
+  //   await WishlistItem.bulkWrite(updatedItemsArray, { session });
+
+  //   await session.commitTransaction();
+  //   session.endSession();
+  //   console.log("All updates applied successfully.");
+  // } catch (err) {
+  //   await session.abortTransaction();
+  //   session.endSession();
+  //   console.error("Transaction aborted due to error:", err);
+  //   throw err;
+  // }
+  return result;
 };

@@ -11,8 +11,8 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { TextField } from '@mui/material';
-import { VaultIcon, EyeIcon } from '@phosphor-icons/react/dist/ssr';
+import { Box, TextField, Typography } from '@mui/material';
+import { VaultIcon, EyeIcon, LightbulbFilamentIcon } from '@phosphor-icons/react/dist/ssr';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
 import {adjustGaugeList} from '@/utils/adjust-gauge-list';
@@ -128,8 +128,10 @@ export function AddExpenseForm({
   };
 
   const secureSaving = adjustGaugeList(gaugeList, formData.numberOfDays)
-  const moneyToAsk = secureSaving['Spending Wallet'].value
+  const moneyToAsk = secureSaving['Spending Wallet'].value;
 
+  const safeAmount = moneyToAsk - maximumSafeAmount;
+  
   return (
     <form onSubmit={handleSubmit}>
       <Card>
@@ -220,6 +222,39 @@ export function AddExpenseForm({
                 </Button>
               )}
 
+            </Grid>
+            <Grid size={{
+              lg: 12,
+              md: 12,
+              xs: 12,
+            }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 1.2,
+                  backgroundColor: '#fff8e1',           // light yellow background
+                  p: 2,
+                  borderRadius: 2,
+                  border: '1px solid #ffe082',          // soft yellow border
+                  maxWidth: 600,
+                  boxShadow: 1,
+                }}
+              >
+                <LightbulbFilamentIcon
+                  size={22}
+                  weight="duotone"
+                  color="black"
+                  style={{ marginTop: 4 }} // bright yellow fill
+                />
+
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Tip:</strong> You can safely use up to <strong>₹{safeAmount}</strong> this month <br />
+                  without affecting your daily budget, wishlist savings, or bill payments on next month.
+                  <br />
+                  Staying within this limit helps avoid delays or missed expenses.
+                </Typography>
+              </Box>
             </Grid>
             <Grid size={{
               lg: 6,

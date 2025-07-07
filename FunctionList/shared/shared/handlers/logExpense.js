@@ -18,7 +18,7 @@ export function logExtendedExpense(state, expense, currentDate, userId, details)
   const duration = (typeof expense.duration === 'number' && expense.duration > 0) ? expense.duration : 1;
   // const normalizedTotal = normalizeExpense(expense, currentDate);
   const expectedCost = normalizeExpense(expense, currentDate);
-  const perDayCost = splitAmountByDays(expense.amount, expectedCost, duration);
+  const perDayCost = splitAmountByDays(expectedCost, expense.amount, duration);
   let perDay = perDayCost.dailyAmount;
 
   console.debug("[logExtendedExpense] Normalized total:", expense);
@@ -55,6 +55,7 @@ export function logExtendedExpense(state, expense, currentDate, userId, details)
   const dailyTotal = dailyBudget * duration;
 
   newState.MonthlyBudget.amount = Math.max(0, newState.MonthlyBudget.amount - dailyTotal);
+  console.debug("[logExtendedExpense] Final monthly Budget Amount :", newState.MonthlyBudget.amount);
 
   let overage = Math.max(expense.amount - dailyTotal, 0);
   const buffer = newState.DailyBuffer.balance;

@@ -1,1 +1,1 @@
-export { logExtendedExpense, monthlyAllocate, handleTemporaryWalletRequest, initializeState, handleFixedExpensePayment } from '../../../FunctionList/shared/shared';
+export { logExtendedExpense, monthlyAllocate, handleTemporaryWalletRequest, initializeState, handleFixedExpensePayment, getNextSalaryDateISO } from '../../../FunctionList/shared/shared';

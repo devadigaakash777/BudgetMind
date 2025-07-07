@@ -3,9 +3,8 @@
 import { AppDispatch, RootState } from '../store';
 import { setPreview } from '../slices/preview-slice';
 import type { BudgetState } from '@/types/budget';
-import { logExtendedExpense, handleTemporaryWalletRequest } from '@/utils/shared';
+import { logExtendedExpense, handleTemporaryWalletRequest, monthlyAllocate, getNextSalaryDateISO } from '@/utils/shared';
 import { PreviewState } from '@/types/preview'
-
 
 type ExpenseInput = {
   amount: number;
@@ -62,3 +61,4 @@ export const requestMoney = function (amount: number, source: string, canDecreas
     dispatch(setPreview(newState));
   };
 };
+

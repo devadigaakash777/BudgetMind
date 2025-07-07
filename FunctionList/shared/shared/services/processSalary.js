@@ -96,7 +96,7 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
     if (Number(remaining.toFixed(2)) < monthlyBudget) {
       const tempWallet = newState.TemporaryWallet;
       let shortage = monthlyBudget - remaining;
-
+      remaining = 0;
       console.debug("[DailyBudget] Shortage:", shortage);
       console.debug("[DailyBudget] TempWallet balance:", tempWallet.balance);
 
@@ -108,19 +108,19 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
       } else {
         // Not enough in TemporaryWallet — fallback to smartBudget calculation
         const totalAvailable = tempWallet.balance + remaining;
+        tempWallet.balance = 0;
         const budget = smartBudget(newState, totalAvailable, daysInMonth);
         monthlyBudget = budget.monthlyBudget;
-
+        remaining = budget.remaining;
         console.debug("[DailyBudget] Used smartBudget() — New monthlyBudget:", monthlyBudget);
         console.debug("[DailyBudget] Adjusted tempWallet balance:", tempWallet.balance);
       }
     } else {
       // No shortage — use requested userDailyBudget directly
       newState.DailyBudget.amount = userDailyBudget;
+      remaining = Math.max(0, remaining - monthlyBudget);
       console.debug("[DailyBudget] No shortage — DailyBudget set directly.");
     }
-
-    remaining = Math.max(0, remaining - monthlyBudget);
     console.debug("[DailyBudget] Final remaining after budget:", remaining);
   }
 
@@ -140,12 +140,13 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
   }
 
   newState.TemporaryWallet.balance += remaining;
+  console.log("[processSalary] final temp wallet cost:", newState.TemporaryWallet.balance);
   // Finalize MonthlyBudget fields
   newState.MonthlyBudget.amount = monthlyBudget;
   newState.MonthlyBudget.amountFunded = monthlyBudget;
 
   // At end of process — decrement duration on one-time (non-permanent) fixed expenses
-  let totalExpenseSavedAmount = newState.FixedExpenses.totalSavedAmount;
+  let totalExpenseSavedAmount = 0;
   newState.FixedExpenses.expenses.forEach(expense => {
     if (!expense.isPermanent) {
       expense.durationInMonths = Math.max(0, expense.durationInMonths - 1);
@@ -155,7 +156,7 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
   newState.FixedExpenses.totalSavedAmount = totalExpenseSavedAmount;
 
   // wishlist item final update
-  let totalItemsSavedAmount = newState.Wishlist.totalSavedAmount;
+  let totalItemsSavedAmount = 0;
   newState.Wishlist.items.forEach(item => {
     if (item.priority > 0 && item.monthLeft > 0 && item.isFunded) {
       item.monthLeft = Math.max(0, item.monthLeft - 1);
@@ -163,6 +164,7 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
           item.isFunded = false;
       }
     }
+    console.log("[processSalary] returning updated state:", newState);
     totalItemsSavedAmount += item.savedAmount;
   });
   newState.Wishlist.totalSavedAmount = totalItemsSavedAmount;

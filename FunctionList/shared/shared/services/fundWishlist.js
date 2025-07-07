@@ -36,7 +36,7 @@ export function distributeWishlistFunds(sortedItems, available) {
   console.debug('distributeWishlistFunds called with:', sortedItems, available);
   for (const item of sortedItems) {
     const remaining = item.cost - item.savedAmount;
-    const monthlyShare = parseFloat((remaining / item.monthLeft).toFixed(2));
+    const monthlyShare = Math.floor(remaining / item.monthLeft);
 
     if (available >= monthlyShare) {
       const newSaved = item.savedAmount + monthlyShare;
