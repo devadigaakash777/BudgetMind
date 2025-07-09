@@ -10,6 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date'
 import { CheckCircleIcon, XCircleIcon, TrashIcon, CalendarIcon, MoneyIcon } from '@phosphor-icons/react/dist/ssr';
+import {InsufficientFundDialog} from '@/components/dashboard/layout/Insufficient-fund-dialog';
 
 const statusMap = {
   "pending": { label: 'Pending', color: 'warning' },
@@ -34,7 +35,7 @@ export interface FixedExpenseItem {
 export interface FixedExpenseCardProps {
   item: FixedExpenseItem;
   onDelete: (id: string) => void;
-  onPay: (id: string) => void;
+  onPay: (id: string, preference: 'main' | 'wishlist', reduceDailyBudget: boolean) => void;
   onIncreaseDuration: (id: string) => void;
   onDecreaseDuration: (id: string) => void;
 }
@@ -47,6 +48,27 @@ export function FixedExpenseCard({
   onDecreaseDuration
 }: FixedExpenseCardProps): React.JSX.Element {
   const { label, color } = statusMap[item.status as keyof typeof statusMap] ?? { label: 'Unknown', color: 'default' };
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const handlePay = () => {
+    if (item.isFunded && !item.isPaid) {
+      onPay(item._id, "main", false); // default fallback
+    } else if (!item.isPaid) {
+      setDialogOpen(true);
+    }
+  };
+
+  const handleConfirmDialog = ({
+    preference,
+    reduceDailyBudget,
+  }: {
+    preference: 'main' | 'wishlist';
+    reduceDailyBudget: boolean;
+  }) => {
+    onPay(item._id, preference, reduceDailyBudget);
+    setDialogOpen(false);
+  };
+
   return (
     <Card sx={{ display: 'flex', flexDirection: 'column', p: 2, gap: 1 }}>
       {/* Row 1: Icon + Main Info */}
@@ -118,13 +140,18 @@ export function FixedExpenseCard({
           <span>
             <IconButton
               color="success"
-              disabled={!item.isFunded || item.isPaid}
-              onClick={() => onPay(item._id)}
+              disabled={item.isPaid}
+              onClick={handlePay}
             >
               <CheckCircleIcon size={20} />
             </IconButton>
           </span>
         </Tooltip>
+        <InsufficientFundDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          onConfirm={handleConfirmDialog}
+        />
       </Stack>
     </Card>
   );

@@ -3,6 +3,7 @@ import { BudgetSummary, FixedExpense } from '../models/budget.model.js';
 import { AuthRequest } from '../middleware/authMiddleware.js';
 import { settlePayback } from '../utils/payback.js'
 import { updateFixedExpenseSavedAmount } from '../utils/updateFixedExpenseSavedAmount.js'
+import { collectAmount } from '../utils/processPayment.js'
 
 // --- Budget Summary ---
 
@@ -116,23 +117,34 @@ export const deleteFixedExpense = async (req: AuthRequest, res: Response): Promi
   res.sendStatus(204);
 };
 
-export const payFixedExpense = async (req: AuthRequest, res: Response) => {
+export const payFixedExpense = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId!;
   const { id } = req.params;
+  const { preference, reduceDailyBudget } = req.body;
 
   const expense = await FixedExpense.findOne({ _id: id, userId });
   if (!expense) {
     res.status(404).json({ message: 'Expense not found' });
+    return;
   }
-  else {
-    if (expense.isFunded && !expense.isPaid) {
+  try {
+    if (!expense.isPaid) {
+        if (!expense.isFunded){
+          const savedAmount = expense.amount - expense.amountToFund;
+          await collectAmount(userId, id, expense.amount, savedAmount, preference, reduceDailyBudget);
+          // expense.isFunded = true;
+        }
         expense.isPaid = true;
         expense.status = 'paid';
         expense.amountToFund = expense.amount;
-        await expense.save();
-        await updateFixedExpenseSavedAmount(userId);
+        // await expense.save();
+        // await updateFixedExpenseSavedAmount(userId);
     }
-    res.sendStatus(204);
+    res.status(204).json({ message: 'Successfully paid' });
+  }
+  catch (err) {
+    console.error('Error in payment:', err);
+    res.status(500).json({ message: 'Server error while paying bill' });
   }
 };
 

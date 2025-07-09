@@ -2,8 +2,9 @@ import { Request, Response } from 'express';
 import { WishlistItem } from '../models/wishlist.model.js';
 import { WishlistSummary } from '../models/wishlist.model.js';
 import { AuthRequest } from '../middleware/authMiddleware.js';
-import { updateTotalSavedAmount } from '../utils/updateWishlistSummary.js'
-import { settlePayback } from '../utils/payback.js'
+import { updateTotalSavedAmount } from '../utils/updateWishlistSummary.js';
+import { settlePayback } from '../utils/payback.js';
+import { collectAmount } from '../utils/processPayment.js'
 
 export const getWishlist = async (req: AuthRequest, res: Response) => {
   const page = Number(req.query.page) || 0;
@@ -90,18 +91,23 @@ export const updateMonthLeft = async (req: AuthRequest, res: Response) => {
 export const buyItem = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const item = await WishlistItem.findOne({ _id: req.params.id, userId: req.userId });
+    const { preference, reduceDailyBudget } = req.body;
 
     if (!item) {
       res.status(404).json({ message: 'Item not found' });
       return;
     }
 
-    if (item.savedAmount !== item.cost) {
-      res.status(400).json({ message: 'Item is not fully funded' });
-      return;
+    const userId = req.userId!;
+    const itemId = req.params.id;
+
+    console.log("item id is: ",itemId);
+
+    if (item.savedAmount < item.cost) {
+      await collectAmount(userId, itemId, item.cost, item.savedAmount, preference, reduceDailyBudget);
     }
-    await item.deleteOne();
-    await updateTotalSavedAmount(req.userId!);
+    // await item.deleteOne();
+    // await updateTotalSavedAmount(req.userId!);
     res.sendStatus(200);
   } catch (err) {
     console.error('Error in buyItem:', err);

@@ -91,9 +91,9 @@ export const thunkDecreaseMonth = createAsyncThunk(
 // Buy item if funded
 export const thunkBuyItem = createAsyncThunk(
   'wishlist/buyItem',
-  async (id: string, { dispatch }) => {
-    await axios.post(`${BASE_URL}/${id}/buy`);
-    dispatch(completePurchase(id));
+  async (data: { id: string; preference: 'main' | 'wishlist'; reduceDailyBudget: boolean }, { dispatch }) => {
+    await axios.post(`${BASE_URL}/${data.id}/buy`, {preference: data.preference, reduceDailyBudget: data.reduceDailyBudget});
+    dispatch(completePurchase(data.id));
   }
 );
 

@@ -59,10 +59,10 @@ export const thunkDeleteFixedExpense = createAsyncThunk(
 // Pay fixed expense
 export const thunkPayFixedExpense = createAsyncThunk(
   'budget/payFixedExpense',
-  async (id: string, { dispatch }) => {
-    const res = await axios.patch(`${BASE_URL}/budget/expenses/${id}/pay`);
+  async (data: { id: string; preference: 'main' | 'wishlist'; reduceDailyBudget: boolean }, { dispatch }) => {
+    const res = await axios.patch(`${BASE_URL}/budget/expenses/${data.id}/pay`,  {preference: data.preference, reduceDailyBudget: data.reduceDailyBudget});
     console.debug("payFixedExpense "+res.status);
-    dispatch(payExpense(id));
+    dispatch(payExpense(data.id));
   }
 );
 

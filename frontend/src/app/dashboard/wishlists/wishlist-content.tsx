@@ -106,7 +106,9 @@ export default function WishlistContent(): React.JSX.Element {
               onDelete={(id) => dispatch(thunkDeleteWishlistItem(id))}
               onIncreaseMonth={(id) => dispatch(thunkIncreaseMonth(id))}
               onDecreaseMonth={(id) => dispatch(thunkDecreaseMonth(id))}
-              onBuy={(id) => dispatch(thunkBuyItem(id))}
+              onBuy={(id, preference, reduceDailyBudget) =>
+                dispatch(thunkBuyItem({ id, preference, reduceDailyBudget }))
+              }
               onIncreasePriority={(id) =>
                 dispatch(thunkChangePriority({ id, newPriority: wishlist.priority + 1 })) // Example logic: +1 priority
               }

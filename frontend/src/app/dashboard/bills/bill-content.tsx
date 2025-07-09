@@ -112,7 +112,9 @@ export default function FixedExpensesContent(): React.JSX.Element {
             <FixedExpenseCard
               item={expense}
               onDelete={(id) => dispatch(thunkDeleteFixedExpense(id))}
-              onPay={(id) => dispatch(thunkPayFixedExpense(id))}
+              onPay={(id, preference, reduceDailyBudget) =>
+                dispatch(thunkPayFixedExpense({ id, preference, reduceDailyBudget }))
+              }
               onIncreaseDuration={(id) => dispatch(thunkIncreaseDuration(id))}
               onDecreaseDuration={(id) => dispatch(thunkDecreaseDuration(id))}
             />

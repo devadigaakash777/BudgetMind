@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 
 export const processWithMutator = async (
   userId: string,
+  sourceID: string | null,
   mutator: Function,
   ...mutatorArgs: any[]
 ) => {
@@ -15,11 +16,19 @@ export const processWithMutator = async (
   const [budgetDetails, expenses, profileDetails, walletDetails, wishlistDetails, items] =
     await Promise.all([
       BudgetSummary.findOne({ userId }).lean(),
-      FixedExpense.find({ userId }).lean(),
+      FixedExpense.find({ userId }).lean().then(expenses =>
+        sourceID
+          ? expenses.filter(exp => exp._id.toString() !== sourceID)
+          : expenses
+      ),
       Profile.findOne({ userId }).lean(),
       Wallet.findOne({ userId }).lean(),
       WishlistSummary.findOne({ userId }).lean(),
-      WishlistItem.find({ userId }).lean()
+      WishlistItem.find({ userId }).lean().then(items =>
+        sourceID
+          ? items.filter(item => item._id.toString() !== sourceID)
+          : items
+      )
     ]);
 
   if (!budgetDetails) throw new Error(`BudgetSummary not found for user ${userId}`);

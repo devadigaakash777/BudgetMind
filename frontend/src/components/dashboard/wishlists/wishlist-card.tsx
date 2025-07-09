@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import {InsufficientFundDialog} from '@/components/dashboard/layout/Insufficient-fund-dialog';
 import {
   CheckCircleIcon,
   XCircleIcon,
@@ -33,7 +34,7 @@ export interface WishlistCardProps {
   onDelete: (id: string) => void;
   onIncreaseMonth: (id: string) => void;
   onDecreaseMonth: (id: string) => void;
-  onBuy: (id: string) => void;
+  onBuy: (id: string, preference: 'main' | 'wishlist', reduceDailyBudget: boolean) => void;
   onIncreasePriority: (id: string) => void;
   onDecreasePriority: (id: string) => void;
 }
@@ -47,6 +48,21 @@ export function WishlistCard({
   onIncreasePriority,
   onDecreasePriority
 }: WishlistCardProps): React.JSX.Element {
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const handleBuy = () => {
+    if (item.isFunded) {
+      onBuy(item._id ?? 'demo', "main", false);
+    } else {
+      setDialogOpen(true);
+    }
+  };
+
+  const handleConfirmDialog = ({ preference, reduceDailyBudget }: { preference: 'main' | 'wishlist', reduceDailyBudget: boolean }) => {
+    onBuy(item._id ?? 'demo', preference, reduceDailyBudget);
+     setDialogOpen(false);
+  };
+
   return (
     <Card sx={{ display: 'flex', flexDirection: 'column', p: 2, gap: 1 }}>
       {/* Row 1: Image + Main Info */}
@@ -125,15 +141,16 @@ export function WishlistCard({
 
         <Tooltip title={item.isFunded ? 'Buy Item' : 'Item not funded'}>
           <span>
-            <IconButton
-              color="success"
-              disabled={!item.isFunded}
-              onClick={() => onBuy(item._id ?? 'demo')}
-            >
+            <IconButton color="success" onClick={handleBuy}>
               <ShoppingCartIcon size={20} />
             </IconButton>
           </span>
         </Tooltip>
+        <InsufficientFundDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          onConfirm={handleConfirmDialog}
+        />
       </Stack>
     </Card>
   );

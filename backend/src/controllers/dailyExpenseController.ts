@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AuthRequest } from '../middleware/authMiddleware.js';
 import DailyExpense, { IDailyExpense } from '../models/expense.model.js';
 import mongoose from 'mongoose';
 import { BudgetSummary } from "../models/budget.model.js";
@@ -6,7 +7,7 @@ import { processDailyExpense, handleTempWallet } from "../services/dailyExpense.
 import { Wallet } from "../models/wallet.model.js";
 
 // 1. Fetch user expenses
-export const getUserDailyExpenses = async (req: Request, res: Response) => {
+export const getUserDailyExpenses = async (req: AuthRequest, res: Response) => {
   try {
     const userId = (req as any).userId;
     const expenses = await DailyExpense.find({ userId }).sort({ date: 1 });
@@ -17,7 +18,7 @@ export const getUserDailyExpenses = async (req: Request, res: Response) => {
 };
 
 // 2. Bulk add expenses
-export const addDailyExpenses = async (req: Request, res: Response): Promise<void> => {
+export const addDailyExpenses = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = (req as any).userId;
 
@@ -34,7 +35,7 @@ export const addDailyExpenses = async (req: Request, res: Response): Promise<voi
 };
 
 // 3. Generate and add expenses
-export const generateAndAddExpenses = async (req: Request, res: Response) => {
+export const generateAndAddExpenses = async (req: AuthRequest, res: Response) => {
   try {
     const userId = (req as any).userId;
 
