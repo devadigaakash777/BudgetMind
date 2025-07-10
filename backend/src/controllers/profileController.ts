@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AuthRequest } from '../middleware/authMiddleware.js';
 import Profile from '../models/profile.model.js';
 import User from '../models/User.js';
 import { finalizeProfile } from "../services/profile.service.js";
@@ -12,7 +13,7 @@ const getOrCreateProfile = async (userId: string) => {
   return profile;
 };
 
-export const getUserProfile = async (req: Request, res: Response) => {
+export const getUserProfile = async (req: AuthRequest, res: Response) => {
   const { userId } = req as any;
 
   const profile = await getOrCreateProfile(userId);
@@ -28,7 +29,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
   });
 };
 
-export const updateBasicProfile = async (req: Request, res: Response): Promise<void> => {
+export const updateBasicProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = (req as any).userId;
   const { firstName, lastName, email, phone, city, state } = req.body;
 
@@ -58,7 +59,7 @@ export const updateBasicProfile = async (req: Request, res: Response): Promise<v
   }
 };
 
-export const updateSalary = async (req: Request, res: Response) => {
+export const updateSalary = async (req: AuthRequest, res: Response) => {
   const userId = (req as any).userId;
   const { jobTitle, hasSalary, salaryAmount, salaryDate } = req.body;
 
@@ -71,21 +72,22 @@ export const updateSalary = async (req: Request, res: Response) => {
   res.json({ message: 'Salary info updated' });
 };
 
-export const updateAvatar = async (req: Request, res: Response) => {
+export const updateAvatar = async (req: AuthRequest, res: Response) => {
   const userId = (req as any).userId;
   await User.findByIdAndUpdate(userId, { avatar: req.body.avatar });
   res.json({ message: 'Avatar updated' });
 };
 
-export const markProfileComplete = async (req: Request, res: Response) => {
+export const markProfileComplete = async (req: AuthRequest, res: Response) => {
   const userId = (req as any).userId;
   const profile = await getOrCreateProfile(userId);
   profile.isProfileComplete = req.body.isProfileComplete;
   await profile.save();
+  console.log("Updated markProfileComplete as ",profile.isProfileComplete);
   res.json({ message: 'Profile status updated' });
 };
 
-export const markSalaryPaid = async (req: Request, res: Response) => {
+export const markSalaryPaid = async (req: AuthRequest, res: Response) => {
   const userId = (req as any).userId;
   const profile = await getOrCreateProfile(userId);
   profile.isSalaryPaid = req.body.isSalaryPaid;
@@ -93,7 +95,7 @@ export const markSalaryPaid = async (req: Request, res: Response) => {
   res.json({ message: 'Salary status updated' });
 };
 
-export const calculateProfile = async (req: Request, res: Response) => {
+export const calculateProfile = async (req: AuthRequest, res: Response) => {
     try {
         const userId = (req as any).userId; // from JWT or session
         const newState = await finalizeProfile(userId);

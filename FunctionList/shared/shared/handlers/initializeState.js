@@ -68,6 +68,7 @@ export function initializeState(initialState, totalWealth, threshold) {
     state.SteadyWallet.balance = 0;
   }
 
+  state.User.isProfileComplete = true;
   console.log("[initializeState] returning state:", state);
   return state;
 }

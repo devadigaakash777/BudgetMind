@@ -11,11 +11,14 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Controller, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { z as zod } from 'zod';
 
 import { authClient } from '@/lib/auth/client';
 
-const schema = zod.object({ email: zod.string().min(1, { message: 'Email is required' }).email() });
+const schema = zod.object({
+  email: zod.string().min(1, { message: 'Email is required' }).email(),
+});
 
 type Values = zod.infer<typeof schema>;
 
@@ -23,6 +26,9 @@ const defaultValues = { email: '' } satisfies Values;
 
 export function ResetPasswordForm(): React.JSX.Element {
   const [isPending, setIsPending] = React.useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+
+  const router = useRouter();
 
   const {
     control,
@@ -34,25 +40,32 @@ export function ResetPasswordForm(): React.JSX.Element {
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
       setIsPending(true);
+      setSuccessMessage(null);
 
-      const error = authClient.resetPassword(values.email);
+      const status = await authClient.forgotPassword(values.email);
 
-      if (error) {
-        setError('root', { type: 'server', message: error });
+      if (status.error) {
+        setError('root', { type: 'server', message: status.error });
         setIsPending(false);
         return;
       }
 
       setIsPending(false);
 
-      // Redirect to confirm password reset
+      setSuccessMessage("✅ We sent a recovery link to your email. Please check your inbox!");
+
     },
-    [setError]
+    [setError, router]
   );
 
   return (
     <Stack spacing={4}>
       <Typography variant="h5">Reset password</Typography>
+      {successMessage && (
+        <Alert severity="success" color="success">
+          {successMessage}
+        </Alert>
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           <Controller
@@ -66,9 +79,13 @@ export function ResetPasswordForm(): React.JSX.Element {
               </FormControl>
             )}
           />
-          {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
+          {errors.root ? (
+            <Alert severity="error" color="error">
+              {errors.root.message}
+            </Alert>
+          ) : null}
           <Button disabled={isPending} type="submit" variant="contained">
-            Send recovery link
+            {isPending ? 'Sending...' : 'Send recovery link'}
           </Button>
         </Stack>
       </form>

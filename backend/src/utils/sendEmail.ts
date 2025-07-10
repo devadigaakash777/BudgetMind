@@ -1,27 +1,21 @@
+// utils/sendEmail.ts
 import nodemailer from 'nodemailer';
 
-const sendEmail = async (to: string, subject: string, html: string) => {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: 'your-email@gmail.com',           // ✅ Your Gmail address
-        pass: 'your-16-character-app-password', // ✅ Google App Password
-      },
-    });
+const sendEmail = async (to: string, subject: string, html: string): Promise<void> => {
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL_USER!,
+      pass: process.env.EMAIL_PASS!,
+    },
+  });
 
-    await transporter.sendMail({
-      from: '"Expense Tracker" <your-email@gmail.com>',
-      to,
-      subject,
-      html,
-    });
-
-    console.log('Email sent successfully');
-  } catch (error) {
-    console.error('Error sending email:', error);
-    throw error;
-  }
+  await transporter.sendMail({
+    from: `"Budget Mind" <${process.env.EMAIL_USER}>`,
+    to,
+    subject,
+    html,
+  });
 };
 
 export default sendEmail;

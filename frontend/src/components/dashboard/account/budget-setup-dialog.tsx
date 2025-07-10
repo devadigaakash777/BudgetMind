@@ -55,6 +55,7 @@ export function BudgetSetupDialog({
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
+      console.log("onComplete is called");
       onComplete(true);
       onClose();
       setActiveStep(0);

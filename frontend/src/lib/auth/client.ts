@@ -111,8 +111,44 @@ class AuthClient {
     }
   }
 
-  resetPassword(value: string) {
-    return value;
+  async resetPassword(token: string, newPassword: string): Promise<{ success?: boolean; error?: string }> {
+    try {
+      const res = await fetch(`http://localhost:5000/api/reset-password/${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPassword }),
+        credentials: 'include', // Include cookies if needed
+      });
+
+      if (!res.ok) {
+        const { message } = await res.json();
+        return { error: message || 'Failed to reset password' };
+      }
+
+      return { success: true }; // Password reset succeeded
+    } catch {
+      return { error: 'Network error during password reset' };
+    }
+  }
+
+  async forgotPassword(email: string): Promise<{ success?: boolean; error?: string }> {
+    try {
+      const res = await fetch(`http://localhost:5000/api/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+        credentials: 'include', // Include cookies if needed
+      });
+
+      if (!res.ok) {
+        const { message } = await res.json();
+        return { error: message || 'Failed to reset password' };
+      }
+
+      return { success: true }; // Password reset succeeded
+    } catch {
+      return { error: 'Network error during password reset' };
+    }
   }
 }
 
