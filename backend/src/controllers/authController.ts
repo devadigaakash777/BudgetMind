@@ -299,3 +299,44 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
     }
   }
 };
+
+// Resend Email
+export const resendVerification = async (req: Request, res: Response): Promise<void> => {
+  const { email } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    if (user.isVerified) {
+      res.status(400).json({ message: 'Email is already verified' });
+      return;
+    }
+
+    const emailToken = jwt.sign(
+      { userId: user.id },
+      EMAIL_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    const verificationLink = `${process.env.BACKEND_URL}/verify-email/${emailToken}`;
+
+    await sendEmail(
+      user.email,
+      'Verify Your Email (Resent)',
+      `<h3>Hi ${user.firstName},</h3>
+       <p>You requested a new verification link:</p>
+       <a href="${verificationLink}">Click here to verify</a>
+       <p>This link expires in 1 hour.</p>`
+    );
+
+    res.json({ message: 'Verification email resent successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

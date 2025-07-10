@@ -40,6 +40,8 @@ export function SignUpForm(): React.JSX.Element {
 
   const [isPending, setIsPending] = React.useState<boolean>(false);
 
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+
   const {
     control,
     handleSubmit,
@@ -50,6 +52,7 @@ export function SignUpForm(): React.JSX.Element {
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
       setIsPending(true);
+      setSuccessMessage(null);
 
       const { error } = await authClient.signUp(values);
 
@@ -59,6 +62,7 @@ export function SignUpForm(): React.JSX.Element {
         return;
       }
 
+      setSuccessMessage('Sign-up successful! Please check your email to verify your account.');
       await checkSession?.();
       router.refresh();
     },
@@ -145,7 +149,7 @@ export function SignUpForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">Created users are not persisted</Alert>
+      {successMessage && <Alert color="success">{successMessage}</Alert>}
     </Stack>
   );
 }

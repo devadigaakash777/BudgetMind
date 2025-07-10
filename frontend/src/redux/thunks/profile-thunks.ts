@@ -3,7 +3,6 @@ import axios from '@/lib/axiosInstance';
 import { setAvatar, handleModel, setSalaryAcknowledged, updateBasicInfo, updateSalaryInfo, setProfileDetails } from '../slices/user-slice';
 import type { RootState } from '../store';
 import type { UserProfile } from '@/types/user'
-import { showSnackbar } from "../slices/snackbar-slice";
 
 
 const API_URL = 'http://localhost:5000/api/profile';
@@ -57,9 +56,7 @@ export const updateUserBasicInfo = createAsyncThunk(
       const res = await axios.put(`${API_URL}/basic`, data);
       console.debug("updateUserBasicInfo "+res.status);
       dispatch(updateBasicInfo(data));
-      dispatch(showSnackbar({ message: "Successfully saved details!", severity: "success" }));
     } catch (err: any) {
-      dispatch(showSnackbar({ message: "Something Wrong Refresh and try!", severity: "error" }));
       return rejectWithValue(err.response?.data || 'Failed to update basic info');
     }
   }
@@ -79,7 +76,6 @@ export const updateUserSalaryInfo = createAsyncThunk(
     try {
       const res = await axios.put(`${API_URL}/salary`, data);
       console.debug("updateUserSalaryInfo "+res.status);
-      dispatch(showSnackbar({ message: "Successfully saved details!", severity: "success" }));
       dispatch(updateSalaryInfo(data));
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Failed to update salary info');
@@ -93,7 +89,6 @@ export const updateUserAvatar = createAsyncThunk(
     try {
       const res = await axios.patch(`${API_URL}/avatar`, { avatar });
       console.debug("updateUserAvatar "+res.status);
-      dispatch(showSnackbar({ message: "Successfully saved details!", severity: "success" }));
       dispatch(setAvatar(avatar));
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Failed to update avatar');
@@ -120,7 +115,6 @@ export const setSalaryStatus = createAsyncThunk(
     try {
       const res = await axios.patch(`${API_URL}/status/salary`, { isSalaryPaid });
       console.debug("setSalaryStatus "+res.status);
-      dispatch(showSnackbar({ message: "Successfully saved details!", severity: "success" }));
       dispatch(setSalaryAcknowledged(isSalaryPaid));
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Failed to update salary status');

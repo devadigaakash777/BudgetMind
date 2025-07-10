@@ -150,6 +150,27 @@ class AuthClient {
       return { error: 'Network error during password reset' };
     }
   }
+
+  async resendVerification(email: string): Promise<{ error?: string }> {
+    try {
+      const res = await fetch('http://localhost:5000/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        const { message } = await res.json();
+        return { error: message || 'Resend failed' };
+      }
+
+      return {};
+    } catch {
+      return { error: 'Network error during resend' };
+    }
+  }
+
 }
 
 export const authClient = new AuthClient();

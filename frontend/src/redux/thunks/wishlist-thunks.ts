@@ -11,7 +11,6 @@ import {
   setWishlistSummary,
   buyItem as completePurchase
 } from '../slices/wishlist-slice';
-import { showSnackbar } from "../slices/snackbar-slice";
 import type { WishlistItem, WishlistItemBase } from '@/types/wishlist';
 
 interface WishlistResponse {
@@ -74,7 +73,6 @@ export const thunkIncreaseMonth = createAsyncThunk(
   'wishlist/increaseMonth',
   async (id: string, { dispatch }) => {
     await axios.patch(`${BASE_URL}/${id}/month`, { direction: 'increase' });
-    dispatch(showSnackbar({ message: "Successful!", severity: "success" }));
     dispatch(increaseMonth(id));
   }
 );

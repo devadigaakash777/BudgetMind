@@ -39,6 +39,9 @@ export function SignInForm(): React.JSX.Element {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [isPending, setIsPending] = React.useState<boolean>(false);
 
+  const [loginEmail, setLoginEmail] = React.useState<string>('');
+  const [resendStatus, setResendStatus] = React.useState<string | null>(null);
+
   const {
     control,
     handleSubmit,
@@ -49,6 +52,8 @@ export function SignInForm(): React.JSX.Element {
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
       setIsPending(true);
+      setLoginEmail(values.email); // Store attempted email
+      setResendStatus(null);       // Clear previous status
 
       const res = await authClient.signInWithPassword(values);
 
@@ -116,22 +121,38 @@ export function SignInForm(): React.JSX.Element {
               Forgot password?
             </Link>
           </div>
-          {errors.root && <Alert color="error">{errors.root.message}</Alert>}
+          {errors.root && (
+            <>
+              <Alert color="error">{errors.root.message}</Alert>
+              {errors.root.message === 'Please verify your email before logging in.' && (
+                <Button
+                  variant="outlined"
+                  onClick={async () => {
+                    try {
+                      const res = await authClient.resendVerification(loginEmail);
+                      if (res?.error) {
+                        setResendStatus(res.error);
+                      } else {
+                        setResendStatus('Verification email has been resent. Please check your inbox.');
+                      }
+                    } catch {
+                      setResendStatus('Something went wrong while resending verification email.');
+                    }
+                  }}
+                >
+                  Resend Verification Email
+                </Button>
+              )}
+            </>
+          )}
+
+          {resendStatus && <Alert color="info">{resendStatus}</Alert>}
+
           <Button disabled={isPending} type="submit" variant="contained">
             Sign in
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">
-        Use{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          sofia@devias.io
-        </Typography>{' '}
-        with password{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          Secret1
-        </Typography>
-      </Alert>
     </Stack>
   );
 }

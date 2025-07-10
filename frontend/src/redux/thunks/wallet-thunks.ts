@@ -9,8 +9,6 @@ import {
   updateWalletState
 } from '../slices/wallet-slice';
 import { WalletState } from '@/types/wallet';
-import { showSnackbar } from "../slices/snackbar-slice";
-
 
 const BASE_URL = 'http://localhost:5000/api/wallet';
 
