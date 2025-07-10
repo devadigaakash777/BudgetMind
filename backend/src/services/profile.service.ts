@@ -4,6 +4,8 @@ import { initializeState, monthlyAllocate } from "../utils/shared.js";
 import { mergeByExistingKeys } from "../utils/sanitizeByType.js";
 import { Wallet } from "../models/wallet.model.js";
 import { WishlistSummary, WishlistItem } from "../models/wishlist.model.js";
+import { processWithMutator } from "../utils/processWithMutator.js";
+import mongoose from 'mongoose';
 
 export const finalizeProfile = async (userId: string) => {
     // 1. Fetch plain objects
@@ -47,26 +49,27 @@ export const finalizeProfile = async (userId: string) => {
     const { _id: ___, ...walletToUpdate } = updatedWallet;
 
     // Save to DB (ONLY ONCE)
-    await BudgetSummary.updateOne({ userId }, { $set: budgetToUpdate });
-    await Profile.updateOne({ userId }, { $set: profileToUpdate });
-    await Wallet.updateOne({ userId }, { $set: walletToUpdate });
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        await BudgetSummary.updateOne({ userId }, { $set: budgetToUpdate });
+        await Profile.updateOne({ userId }, { $set: profileToUpdate });
+        await Wallet.updateOne({ userId }, { $set: walletToUpdate });
+        await session.commitTransaction();
+        session.endSession();
+        console.log("All updates applied successfully.");
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+        console.error("Transaction aborted due to error:", err);
+        throw err;
+    }
     return newState;
 };
 
 
 export const finalizeSalary = async (userId: string) => {
-    // 1. Fetch plain objects
-    const budgetDetails = await BudgetSummary.findOne({ userId }).lean();
-    if (!budgetDetails) {
-        throw new Error(`BudgetSummary not found for user ${userId}`);
-    }
-
-    const expenses = await FixedExpense.find({ userId }).lean();
-    if (!expenses) {
-        throw new Error(`BudgetSummary not found for user ${userId}`);
-    }
-
     const profileDetails = await Profile.findOne({ userId }).lean();
     if (!profileDetails) {
         throw new Error(`Profile not found for user ${userId}`);
@@ -76,85 +79,7 @@ export const finalizeSalary = async (userId: string) => {
     if (!walletDetails) {
         throw new Error(`Wallet not found for user ${userId}`);
     }
+    const salary = profileDetails.hasSalary ? profileDetails?.salary?.amount : walletDetails.SteadyWallet.monthlyAmount;
 
-    const wishlistDetails = await WishlistSummary.findOne({ userId }).lean();
-    if (!wishlistDetails) {
-        throw new Error(`Wallet not found for user ${userId}`);
-    }
-
-    const items = await WishlistItem.find({ userId }).lean();
-    if (!items) {
-        throw new Error(`Wallet not found for user ${userId}`);
-    }
-
-    const state = {
-        User: profileDetails,
-        ...walletDetails,
-        MonthlyBudget: budgetDetails.MonthlyBudget,
-        DailyBudget: budgetDetails.DailyBudget,
-        FixedExpenses: {
-        expenses,
-        totalSavedAmount: budgetDetails.FixedExpenses?.totalSavedAmount || 0
-        },
-        Wishlist: {
-            items,
-            totalSavedAmount: wishlistDetails?.totalSavedAmount || 0
-        }
-    };
-
-    const newState = monthlyAllocate(
-        state,
-        new Date(),
-        profileDetails?.salary?.amount,
-    );
-
-    console.log(JSON.stringify(newState, null, 2));
-
-    // // Merge and strip _id
-    const updatedBudget = mergeByExistingKeys(budgetDetails, newState);
-    // const updatedProfile = mergeByExistingKeys(profileDetails, newState.User);
-    const updatedWallet = mergeByExistingKeys(walletDetails, newState);
-
-    const totalSavedAmount = newState.Wishlist.totalSavedAmount;
-    
-    const updatedExpensesArray = expenses.map(exp => {
-    const updated = mergeByExistingKeys(
-        exp,
-        newState.FixedExpenses.expenses.find((e: { _id: { toString: () => string; }; }) => e._id.toString() === exp._id.toString()) || {}
-    );
-    const { _id, ...rest } = updated;
-    return {
-        updateOne: {
-        filter: { _id },
-        update: { $set: rest }
-        }
-    };
-    });
-
-
-    const updatedItemsArray = items.map(item => {
-    const updated = mergeByExistingKeys(
-        item,
-        newState.Wishlist.items.find((i: { _id: { toString: () => string; }; }) => i._id.toString() === item._id.toString()) || {}
-    );
-    const { _id, ...rest } = updated;
-    return {
-        updateOne: {
-        filter: { _id },
-        update: { $set: rest }
-        }
-    };
-    });
-
-    const { _id: _, ...budgetToUpdate } = updatedBudget;
-    const { _id: __, ...walletToUpdate } = updatedWallet;
-
-    // Save to DB (ONLY ONCE)
-    await BudgetSummary.updateOne({ userId }, { $set: budgetToUpdate });
-    await Wallet.updateOne({ userId }, { $set: walletToUpdate });
-    await WishlistSummary.updateOne({ userId },{ $set: { totalSavedAmount } });
-
-    await FixedExpense.bulkWrite(updatedExpensesArray);
-    await WishlistItem.bulkWrite(updatedItemsArray);
-    return newState;
+    return await processWithMutator(userId, null, monthlyAllocate, new Date(), salary);
 };

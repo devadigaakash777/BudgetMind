@@ -12,6 +12,7 @@ export const processWithMutator = async (
   mutator: Function,
   ...mutatorArgs: any[]
 ) => {
+  
   // Fetch all required data
   const [budgetDetails, expenses, profileDetails, walletDetails, wishlistDetails, items] =
     await Promise.all([
@@ -92,39 +93,39 @@ export const processWithMutator = async (
 
   const totalSavedAmount = newState.Wishlist.totalSavedAmount;
 
-  // const session = await mongoose.startSession();
-  // session.startTransaction();
-  // try {
-  //   await WishlistSummary.updateOne(
-  //     { userId },
-  //     { $set: { totalSavedAmount } },
-  //     { session }
-  //   );
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await WishlistSummary.updateOne(
+      { userId },
+      { $set: { totalSavedAmount } },
+      { session }
+    );
 
-  //   await BudgetSummary.updateOne(
-  //     { userId },
-  //     { $set: budgetToUpdate },
-  //     { session }
-  //   );
+    await BudgetSummary.updateOne(
+      { userId },
+      { $set: budgetToUpdate },
+      { session }
+    );
 
-  //   await Wallet.updateOne(
-  //     { userId },
-  //     { $set: walletToUpdate },
-  //     { session }
-  //   );
+    await Wallet.updateOne(
+      { userId },
+      { $set: walletToUpdate },
+      { session }
+    );
 
-  //   await FixedExpense.bulkWrite(updatedExpensesArray, { session });
+    await FixedExpense.bulkWrite(updatedExpensesArray, { session });
 
-  //   await WishlistItem.bulkWrite(updatedItemsArray, { session });
+    await WishlistItem.bulkWrite(updatedItemsArray, { session });
 
-  //   await session.commitTransaction();
-  //   session.endSession();
-  //   console.log("All updates applied successfully.");
-  // } catch (err) {
-  //   await session.abortTransaction();
-  //   session.endSession();
-  //   console.error("Transaction aborted due to error:", err);
-  //   throw err;
-  // }
+    await session.commitTransaction();
+    session.endSession();
+    console.log("All updates applied successfully.");
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Transaction aborted due to error:", err);
+    throw err;
+  }
   return result;
 };

@@ -54,7 +54,6 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response) =>
       canReduceBudget: boolean;
       usedBoth: boolean;
     } = req.body;
-    const generatedExpenses = req.body;
     // Checking whether take money from wishlist or main
     
     const budget = await BudgetSummary.findOne({ userId }).lean();
@@ -90,14 +89,14 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response) =>
       }
     }
 
-    // const today = new Date();
-    // const expense = {amount: totalAmount, duration: numberOfDays}
+    const today = new Date();
+    const expense = {amount: totalAmount, duration: numberOfDays}
 
-    // const generatedState = await processDailyExpense(expense, today, userId, details);
+    const generatedState = await processDailyExpense(expense, today, userId, details);
 
-    // const generatedExpenses = generatedState.data;
-    // console.log(JSON.stringify(generatedExpenses, null, 2));
-    // await DailyExpense.insertMany(generatedExpenses);
+    const generatedExpenses = generatedState.data;
+    console.log(JSON.stringify(generatedExpenses, null, 2));
+    await DailyExpense.insertMany(generatedExpenses);
     res.status(201).json({ message: 'Generated and added expenses', data: generatedExpenses });
   } catch (error) {
     console.log(error);

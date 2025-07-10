@@ -9,6 +9,7 @@ import budgetRoutes from './routes/budgetRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import dailyExpenseRoutes from './routes/dailyExpenseRoutes.js';
 import connectDB from './config/db.js';
+import './cron/midnightJob.js'
 
 import { finalizeSalary } from "./services/profile.service.js";
 
