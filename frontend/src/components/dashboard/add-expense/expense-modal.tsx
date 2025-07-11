@@ -249,7 +249,7 @@ export function AddExpenseForm({
                 />
 
                 <Typography variant="body2" color="text.secondary">
-                  <strong>Tip:</strong> You can safely use up to <strong>₹{safeAmount}</strong> this month <br />
+                  <strong>Tip:</strong> You can use Maximum <strong>₹{safeAmount}</strong> this today <br />
                   without affecting your daily budget, wishlist savings, or bill payments on next month.
                   <br />
                   Staying within this limit helps avoid delays or missed expenses.

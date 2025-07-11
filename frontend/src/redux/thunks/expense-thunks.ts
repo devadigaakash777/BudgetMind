@@ -43,3 +43,37 @@ export const thunkGenerateAndAddExpenses = createAsyncThunk(
     }
   }
 );
+
+interface DownloadExcelPayload {
+  fromDate: string;
+  toDate: string;
+}
+
+export const thunkDownloadExpensesExcel = createAsyncThunk<
+  void, // no return type
+  DownloadExcelPayload, 
+  { rejectValue: string }
+>(
+  'dailyExpense/downloadExcel',
+  async ({ fromDate, toDate }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/expense/download`, {
+        params: { from: fromDate, to: toDate },
+        responseType: 'blob', // Ensures backend returns a Blob
+      });
+
+      const blob = response.data as Blob; // 👈 Fix the TS error
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `expenses_${fromDate}_to_${toDate}.xlsx`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to download Excel'
+      );
+    }
+  }
+);
+

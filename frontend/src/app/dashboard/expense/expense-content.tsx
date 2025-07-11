@@ -8,7 +8,7 @@ import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import { setPage, setRowsPerPage } from '@/redux/slices/daily-expenses-slice';
 import FullScreenLoader from '@/components/dashboard/loader';
 import { DailyExpensesFilters } from '@/components/dashboard/expense/expenses-filters';
@@ -17,10 +17,29 @@ import type { DailyExpense } from '@/types/daily-expense';
 
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
+import { Chip, FormControl, InputLabel, OutlinedInput, TextField, Tooltip } from '@mui/material';
+import { thunkDownloadExpensesExcel } from '@/redux/thunks/expense-thunks';
+import { FileXlsIcon } from '@phosphor-icons/react';
+import { showSnackbar } from '@/redux/slices/snackbar-slice';
 
 export default function ExpenseContent(): React.JSX.Element {
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const [fromDate, setFromDate] = React.useState<string>('');
+  const [toDate, setToDate] = React.useState<string>('');
+
+  const handleDownloadClick = () => {
+    if (!fromDate || !toDate) {
+      dispatch(showSnackbar({
+        message: 'Please select both from and to dates.',
+        severity: 'error',
+      }));
+      return;
+    }
+    dispatch(thunkDownloadExpensesExcel({ fromDate, toDate }));
+  };
+
+
   const handlePageChange = (_event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     dispatch(setPage(newPage));
   };
@@ -74,10 +93,33 @@ export default function ExpenseContent(): React.JSX.Element {
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Daily Expenses</Typography>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Export
-            </Button>
+          <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mt: 1 }}>
+            <FormControl fullWidth size="small" sx={{ minWidth: 150 }}>
+              <InputLabel shrink htmlFor="from-date">From Date</InputLabel>
+              <OutlinedInput
+                id="from-date"
+                type="date"
+                notched
+                label="From Date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
+            </FormControl>
+
+            <FormControl fullWidth size="small" sx={{ minWidth: 150 }}>
+              <InputLabel shrink htmlFor="to-date">To Date</InputLabel>
+              <OutlinedInput
+                id="to-date"
+                type="date"
+                notched
+                label="To Date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </FormControl>
+            <Tooltip title="Download in Excel Format">
+              <Chip variant="filled" onClick={handleDownloadClick} color="success" icon={<FileXlsIcon size={20} />} label="Download Excel" />
+            </Tooltip>
           </Stack>
         </Stack>
         <div>

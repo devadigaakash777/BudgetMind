@@ -87,15 +87,92 @@ export function WishlistCard({
         </Typography>
 
         {/* Info Row */}
-        <Box sx={{ mt: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-          <Typography variant="body2"> Saved: ₹{item.savedAmount}</Typography>
-          <Typography variant="body2"> Cost: ₹{item.cost}</Typography>
-          <Typography variant="body2"><CalendarDotsIcon size={16} /> Months Left: {item.monthLeft}</Typography>
-          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-            <SealIcon size={16} style={{ fill: '#1976d2' }} weight="fill"/> Priority: {item.priority}
-          </Typography>
-        </Box>
+        <Box
+          sx={{
+            mt: 1,
+            p: 1.5,
+            border: '1px solid #e0e0e0',
+            borderRadius: 2,
+            backgroundColor: '#f9fafb',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 1.5,
+          }}
+        >
+          {/* Saved */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#e3f2fd', // light blue
+              borderRadius: 1,
+              px: 1,
+              py: 0.5,
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, color: '#1976d2' }}
+            >
+              💰 Saved: ₹{item.savedAmount}
+            </Typography>
+          </Box>
 
+          {/* Cost */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#fff3e0', // light orange
+              borderRadius: 1,
+              px: 1,
+              py: 0.5,
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, color: '#fb8c00' }}
+            >
+              💸 Cost: ₹{item.cost}
+            </Typography>
+          </Box>
+
+          {/* Months Left */}
+          <Box sx={{ gridColumn: '1 / -1', mt: 0.5 }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, color: '#616161' }}
+            >
+              ⏳ {item.monthLeft} Months Left to Purchase
+            </Typography>
+          </Box>
+
+          {/* Priority */}
+          <Box
+            sx={{
+              gridColumn: '1 / -1',
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#e8f5e9', // light green
+              borderRadius: 1,
+              px: 1,
+              py: 0.5,
+              mt: 0.5,
+            }}
+          >
+            <SealIcon
+              size={16}
+              style={{ fill: '#43a047', marginRight: 4 }}
+              weight="fill"
+            />
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, color: '#43a047' }}
+            >
+              Priority: {item.priority}
+            </Typography>
+          </Box>
+        </Box>
         {/* Funded Status */}
         <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
           {!item.isFunded && (
@@ -112,7 +189,7 @@ export function WishlistCard({
                   }}
               >
                 <AlertTitle>Not Funded</AlertTitle>
-                Still you can buy the product. But by deducting Money from SPending wallet. 
+                This product isn’t funded. You can still purchase it—your spending wallet will be used first, with fallback to other wallets if needed.
               </Alert>
             </>
           )}

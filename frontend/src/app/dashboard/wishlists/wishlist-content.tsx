@@ -71,7 +71,7 @@ export default function WishlistContent(): React.JSX.Element {
         </Stack>
         <div>
           <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
-            Add
+            Add New Item
           </Button>
         </div>
         <AddWishlistModal

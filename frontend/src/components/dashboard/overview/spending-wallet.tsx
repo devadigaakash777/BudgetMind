@@ -8,6 +8,7 @@ import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { WalletIcon, PlusIcon } from '@phosphor-icons/react/dist/ssr';
+import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react';
 
 export interface SpendingWalletProps {
   onOpen: () => void;
@@ -32,8 +33,8 @@ export function SpendingWallet({ onOpen, sx, value }: SpendingWalletProps): Reac
               <WalletIcon fontSize="var(--icon-fontSize-lg)" />
             </Avatar>
           </Stack>
-          <Button onClick={onOpen} variant='contained' color="primary" startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} size="small">
-            Add Money
+          <Button onClick={onOpen} variant='contained' color="primary" startIcon={<ArrowCounterClockwiseIcon fontSize="var(--icon-fontSize-md)" />} size="small">
+            Update Wallet
           </Button>
         </Stack>
       </CardContent>

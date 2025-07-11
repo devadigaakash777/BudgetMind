@@ -72,7 +72,7 @@ export default function FixedExpensesContent(): React.JSX.Element {
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Fixed Expenses</Typography>
+          <Typography variant="h4">Bills</Typography>
         </Stack>
         <div>
           <Button
@@ -80,7 +80,7 @@ export default function FixedExpensesContent(): React.JSX.Element {
             variant="contained"
             onClick={handleOpen}
           >
-            Add
+            Add New Bill
           </Button>
         </div>
 

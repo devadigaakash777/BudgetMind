@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { CircularProgress, Typography, Paper, Box } from '@mui/material';
 import { PiggyBankIcon } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { typography } from '@mui/system';
 
 const messages = [
   '"Spending Wallet" is where you can spend freely—no worries about wishlist or bills.',
@@ -11,7 +12,11 @@ const messages = [
   'Use "Preview" in Add Expenses to simulate spending. But note: money edits are real!'
 ];
 
-const FullScreenLoader = () => {
+type FullScreenLoaderProps = {
+  text?: string; // optional single message
+};
+
+const FullScreenLoader = ({ text }: FullScreenLoaderProps) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -36,6 +41,7 @@ const FullScreenLoader = () => {
         p: 3
       }}
     >
+    { !text ?
       <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', my: 2 }}>
         <CircularProgress
           size={100}
@@ -43,8 +49,12 @@ const FullScreenLoader = () => {
           sx={{ position: 'absolute', color: '#4a90e2' }}
         />
         <PiggyBankIcon size={48} weight="duotone" color="#4a90e2" />
-      </Box>
-
+      </Box> 
+      :
+      <Typography variant="h5" fontWeight="bold" sx={{ textTransform: 'capitalize' }}>
+          {text}
+      </Typography>
+    }
       <AnimatePresence mode="wait">
         <motion.div
           key={index}

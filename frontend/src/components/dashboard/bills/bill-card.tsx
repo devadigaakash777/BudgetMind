@@ -2,7 +2,7 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import { Button, ButtonGroup, Chip } from '@mui/material';
+import { Alert, AlertTitle, Button, ButtonGroup, Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
@@ -96,16 +96,23 @@ export function FixedExpenseCard({
                 Duration: {item.durationInMonths} months
               </Typography>
             )}
-            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-              {item.isFunded ? (
+            <Typography component="div" variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
+              {!item.isFunded  && (
                 <>
-                  <CheckCircleIcon size={16} color="green" style={{ marginRight: 4 }} />
-                  Funded
-                </>
-              ) : (
-                <>
-                  <XCircleIcon size={16} color="red" style={{ marginRight: 4 }} />
-                  Not Funded
+                  <Alert severity="error" 
+                    sx={{
+                        fontSize: 12,
+                        py: 0.5,
+                        px: 1,
+                        '& .MuiAlertTitle-root': {
+                          fontSize: 13,
+                          mb: 0.3
+                        }
+                      }}
+                  >
+                    <AlertTitle>Not Funded</AlertTitle>
+                    This product isn’t funded. You can still purchase it—your spending wallet will be used first, with fallback to other wallets if needed.
+                  </Alert>
                 </>
               )}
             </Typography>

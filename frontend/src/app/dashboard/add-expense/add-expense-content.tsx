@@ -5,7 +5,7 @@ import { Box, Avatar, Typography, IconButton} from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { ArrowCounterClockwiseIcon, WalletIcon, PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import { deepOrange } from '@mui/material/colors';
-import { Grid } from '@mui/system';
+import { Grid, typography } from '@mui/system';
 import FullScreenLoader from '@/components/dashboard/loader';
 import { useSelector, useDispatch} from 'react-redux';
 import { RootState } from '@/redux/store';
@@ -20,6 +20,7 @@ import { updateTempWallet } from '@/redux/slices/wallet-slice';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
 import { simulateMonthlyAllocation, calculateRequiredAmount } from '@/utils/preview-utils';
+import { thunkUpdateTempWallet } from '@/redux/thunks/wallet-thunks';
 
 export default function AddExpenseContent(): React.JSX.Element {
 
@@ -36,7 +37,8 @@ export default function AddExpenseContent(): React.JSX.Element {
   const wishlistState = useSelector((state: RootState) => state.wishlist);
   const userState = useSelector((state: RootState) => state.user);
   const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
-  
+  const expenseState = useSelector((state: RootState) => state.expense);
+
   // Add amount to TempWallet
   const [walletAmount, addWalletAmount] = React.useState(false);    
   const handleWalletOpen = () => addWalletAmount(true);
@@ -102,6 +104,13 @@ export default function AddExpenseContent(): React.JSX.Element {
     'Daily Saving': previewState?.DailyBuffer?.balance ?? walletState.DailyBuffer.balance,
 
   };
+
+  const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+  const todaysFirstExpense = expenseState.data
+    .filter(expense => expense.date === today) // Keep only today's expenses
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]; // Get the earliest one
+
 
   //Gauge meter value
   const daily = previewState?.DailyBudget?.amount ?? budgetState.DailyBudget.amount;
@@ -195,7 +204,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           </Box>
 
           <IconButton color="primary" onClick={handleWalletOpen}>
-            <PlusIcon size={24} weight="bold" />
+            <ArrowCounterClockwiseIcon size={24} weight="bold" />
           </IconButton>
         </Box>
         <TempWalletForm
@@ -203,7 +212,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           onClose={() => addWalletAmount(false)}
           currentBalance={walletState.TemporaryWallet.balance} 
           onAdd={() => dispatch(syncPreview())}
-          onSave={(val) => dispatch(updateTempWallet(val))}
+          onSave={(val) => dispatch(thunkUpdateTempWallet(val))}
         />
       </Box>
       <Grid container spacing={3}>
@@ -214,7 +223,7 @@ export default function AddExpenseContent(): React.JSX.Element {
             xs: 12,
           }}
         >
-        { userState?.data?._id &&
+        { userState?.data?._id  && !todaysFirstExpense ?
           <AddExpenseForm 
             userid={userState.data._id}
             maximumSafeAmount={maximumSafeAmount}
@@ -230,6 +239,8 @@ export default function AddExpenseContent(): React.JSX.Element {
             sourceSelections={sourceSelections}
             setSourceSelections={setSourceSelections}
           />
+          :
+          <FullScreenLoader text='Expense added Successfully' />
         }
         </Grid>
         <Grid

@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { BudgetSummary } from "../models/budget.model.js";
 import { processDailyExpense, handleTempWallet } from "../services/dailyExpense.service.js";
 import { Wallet } from "../models/wallet.model.js";
+import XLSX from "xlsx";
 
 // 1. Fetch user expenses
 export const getUserDailyExpenses = async (req: AuthRequest, res: Response) => {
@@ -54,8 +55,19 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response) =>
       canReduceBudget: boolean;
       usedBoth: boolean;
     } = req.body;
-    // Checking whether take money from wishlist or main
     
+     // ✅ Reject if expenses already exist for today
+    const todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const existingExpenses = await DailyExpense.findOne({ userId, date: todayDate });
+    if (existingExpenses) {
+      res.status(400).json({
+        error: 'You have already added expenses for today. Try again tomorrow.'
+      });
+      return;
+    }
+
+    // Checking whether take money from wishlist or main
+
     const budget = await BudgetSummary.findOne({ userId }).lean();
     if (!budget) throw new Error(`BudgetSummary not found for user ${userId}`);
     const actualDailyBudget = budget.DailyBudget.amount * numberOfDays;
@@ -101,5 +113,72 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response) =>
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Failed to generate/add expenses', details: error });
+  }
+};
+
+export const downloadUserExpensesExcel = async (req: AuthRequest, res: Response): Promise<void>  => {
+  try {
+    const userId = (req as any).userId;
+
+    // Get "from" and "to" dates from query params
+    const { from, to } = req.query;
+
+    if (!from || !to) {
+      res.status(400).json({ error: "Please provide 'from' and 'to' dates in query params." });
+      return;
+    }
+
+    // Dates are stored as strings, so we need to use $gte and $lte on date strings
+    const fromDate = from as string;
+    const toDate = to as string;
+
+    // Fetch expenses for this user within the date range
+    const expenses = await DailyExpense.find({
+      userId,
+      date: { $gte: fromDate, $lte: toDate },
+    })
+      .sort({ date: 1 }) // Sort by date ascending
+      .lean();
+
+    if (!expenses || expenses.length === 0) {
+      res.status(404).json({ error: "No expenses found for this date range." });
+      return;
+    }
+
+    // Clean up fields for Excel (if needed)
+    const dataForExcel = expenses.map((expense) => ({
+      Date: expense.date,
+      Amount: expense.amount,
+      Details: expense.details,
+      Balance: expense.balance,
+      Status: expense.amountStatus,
+      Difference: expense.amountDifference,
+    }));
+
+    // Create Excel workbook
+    const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Daily Expenses");
+
+    // Write workbook to buffer
+    const buffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+    // Send Excel file
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=daily_expenses_${from}_${to}.xlsx`
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to generate and download expenses",
+      details: error,
+    });
   }
 };
