@@ -11,9 +11,9 @@ import { Budget } from '@/components/dashboard/overview/budget';
 import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
 import { DailyExpenseChart } from '@/components/dashboard/overview/daily-expense-chart';
-import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
+import { BudgetProgress } from '@/components/dashboard/overview/budget-progress';
 import { SpendingWallet } from '@/components/dashboard/overview/spending-wallet';
-import { TotalProfit } from '@/components/dashboard/overview/total-profit';
+import { SecureSaving } from '@/components/dashboard/overview/secure-saving';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import { TempWalletForm } from '@/components/dashboard/account/expense-wallet-form';
 import { thunkUpdateSteadyWallet, thunkUpdateThreshold, thunkUpdateTotalWealth, thunkUpdateTempWallet } from '@/redux/thunks/wallet-thunks';
@@ -48,8 +48,12 @@ export default function DashboardContent(): React.JSX.Element {
   const pieChartSeries = {
     'Secure Saving': walletState.MainWallet.balance,
     'Spending Wallet': walletState.TemporaryWallet.balance,
+    ...(userState.hasSalary === false && {
     'Monthly Allowance': walletState.SteadyWallet.balance,
+     }),
     'Budget Leftover': walletState.DailyBuffer.balance,
+    'Wishlist Saving': wishlist.totalSavedAmount,
+    'Bill Saving': budgetState.FixedExpenses.totalSavedAmount
   };
 
   // Ensure `handleOpen()` is called only once when isProfileComplete === false
@@ -129,7 +133,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <TasksProgress sx={{ height: '100%' }} value={remainPercentage} />
+        <BudgetProgress sx={{ height: '100%' }} value={remainPercentage} />
       </Grid>
       <Grid
         size={{
@@ -138,7 +142,7 @@ export default function DashboardContent(): React.JSX.Element {
           xs: 12,
         }}
       >
-        <TotalProfit sx={{ height: '100%' }} value={`${walletState.MainWallet.balance}`} />
+        <SecureSaving sx={{ height: '100%' }} value={`${walletState.MainWallet.balance}`} />
       </Grid>
       <Grid
         size={{

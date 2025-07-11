@@ -14,6 +14,8 @@ import {
   updateDailyBudget
 } from '../slices/budget-slice';
 import type { Expense, ExpenseBase, BudgetState } from '@/types/budget';
+import { refetchAllUserData } from '@/redux/thunks/global-refresh';
+import type { AppDispatch } from '@/redux/store';
 
 interface BudgetSummaryResponse {
   summary: BudgetState;
@@ -62,7 +64,8 @@ export const thunkPayFixedExpense = createAsyncThunk(
   async (data: { id: string; preference: 'main' | 'wishlist'; reduceDailyBudget: boolean }, { dispatch }) => {
     const res = await axios.patch(`${BASE_URL}/budget/expenses/${data.id}/pay`,  {preference: data.preference, reduceDailyBudget: data.reduceDailyBudget});
     console.debug("payFixedExpense "+res.status);
-    dispatch(payExpense(data.id));
+    // dispatch(payExpense(data.id));
+    await refetchAllUserData(dispatch as AppDispatch);
   }
 );
 

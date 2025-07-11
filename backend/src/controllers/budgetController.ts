@@ -111,9 +111,9 @@ export const deleteFixedExpense = async (req: AuthRequest, res: Response): Promi
     res.status(404).json("Expense item not found");
     return;
   }
-  const savedAmount = expense.amount - expense.amountToFund
+  const savedAmount = expense.isPaid ? 0 : expense.amount - expense.amountToFund;
   await FixedExpense.deleteOne({ _id: id, userId });
-  await settlePayback(req.userId!, savedAmount, "wishlist");
+  await settlePayback(req.userId!, savedAmount, "expense");
   res.sendStatus(204);
 };
 
@@ -132,13 +132,13 @@ export const payFixedExpense = async (req: AuthRequest, res: Response): Promise<
         if (!expense.isFunded){
           const savedAmount = expense.amount - expense.amountToFund;
           await collectAmount(userId, id, expense.amount, savedAmount, preference, reduceDailyBudget);
-          // expense.isFunded = true;
+          expense.isFunded = true;
         }
         expense.isPaid = true;
         expense.status = 'paid';
         expense.amountToFund = expense.amount;
-        // await expense.save();
-        // await updateFixedExpenseSavedAmount(userId);
+        await expense.save();
+        await updateFixedExpenseSavedAmount(userId);
     }
     res.status(204).json({ message: 'Successfully paid' });
   }

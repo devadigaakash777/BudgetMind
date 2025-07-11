@@ -6,12 +6,9 @@ import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import { FixedExpenseCard } from '@/components/dashboard/bills/bill-card';
-import { CompaniesFilters } from '@/components/dashboard/wishlists/integrations-filters'; 
 import AddFixedExpenseModal from '@/components/dashboard/bills/bill-model';
 import { ExpenseBase } from '@/types/budget'
 import { useSelector, useDispatch } from 'react-redux';
@@ -26,6 +23,7 @@ import {
 import FullScreenLoader from '@/components/dashboard/loader';
 import { useEffect } from 'react';
 import { clearPreview } from '@/redux/slices/preview-slice';
+import { Divider } from '@mui/material';
 
 export default function FixedExpensesContent(): React.JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,7 +34,7 @@ export default function FixedExpensesContent(): React.JSX.Element {
 
   //clear the preview to reflect any changes happened in this component
     useEffect(() => {
-      dispatch(clearPreview()); 
+      dispatch(clearPreview());
     }, [dispatch]);
 
   // Modal state
@@ -51,12 +49,16 @@ export default function FixedExpensesContent(): React.JSX.Element {
   // Pagination state
   const [page, setPage] = React.useState(0);
   const rowsPerPage = fixedExpenseWallet.rowsPerPage;
-  console.log(rowsPerPage);
 
-  const paginatedItems = fixedExpenses.slice(
+  const sortedFixedExpenses = [...fixedExpenses].sort((a, b) =>
+    new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+  );
+
+  const paginatedItems = sortedFixedExpenses.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+  
   const totalPages = Math.ceil(fixedExpenses.length / rowsPerPage);
   
   const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
@@ -71,14 +73,6 @@ export default function FixedExpensesContent(): React.JSX.Element {
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Fixed Expenses</Typography>
-          <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
-            <Button color="inherit" startIcon={<UploadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Import
-            </Button>
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Export
-            </Button>
-          </Stack>
         </Stack>
         <div>
           <Button
@@ -97,7 +91,7 @@ export default function FixedExpensesContent(): React.JSX.Element {
         />
       </Stack>
 
-      <CompaniesFilters />
+      <Divider sx={{ my: 2 }} />
 
       <Grid container spacing={3}>
         {paginatedItems.map((expense) => (

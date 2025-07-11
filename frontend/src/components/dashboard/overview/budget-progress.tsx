@@ -6,14 +6,14 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { ListBulletsIcon } from '@phosphor-icons/react/dist/ssr/ListBullets';
+import { CalendarDotsIcon } from '@phosphor-icons/react/dist/ssr';
 
-export interface TasksProgressProps {
+export interface BudgetProgressProps {
   sx?: SxProps;
   value: number;
 }
 
-export function TasksProgress({ value, sx }: TasksProgressProps): React.JSX.Element {
+export function BudgetProgress({ value, sx }: BudgetProgressProps): React.JSX.Element {
   return (
     <Card sx={sx}>
       <CardContent>
@@ -21,12 +21,12 @@ export function TasksProgress({ value, sx }: TasksProgressProps): React.JSX.Elem
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={1}>
               <Typography color="text.secondary" gutterBottom variant="overline">
-                Task Progress
+                Monthly Budget Used
               </Typography>
               <Typography variant="h4">{value}%</Typography>
             </Stack>
             <Avatar sx={{ backgroundColor: 'var(--mui-palette-warning-main)', height: '56px', width: '56px' }}>
-              <ListBulletsIcon fontSize="var(--icon-fontSize-lg)" />
+              <CalendarDotsIcon fontSize="var(--icon-fontSize-lg)" />
             </Avatar>
           </Stack>
           <div>

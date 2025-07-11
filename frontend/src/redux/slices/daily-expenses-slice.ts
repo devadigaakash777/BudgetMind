@@ -12,6 +12,7 @@ const initialState: DailyExpenseState = {
   totalAmount: 0,
   canReduceBudget: true,
   source: 'main',
+  searchText: '',
 };
 
 
@@ -66,6 +67,9 @@ const dailyExpenseSlice = createSlice({
     reduceBudget(state, action: PayloadAction<boolean>) {
       state.canReduceBudget = action.payload;
     },
+    setSearchText(state, action: PayloadAction<string>) {
+      state.searchText = action.payload;
+    },
   },
 });
 
@@ -79,6 +83,7 @@ export const {
   addExpense,
   selectSource,
   reduceBudget,
+  setSearchText
 } = dailyExpenseSlice.actions;
 
 export default dailyExpenseSlice.reducer;

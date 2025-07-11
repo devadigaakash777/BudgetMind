@@ -3,6 +3,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/lib/axiosInstance'; // your custom axios instance
 import { setDailyExpense } from '../slices/daily-expenses-slice';
 import type { DailyExpense } from '@/types/daily-expense';
+import { refetchAllUserData } from '@/redux/thunks/global-refresh';
+import type { AppDispatch } from '@/redux/store';
 
 const BASE_URL = 'http://localhost:5000/api';
 
@@ -35,7 +37,7 @@ export const thunkGenerateAndAddExpenses = createAsyncThunk(
   async (payload: GenerateExpensePayload, { dispatch, rejectWithValue }) => {
     try {
       await axios.post(`${BASE_URL}/expense/generate-add`, payload);
-      await dispatch(thunkFetchDailyExpenses());
+      await refetchAllUserData(dispatch as AppDispatch);
     } catch (error: any) {
       return rejectWithValue(error.response?.data || 'Failed to generate/add expenses');
     }

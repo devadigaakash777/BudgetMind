@@ -2,7 +2,7 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import { Button,ButtonGroup } from '@mui/material';
+import { Alert, AlertTitle, Button,ButtonGroup, CardActions, CardContent, CardMedia, Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
@@ -16,6 +16,8 @@ import {
   ShoppingCartIcon,
   StarIcon
 } from '@phosphor-icons/react/dist/ssr';
+import { CalendarDots, CalendarDotsIcon, SealIcon } from '@phosphor-icons/react';
+import { yellow } from '@mui/material/colors';
 
 export interface WishlistItem {
   _id?: string;
@@ -64,94 +66,98 @@ export function WishlistCard({
   };
 
   return (
-    <Card sx={{ display: 'flex', flexDirection: 'column', p: 2, gap: 1 }}>
-      {/* Row 1: Image + Main Info */}
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, alignItems: 'center' }}>
-        {/* Product Image */}
-        <Avatar
-          src={item.image}
-          variant="square"
-          sx={{ width: 100, height: 100, borderRadius: 1 }}
-        />
+    <Card sx={{ maxWidth: 350, display: 'flex', flexDirection: 'column', boxShadow: 3, py: 1}}>
+      {/* Image */}
+      <CardMedia
+        component="img"
+        height="150"
+        image={item.image}
+        alt={item.name}
+        sx={{ objectFit: 'contain' }}
+      />
 
-        {/* Main Content */}
-        <Box sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            {item.name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            {item.description}
-          </Typography>
+      <Divider sx={{ mt: 1 }} />
+      {/* Main Content */}
+      <CardContent>
+        <Typography variant="h5" fontWeight="bold" sx={{ textTransform: 'capitalize' }}>
+          {item.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          {item.description}
+        </Typography>
 
-          <Stack direction="row" spacing={3} flexWrap="wrap">
-            <Typography variant="body2">Saved: ₹{item.savedAmount}</Typography>
-            <Typography variant="body2">Cost: ₹{item.cost}</Typography>
-            <Typography variant="body2">Months Left: {item.monthLeft}</Typography>
-            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-              Priority: {item.priority}
-              <StarIcon size={16} weight="fill" style={{ marginLeft: 4 }} />
-            </Typography>
-            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-              {item.isFunded ? (
-                <>
-                  <CheckCircleIcon size={16} color="green" style={{ marginRight: 4 }} />
-                  Funded
-                </>
-              ) : (
-                <>
-                  <XCircleIcon size={16} color="red" style={{ marginRight: 4 }} />
-                  Not Funded
-                </>
-              )}
-            </Typography>
-          </Stack>
+        {/* Info Row */}
+        <Box sx={{ mt: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+          <Typography variant="body2"> Saved: ₹{item.savedAmount}</Typography>
+          <Typography variant="body2"> Cost: ₹{item.cost}</Typography>
+          <Typography variant="body2"><CalendarDotsIcon size={16} /> Months Left: {item.monthLeft}</Typography>
+          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
+            <SealIcon size={16} style={{ fill: '#1976d2' }} weight="fill"/> Priority: {item.priority}
+          </Typography>
         </Box>
-      </Box>
 
-      <Divider sx={{ my: 1 }} />
+        {/* Funded Status */}
+        <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+          {!item.isFunded && (
+            <>
+              <Alert severity="error" 
+               sx={{
+                    fontSize: 12,
+                    py: 0.5,
+                    px: 1,
+                    '& .MuiAlertTitle-root': {
+                      fontSize: 13,
+                      mb: 0.3
+                    }
+                  }}
+              >
+                <AlertTitle>Not Funded</AlertTitle>
+                Still you can buy the product. But by deducting Money from SPending wallet. 
+              </Alert>
+            </>
+          )}
+        </Box>
+      </CardContent>
 
-      {/* Row 2: Action Buttons */}
-      <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-        <Tooltip title="Delete Item">
-          <IconButton color="error" onClick={() => onDelete(item._id ?? 'demo')}>
-            <TrashIcon size={20} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Change Months Left">
-          <ButtonGroup
-            disableElevation
-            variant="outlined"
-            aria-label="Disabled button group"
-          >
+      <Divider />
+
+      {/* Controls */}
+      <CardActions sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 2 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="body2" fontWeight="medium">Adjust Months Left:</Typography>
+          <ButtonGroup variant="outlined" aria-label="Basic button group" size="small">
             <Button onClick={() => onDecreaseMonth(item._id ?? 'demo')}>-</Button>
             <Button onClick={() => onIncreaseMonth(item._id ?? 'demo')}>+</Button>
           </ButtonGroup>
-        </Tooltip>
+        </Box>
 
-        <Tooltip title="Decrease Priority">
-          <ButtonGroup
-            disableElevation
-            variant="outlined"
-            aria-label="Disabled button group"
-          >
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="body2" fontWeight="medium">Change Priority:</Typography>
+          <ButtonGroup variant="outlined" aria-label="Basic button group" size="small">
             <Button onClick={() => onDecreasePriority(item._id ?? 'demo')}>-</Button>
             <Button onClick={() => onIncreasePriority(item._id ?? 'demo')}>+</Button>
           </ButtonGroup>
-        </Tooltip>
+        </Box>
 
-        <Tooltip title={item.isFunded ? 'Buy Item' : 'Item not funded'}>
-          <span>
-            <IconButton color="success" onClick={handleBuy}>
-              <ShoppingCartIcon size={20} />
-            </IconButton>
-          </span>
-        </Tooltip>
-        <InsufficientFundDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onConfirm={handleConfirmDialog}
-        />
-      </Stack>
+        <Divider />
+
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Tooltip title="Buy Item">
+            <Chip variant="filled" onClick={handleBuy} color="success" icon={<ShoppingCartIcon size={20} />} label="Buy" />
+          </Tooltip>
+
+          <Tooltip title="Delete Item">
+            <Chip variant="filled" onClick={() => onDelete(item._id ?? 'demo')} color="error" icon={<TrashIcon size={20} />} label="Delete" />
+          </Tooltip>
+        </Box>
+      </CardActions>
+
+      {/* Dialog */}
+      <InsufficientFundDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={handleConfirmDialog}
+      />
     </Card>
   );
 }

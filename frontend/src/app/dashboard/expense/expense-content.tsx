@@ -44,8 +44,24 @@ export default function ExpenseContent(): React.JSX.Element {
   const page = expenseState.page;
   const rowsPerPage = expenseState.rowsPerPage;
 
-  const paginatedDailyExpenses = applyPagination(dailyExpenses, page, rowsPerPage);
-  const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
+  const searchText = expenseState.searchText.toLowerCase();
+  const statusLabelMap = {
+    above: "overspent",
+    below: "underspent",
+    equal: "on budget"
+  };
+
+  const filteredDailyExpenses = React.useMemo(() => {
+    return dailyExpenses.filter((expense) =>
+      statusLabelMap[expense.amountStatus]?.toLowerCase().includes(searchText) ||
+      expense.date?.toLowerCase().includes(searchText)
+    );
+  }, [dailyExpenses, searchText]);
+
+  const paginatedDailyExpenses = React.useMemo(() => {
+    return applyPagination(filteredDailyExpenses, page, rowsPerPage);
+  }, [filteredDailyExpenses, page, rowsPerPage]);
+    const isAppLoading = useSelector((state: RootState) => state.loader.isAppLoading);
   
   if (isAppLoading) {
     return (
@@ -59,9 +75,6 @@ export default function ExpenseContent(): React.JSX.Element {
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Daily Expenses</Typography>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Button color="inherit" startIcon={<UploadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Import
-            </Button>
             <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
               Export
             </Button>
@@ -73,13 +86,13 @@ export default function ExpenseContent(): React.JSX.Element {
             variant="contained" 
             component={RouterLink} 
             href={paths.dashboard.addExpense}>
-            Add
+            Add Daily Expenses
           </Button>
         </div>
       </Stack>
       <DailyExpensesFilters />
       <DailyExpensesTable
-        count={dailyExpenses.length}
+        count={filteredDailyExpenses.length}
         page={page}
         rows={paginatedDailyExpenses}
         rowsPerPage={rowsPerPage}

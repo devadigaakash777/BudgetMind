@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow';
 import { ArrowDownIcon, ArrowUpIcon } from '@phosphor-icons/react/dist/ssr';
 import { useSelection } from '@/hooks/use-selection';
 import type { DailyExpense } from '@/types/daily-expense';
+import { Typography } from '@mui/material';
 
 function noop(_event: unknown, _newPage: number) {}
 
@@ -50,6 +51,13 @@ export function DailyExpensesTable({
   console.warn(selected);
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
+
+  const selectedAmountTotal = React.useMemo(() => {
+    return rows
+      .filter((row) => selected?.has(row._id))
+      .reduce((sum, row) => sum + row.amount, 0);
+  }, [rows, selected]);
+
 
   return (
     <Card>
@@ -114,6 +122,11 @@ export function DailyExpensesTable({
         </Table>
       </Box>
       <Divider />
+      <Box sx={{ p: 2 }}>
+        <Typography variant="subtitle1">
+          Total Spent on Selected: ₹{selectedAmountTotal}
+        </Typography>
+      </Box>
       <TablePagination
         component="div"
         count={count}

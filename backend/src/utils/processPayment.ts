@@ -23,7 +23,7 @@ export async function collectAmount(userId: string, sourceID: string, cost: numb
     }
 
     const remaining = Math.max(tempWalletBudget - (cost - savedAmount), 0);
-    // wallet.TemporaryWallet.balance = remaining;
-    // await wallet.save();
+    wallet.TemporaryWallet.balance = remaining;
+    await wallet.save();
     console.log("updated value of temp wallet budget is ",remaining);
 }

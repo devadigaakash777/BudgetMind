@@ -7,12 +7,12 @@ import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { PiggyBankIcon } from '@phosphor-icons/react/dist/ssr';
 
-export interface TotalProfitProps {
+export interface SecureSavingProps {
   sx?: SxProps;
   value: string;
 }
 
-export function TotalProfit({ value, sx }: TotalProfitProps): React.JSX.Element {
+export function SecureSaving({ value, sx }: SecureSavingProps): React.JSX.Element {
   return (
     <Card sx={sx}>
       <CardContent>

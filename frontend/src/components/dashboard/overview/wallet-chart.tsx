@@ -40,7 +40,7 @@ export function WalletChart({ chartSeries, labels, sx }: WalletChartProps): Reac
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Traffic source" />
+      <CardHeader title="Amount Distribution" />
       <CardContent>
         <Box sx={{ width: '100%' }}>
           <Stack spacing={2}>

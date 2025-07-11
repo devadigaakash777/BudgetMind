@@ -20,4 +20,5 @@ export interface DailyExpenseState {
   totalAmount: number;
   canReduceBudget: boolean;
   source: 'wishlist' | 'main';
+  searchText: string;
 }

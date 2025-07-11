@@ -106,8 +106,8 @@ export const buyItem = async (req: AuthRequest, res: Response): Promise<void> =>
     if (item.savedAmount < item.cost) {
       await collectAmount(userId, itemId, item.cost, item.savedAmount, preference, reduceDailyBudget);
     }
-    // await item.deleteOne();
-    // await updateTotalSavedAmount(req.userId!);
+    await item.deleteOne();
+    await updateTotalSavedAmount(req.userId!);
     res.sendStatus(200);
   } catch (err) {
     console.error('Error in buyItem:', err);

@@ -28,6 +28,7 @@ import { setPage } from '@/redux/slices/wishlist-slice';
 import FullScreenLoader from '@/components/dashboard/loader';
 import { useEffect } from 'react';
 import { clearPreview } from '@/redux/slices/preview-slice';
+import { Divider } from '@mui/material';
 
 export default function WishlistContent(): React.JSX.Element {
   const [open, setOpen] = React.useState(false);
@@ -67,14 +68,6 @@ export default function WishlistContent(): React.JSX.Element {
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Wishlist</Typography>
-          <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
-            <Button color="inherit" startIcon={<UploadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Import
-            </Button>
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Export
-            </Button>
-          </Stack>
         </Stack>
         <div>
           <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
@@ -90,7 +83,7 @@ export default function WishlistContent(): React.JSX.Element {
           maxPriority={wishlists.length > 0 ? Math.max(...wishlists.map(i => i.priority)) : 0}
         />
       </Stack>
-      <CompaniesFilters />
+      <Divider sx={{ my: 2 }} />
       <Grid container spacing={3}>
         {paginatedItems.map((wishlist) => (
           <Grid

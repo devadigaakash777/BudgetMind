@@ -12,6 +12,8 @@ import {
   buyItem as completePurchase
 } from '../slices/wishlist-slice';
 import type { WishlistItem, WishlistItemBase } from '@/types/wishlist';
+import { refetchAllUserData } from '@/redux/thunks/global-refresh';
+import type { AppDispatch } from '@/redux/store';
 
 interface WishlistResponse {
   items: WishlistItem[];
@@ -91,7 +93,7 @@ export const thunkBuyItem = createAsyncThunk(
   'wishlist/buyItem',
   async (data: { id: string; preference: 'main' | 'wishlist'; reduceDailyBudget: boolean }, { dispatch }) => {
     await axios.post(`${BASE_URL}/${data.id}/buy`, {preference: data.preference, reduceDailyBudget: data.reduceDailyBudget});
-    dispatch(completePurchase(data.id));
+    await refetchAllUserData(dispatch as AppDispatch);
   }
 );
 
