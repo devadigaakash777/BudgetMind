@@ -7,7 +7,8 @@ import {
   markProfileComplete,
   markSalaryPaid,
   getUserProfile,
-  calculateProfile
+  calculateProfile,
+  resetUserData
 } from '../controllers/profileController.js';
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.put('/salary', updateSalary);
 router.patch('/avatar', updateAvatar);
 router.patch('/status/profile', markProfileComplete);
 router.patch('/status/salary', markSalaryPaid);
+router.post('/reset', resetUserData);
 
 export default router;

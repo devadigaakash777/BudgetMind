@@ -1,7 +1,6 @@
 import { getNextSalaryDateISO } from '@/utils/shared';
 import { monthlyAllocate } from '@/utils/shared';
 import type { PreviewState } from '@/types/preview';
-import { stat } from 'fs';
 
 type newBudgetResult = {
   TemporaryWallet: any;

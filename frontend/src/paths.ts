@@ -8,7 +8,7 @@ export const paths = {
     wishlists: '/dashboard/wishlists',
     bills: '/dashboard/bills',
     addExpense: '/dashboard/add-expense',
-    settings: '/dashboard/settings',
+    chatbot: '/dashboard/chatbot',
   },
   errors: { notFound: '/errors/not-found' },
 } as const;

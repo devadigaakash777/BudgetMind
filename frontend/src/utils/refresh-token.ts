@@ -1,10 +1,6 @@
-import axios from 'axios';
 import store from '@/redux/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser, clearUser, setAccessToken } from '@/redux/slices/user-slice';
-import { RootState } from '@/redux/store';
+import { clearUser, setAccessToken } from '@/redux/slices/user-slice';
 import {isTokenExpired} from '@/utils/jwt-decoder';
-import type { User } from '@/types/user';
 import { authClient } from '@/lib/auth/client';
 
 export async function refreshTokenIfNeeded(): Promise<string | null> {

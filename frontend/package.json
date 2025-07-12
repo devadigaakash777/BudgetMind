@@ -36,12 +36,15 @@
     "dayjs": "1.11.13",
     "framer-motion": "^12.23.0",
     "jwt-decode": "^4.0.0",
+    "marked": "^16.0.0",
     "next": "15.3.3",
     "react": "19.1.0",
     "react-apexcharts": "1.7.0",
+    "react-chatbotify": "^2.2.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.58.1",
     "react-redux": "^9.2.0",
+    "remove-markdown": "^0.6.2",
     "zod": "3.25.57"
   },
   "devDependencies": {

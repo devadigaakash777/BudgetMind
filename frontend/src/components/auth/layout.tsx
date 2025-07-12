@@ -54,12 +54,12 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
             </Typography>
           </Stack>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            {/* <Box
+            <Box
               component="img"
               alt="Widgets"
-              src="/assets/auth-widgets.jpeg"
+              src="/assets/auth-widgets.png"
               sx={{ height: 'auto', width: '100%', maxWidth: '600px' }}
-            /> */}
+            />
           </Box>
         </Stack>
       </Box>

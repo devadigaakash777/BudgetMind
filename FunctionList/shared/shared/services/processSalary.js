@@ -71,7 +71,9 @@ export function processSalary(state, salary, currentDate, userDailyBudget = null
   // newState.User.Salary.amount = salary;
   let remaining = salary;
 
-  // 2. Move DailyBuffer funds to TemporaryWallet
+  // 2. Move DailyBuffer funds and remaining Monthly budget fund to TemporaryWallet
+  newState.TemporaryWallet.balance += newState.MonthlyBudget.amount;
+  newState.MonthlyBudget.amount = 0;
   addDailyBufferToTemporaryWallet(newState);
 
   // 3.Deduct amount from Temporary Wallet

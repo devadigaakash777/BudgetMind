@@ -7,6 +7,7 @@ import previewReducer from './slices/preview-slice';
 import expenseReducer from './slices/daily-expenses-slice';
 import loaderReducer from './slices/loader-slice';
 import snackbarReducer from "./slices/snackbar-slice";
+import chatbotReducer from "./slices/chatbot-slice";
 import { snackbarMiddleware } from './middleware/snackbar-middleware';
 
 const store = configureStore({
@@ -19,6 +20,7 @@ const store = configureStore({
     preview: previewReducer,
     loader: loaderReducer,
     snackbar: snackbarReducer,
+    chatbot: chatbotReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(snackbarMiddleware),

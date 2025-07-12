@@ -3,6 +3,10 @@ import { AuthRequest } from '../middleware/authMiddleware.js';
 import Profile from '../models/profile.model.js';
 import User from '../models/User.js';
 import { finalizeProfile } from "../services/profile.service.js";
+import { FixedExpense, BudgetSummary } from '../models/budget.model.js';
+import DailyExpense from '../models/expense.model.js';
+import { Wallet } from '../models/wallet.model.js';
+import { WishlistItem, WishlistSummary } from '../models/wishlist.model.js';
 
 const getOrCreateProfile = async (userId: string) => {
   let profile = await Profile.findOne({ userId });
@@ -104,4 +108,38 @@ export const calculateProfile = async (req: AuthRequest, res: Response) => {
         console.error(error);
         res.status(500).json({ error: "Failed to calculate profile" });
     }
+};
+
+export const resetUserData = async (req: AuthRequest, res: Response) => {
+  const userId = (req as any).userId;
+  const { deleteDailyExpense = false } = req.body;
+
+  try {
+    // 1. Reset only specific Profile fields
+    const profile = await Profile.findOne({ userId });
+    if (profile) {
+      profile.isProfileComplete = false;
+      profile.isSalaryPaid = false;
+      profile.hasSalary = false;
+      profile.salary = { amount: 0, date: 1 };
+      await profile.save();
+    }
+
+    // 2. Delete related data
+    await Wallet.deleteOne({ userId });
+    await FixedExpense.deleteMany({ userId });
+    await BudgetSummary.deleteOne({ userId });
+    await WishlistItem.deleteMany({ userId });
+    await WishlistSummary.deleteOne({ userId });
+
+    // 3. Conditionally delete Daily Expenses
+    if (deleteDailyExpense) {
+      await DailyExpense.deleteMany({ userId });
+    }
+
+    res.status(200).json({ message: 'User data reset successfully' });
+  } catch (error) {
+    console.error('Error resetting user data:', error);
+    res.status(500).json({ message: 'Failed to reset user data' });
+  }
 };

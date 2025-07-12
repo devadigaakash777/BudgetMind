@@ -9,8 +9,8 @@ import budgetRoutes from './routes/budgetRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import dailyExpenseRoutes from './routes/dailyExpenseRoutes.js';
 import connectDB from './config/db.js';
-import './cron/midnightJob.js'
-
+import './cron/midnightJob.js';
+import chatbotRoutes from './routes/chatbotRoutes.js';
 import { finalizeSalary } from "./services/profile.service.js";
 
 dotenv.config();
@@ -32,6 +32,8 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/budget', budgetRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/expense', dailyExpenseRoutes);
+app.use('/api/chatbot', chatbotRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

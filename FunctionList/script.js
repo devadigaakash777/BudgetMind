@@ -103,7 +103,7 @@ window.state = {
   PendingPayments: { amount: 0 },
   threshold: 10000,
   __v: 0,
-  MonthlyBudget: { amount: 19992, amountFunded: 19992 },
+  MonthlyBudget: { amount: 10000, amountFunded: 19992 },
   DailyBudget: { amount: 714, setAmount: 0, min: 125, max: 1025 },
   FixedExpenses: {
     expenses: [ {
@@ -131,8 +131,8 @@ window.state = {
       image: 'https://res.cloudinary.com/ddmlou0da/image/upload/v1751368444/py8gjmvmvnxtlpijo7ej.jpg',
       savedAmount: 0,
       priority: 7,
-      cost: 50000,
-      monthLeft: 10,
+      cost: 49999,
+      monthLeft: 9,
       isFunded: false,
       __v: 0
     } ],
