@@ -42,7 +42,7 @@ export const addPreviewExpense = function (expense: ExpenseInput) {
   return function (dispatch: AppDispatch, getState: () => RootState) {
     const state = getState().preview;
     const date = new Date();
-    const { newState } = logExtendedExpense(state, expense, date,  "user", " ") as LogExpenseResult;
+    const { newState } = logExtendedExpense(state, expense, date,  "user", " ", null) as LogExpenseResult;
     if (newState.DailyBudget) {
       newState.DailyBudget.amount = Math.max(0, newState.DailyBudget.amount - expense.amount);
     }
@@ -56,7 +56,7 @@ export const addPreviewExpense = function (expense: ExpenseInput) {
 export const requestMoney = function (amount: number, source: string, canDecrease: boolean) {
   return function (dispatch: AppDispatch, getState: () => RootState) {
     const state = getState().preview;
-    const { newState } = handleTemporaryWalletRequest(state, amount, source, canDecrease) as requestMoneyResult;
+    const { newState } = handleTemporaryWalletRequest(state, amount, source, canDecrease, true) as requestMoneyResult;
     console.log(newState);
     dispatch(setPreview(newState));
   };

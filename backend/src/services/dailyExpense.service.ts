@@ -5,9 +5,10 @@ export const processDailyExpense = async (
   expense: { amount: number; duration?: number },
   date: Date,
   userId: string,
-  details: string
+  details: string,
+  daysBetween: number | null
 ) => {
-  return await processWithMutator(userId, null, logExtendedExpense, expense, date, userId, details);
+  return await processWithMutator(userId, null, logExtendedExpense, expense, date, userId, details, daysBetween);
 };
 
 export const handleTempWallet = async (
@@ -15,7 +16,8 @@ export const handleTempWallet = async (
   amountRequested: number,
   sourcePreference: 'wishlist' | 'main',
   canDecreaseBudget: boolean,
+  hasBudgetPaid: boolean,
 ) => {
-  return await processWithMutator(userId, null, handleTemporaryWalletRequest, amountRequested, sourcePreference, canDecreaseBudget);
+  return await processWithMutator(userId, null, handleTemporaryWalletRequest, amountRequested, sourcePreference, canDecreaseBudget, hasBudgetPaid);
 };
 

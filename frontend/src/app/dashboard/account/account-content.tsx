@@ -11,10 +11,13 @@ import { DailyBudgetForm } from '@/components/dashboard/account/set-budget-detai
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { updateUserBasicInfo, updateUserAvatar, updateUserSalaryInfo } from '@/redux/thunks/profile-thunks';
+import { updateUserBasicInfo, updateUserAvatar, updateUserSalaryInfo, resetAll } from '@/redux/thunks/profile-thunks';
 import { thunkUpdateSteadyWallet, thunkUpdateThreshold } from '@/redux/thunks/wallet-thunks';
 import { thunkUpdateDailyBudget } from '@/redux/thunks/budget-thunks';
 import FullScreenLoader from '@/components/dashboard/loader';
+import { ResetAllDialog } from '@/components/dashboard/account/reset-all-dialog';
+import { ArrowsClockwiseIcon } from '@phosphor-icons/react';
+import { Button } from '@mui/material';
 
 export default function AccountContent(): React.JSX.Element {
   const user = useSelector((state: RootState) => state.user);
@@ -24,10 +27,14 @@ export default function AccountContent(): React.JSX.Element {
   
   const dispatch = useDispatch<AppDispatch>();
 
+  const [resetOpen, setResetOpen] = React.useState(false);
+
   // specify the limit to setting max Budget 
   const monthlyAmount = user.hasSalary
   ? user.salary.amount
   : wallet.SteadyWallet.monthlyAmount;
+
+
 
   if (isAppLoading) {
     return (
@@ -110,6 +117,26 @@ export default function AccountContent(): React.JSX.Element {
             maxAmount = {budgetState.DailyBudget.max}
             onSave={(updatedData) => dispatch(thunkUpdateDailyBudget(updatedData))}
             />
+        </Grid>
+        <Grid
+          size={{
+            lg: 12,
+            md: 12,
+            xs: 12,
+          }}
+        >
+          <Button
+            variant="outlined"
+            startIcon={<ArrowsClockwiseIcon />}
+            onClick={() => setResetOpen(true)} 
+          >
+            Reset
+          </Button>
+          <ResetAllDialog
+            open={resetOpen}
+            onClose={() => setResetOpen(false)}
+            onReset={(deleteExpenses) => dispatch(resetAll(deleteExpenses))}
+          />
         </Grid>
       </Grid>
     </Stack>

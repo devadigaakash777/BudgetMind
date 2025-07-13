@@ -134,3 +134,15 @@ export const calculateBudget = createAsyncThunk(
     }
   }
 );
+
+export const resetAll = createAsyncThunk(
+  'user/resetAll',
+  async (deleteDailyExpense: boolean, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${API_URL}/reset`, { deleteDailyExpense });
+      console.debug("reset status "+res.status);
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || 'Failed to reset');
+    }
+  }
+);

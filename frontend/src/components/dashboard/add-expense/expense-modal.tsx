@@ -11,7 +11,7 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, FormHelperText, TextField, Typography } from '@mui/material';
 import { VaultIcon, EyeIcon, LightbulbFilamentIcon } from '@phosphor-icons/react/dist/ssr';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
@@ -23,6 +23,7 @@ type GaugeLimit = { value: number; label?: string };
 type AddExpenseFormProps = {
   userid: string;
   maximumSafeAmount: number;
+  restrictedDuration: number | null;
   onAdd: (payload: {
     totalAmount: number;
     details: string;
@@ -53,6 +54,7 @@ type AddExpenseFormProps = {
 export function AddExpenseForm({
   userid,
   maximumSafeAmount,
+  restrictedDuration,
   onAdd,
   onAddPreview,
   pieChartSeries,
@@ -110,7 +112,7 @@ export function AddExpenseForm({
     onAdd({
       totalAmount: formData.amount,
       details: formData.details,
-      numberOfDays: formData.numberOfDays,
+      numberOfDays: restrictedDuration? Math.min(formData.numberOfDays, restrictedDuration): formData.numberOfDays,
       source: selectedSource,
       canReduceBudget: canReduceBudget,
       usedBoth: usedBoth
@@ -193,8 +195,17 @@ export function AddExpenseForm({
                   onChange={handleInputChange}
                   label="Number of Days"
                   type="number"
-                  inputProps={{ min: 1 }}
+                  inputProps={{ 
+                    min: 1, 
+                    ...(restrictedDuration !== null && { max: restrictedDuration }),
+                  }}
+                  error={restrictedDuration !== null && formData.numberOfDays > restrictedDuration}
                 />
+                <FormHelperText>
+                  {restrictedDuration !== null && formData.numberOfDays > restrictedDuration
+                    ? `Max allowed days is ${restrictedDuration}`
+                    : ' '}
+                </FormHelperText>
               </FormControl>
             </Grid>
             <Grid size={{

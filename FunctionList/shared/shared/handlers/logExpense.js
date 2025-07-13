@@ -11,11 +11,12 @@ import { splitAmountByDays } from '../utils/splitAmountByDays.js'
  * @param {Date} currentDate - Date the expense starts
  * @returns {object} Updated state object
  */
-export function logExtendedExpense(state, expense, currentDate, userId, details) {
+export function logExtendedExpense(state, expense, currentDate, userId, details, restrictedDuration) {
   const newState = structuredClone(state);
   const dailyBudget = newState.DailyBudget.amount;
 
-  const duration = (typeof expense.duration === 'number' && expense.duration > 0) ? expense.duration : 1;
+  const givenDuration = (typeof expense.duration === 'number' && expense.duration > 0) ? expense.duration : 1;
+  const duration = restrictedDuration ? Math.min(restrictedDuration, givenDuration) : givenDuration;
   // const normalizedTotal = normalizeExpense(expense, currentDate);
   const expectedCost = normalizeExpense(expense, currentDate);
   const perDayCost = splitAmountByDays(expectedCost, expense.amount, duration);

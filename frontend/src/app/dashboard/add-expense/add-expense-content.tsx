@@ -21,6 +21,7 @@ import { FixedExpense } from '@/components/dashboard/overview/fixed-expense';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
 import { simulateMonthlyAllocation, calculateRequiredAmount } from '@/utils/preview-utils';
 import { thunkUpdateTempWallet } from '@/redux/thunks/wallet-thunks';
+import dayjs from 'dayjs';
 
 export default function AddExpenseContent(): React.JSX.Element {
 
@@ -110,6 +111,18 @@ export default function AddExpenseContent(): React.JSX.Element {
   const todaysFirstExpense = expenseState.data
     .filter(expense => expense.date === today) // Keep only today's expenses
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]; // Get the earliest one
+
+  const lastExpense = expenseState.data
+  .slice()
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
+  const todayJS = dayjs().startOf('day'); // today's date at 00:00
+  let daysBetween = null;
+
+  if (lastExpense) {
+    const lastDate = dayjs(lastExpense.date, 'YYYY-MM-DD');
+    daysBetween = todayJS.diff(lastDate, 'day');
+  }
 
 
   //Gauge meter value
@@ -227,6 +240,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           <AddExpenseForm 
             userid={userState.data._id}
             maximumSafeAmount={maximumSafeAmount}
+            restrictedDuration={daysBetween}
             onAdd={(payload) => dispatch(thunkGenerateAndAddExpenses(payload))}
             onAddPreview={(value) => dispatch(addPreviewExpense(value))}
             pieChartSeries={pieChartSeries} 

@@ -6,6 +6,7 @@ import { BudgetSummary } from "../models/budget.model.js";
 import { processDailyExpense, handleTempWallet } from "../services/dailyExpense.service.js";
 import { Wallet } from "../models/wallet.model.js";
 import XLSX from "xlsx";
+import dayjs from 'dayjs';
 
 // 1. Fetch user expenses
 export const getUserDailyExpenses = async (req: AuthRequest, res: Response) => {
@@ -36,7 +37,7 @@ export const addDailyExpenses = async (req: AuthRequest, res: Response): Promise
 };
 
 // 3. Generate and add expenses
-export const generateAndAddExpenses = async (req: AuthRequest, res: Response) => {
+export const generateAndAddExpenses = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = (req as any).userId;
 
@@ -57,11 +58,23 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response) =>
     } = req.body;
     
      // ✅ Reject if expenses already exist for today
-    const todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const existingExpenses = await DailyExpense.findOne({ userId, date: todayDate });
-    if (existingExpenses) {
+    const lastExpense = await DailyExpense.findOne({ userId }).sort({ date: -1 });
+
+    let daysBetween: number | null = null;
+
+    if (lastExpense) {
+      const today = dayjs().startOf('day');
+      const lastDate = dayjs(lastExpense.date, 'YYYY-MM-DD');
+
+      daysBetween = today.diff(lastDate, 'day');
+      console.log('Days between:', daysBetween);
+    } else {
+      console.log('No expenses found for this user.');
+    }
+
+    if (daysBetween !== null && daysBetween === 0) {
       res.status(400).json({
-        error: 'You have already added expenses for today. Try again tomorrow.'
+        error: 'You have already added expenses for today. Try again tomorrow.',
       });
       return;
     }
@@ -91,7 +104,7 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response) =>
     if(totalAmount > totalBudget){
       let required = totalAmount - totalBudget;
       for(let i=0; i<count ; i++){
-        const newState = await handleTempWallet(userId, required, preference, canReduceBudget);
+        const newState = await handleTempWallet(userId, required, preference, canReduceBudget, true);
         required -= (newState.amountCollected - newState.freedBudget);
         preference = (preference === 'main') ? 'wishlist' : 'main';
         console.warn("Required ",required);
@@ -104,7 +117,7 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response) =>
     const today = new Date();
     const expense = {amount: totalAmount, duration: numberOfDays}
 
-    const generatedState = await processDailyExpense(expense, today, userId, details);
+    const generatedState = await processDailyExpense(expense, today, userId, details, daysBetween);
 
     const generatedExpenses = generatedState.data;
     console.log(JSON.stringify(generatedExpenses, null, 2));
