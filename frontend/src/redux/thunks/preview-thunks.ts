@@ -56,7 +56,7 @@ export const addPreviewExpense = function (expense: ExpenseInput) {
 export const requestMoney = function (amount: number, source: string, canDecrease: boolean) {
   return function (dispatch: AppDispatch, getState: () => RootState) {
     const state = getState().preview;
-    const { newState } = handleTemporaryWalletRequest(state, amount, source, canDecrease, true) as requestMoneyResult;
+    const { newState } = handleTemporaryWalletRequest(state, amount, source, canDecrease, false) as requestMoneyResult;
     console.log(newState);
     dispatch(setPreview(newState));
   };

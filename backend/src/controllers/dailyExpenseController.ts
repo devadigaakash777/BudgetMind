@@ -104,7 +104,7 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response): P
     if(totalAmount > totalBudget){
       let required = totalAmount - totalBudget;
       for(let i=0; i<count ; i++){
-        const newState = await handleTempWallet(userId, required, preference, canReduceBudget, true);
+        const newState = await handleTempWallet(userId, required, preference, canReduceBudget, false);
         required -= (newState.amountCollected - newState.freedBudget);
         preference = (preference === 'main') ? 'wishlist' : 'main';
         console.warn("Required ",required);

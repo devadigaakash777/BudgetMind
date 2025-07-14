@@ -13,7 +13,6 @@ import { smartBudget } from './smartBudget.js';
  * @return {number} - Amount get from the Monthly budget
  */
 export function consumeFromMonthlyBudget(state, requiredAmount = null, dateStr = null) {
-  const today = new Date();
   const daysLeft = getDaysRemaining(dateStr);
   console.debug('[consumeFromMonthlyBudget] daysLeft:', daysLeft);
   const dailyMin = state.DailyBudget.min;

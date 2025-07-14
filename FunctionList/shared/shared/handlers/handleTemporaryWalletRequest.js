@@ -44,15 +44,16 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
           console.warn("cant satisfy the request go with handleTemporaryWallet"); 
         }
         // amount requirement changes after changing dailyBudget
-        amountRequested -= extraAmount.totalRemaining;
-        // if(hasBudgetPaid){
-        //   amountRequested -= extraAmount.totalRemaining;
-        // }else{
-        //   const releasedAmount = state.DailyBudget.amount - extraAmount.smartDailyBudget;
-        //   collected.amountCollected += extraAmount.totalRemaining;
-        //   collected.freedBudget = releasedAmount;
-        //   amountRequested -= (extraAmount.totalRemaining - releasedAmount);
-        // }
+        // amountRequested -= extraAmount.totalRemaining;
+        if(hasBudgetPaid){
+          amountRequested -= extraAmount.totalRemaining;
+          collected.amountCollected += extraAmount.totalRemaining;
+        }else{
+          const releasedAmount = state.DailyBudget.amount - extraAmount.smartDailyBudget;
+          collected.amountCollected += extraAmount.totalRemaining;
+          collected.freedBudget = releasedAmount;
+          amountRequested -= (extraAmount.totalRemaining - releasedAmount);
+        }
   }
   // const fromTemp = Math.min(newState.TemporaryWallet.balance, amountRequested);
   // if (fromTemp > 0) {

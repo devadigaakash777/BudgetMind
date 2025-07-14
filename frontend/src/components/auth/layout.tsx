@@ -58,7 +58,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
               component="img"
               alt="Widgets"
               src="/assets/auth-widgets.png"
-              sx={{ height: 'auto', width: '100%', maxWidth: '600px' }}
+              sx={{ height: '80vh', width: '100%', maxWidth: '600px' }}
             />
           </Box>
         </Stack>

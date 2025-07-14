@@ -46,27 +46,37 @@ export function initializeState(initialState, totalWealth, threshold) {
     const isSteadyDay = today === state.SteadyWallet.date;
 
     // If today is not salary day or steady day, do nothing
-    if (!(isSalaryDay || isSteadyDay)) {
-      const salaryDay = state.User.hasSalary ? state.User.salary.date : state.SteadyWallet.date;
-      const salaryDate = getNextSalaryDateISO(salaryDay);
-      const daysLeft = getDaysRemaining(salaryDate);
-      const result = smartBudget(state ,remaining, daysLeft);
-      state.MonthlyBudget.amount = result.monthlyBudget;
-      state.MonthlyBudget.amountFunded = result.monthlyBudget;
-      state.TemporaryWallet.balance = result.remaining;
-    }   
+    try{
+      if (!(isSalaryDay || isSteadyDay)) {
+        const salaryDay = state.User.hasSalary ? state.User.salary.date : state.SteadyWallet.date;
+        const salaryDate = getNextSalaryDateISO(salaryDay);
+        const daysLeft = getDaysRemaining(salaryDate);
+        const result = smartBudget(state ,remaining, daysLeft);
+        state.MonthlyBudget.amount = result.monthlyBudget;
+        state.MonthlyBudget.amountFunded = result.monthlyBudget;
+        state.TemporaryWallet.balance = result.remaining;
+      }   
+    }
+    catch(error){
+      state.User.isProfileComplete = false;
+      throw error;
+    }
 
   } else {
-    if (!state.User.hasSalary) {
-      console.warn("Insufficient wealth and no salary. Cannot initialize.");
-      return null;
-    }
-    state.MainWallet.balance = totalWealth;
-    // explicitly reset TemporaryWallet
-    state.TemporaryWallet.balance = 0;
-    // explicitly reset SteadyWallet
-    state.SteadyWallet.balance = 0;
+    state.User.isProfileComplete = false;
+    throw new Error("threshold should less than total wealth");
   }
+  const salary = state.User.salary.amount;
+  const getDaysInMonth = () => new Date(
+                                new Date().getFullYear(),
+                                new Date().getMonth() + 1,
+                                0
+                                ).getDate();
+                      
+  const maxAllowed = Math.floor(salary / getDaysInMonth());
+
+  state.DailyBudget.min = 0;
+  state.DailyBudget.max = maxAllowed;
 
   state.User.isProfileComplete = true;
   console.log("[initializeState] returning state:", state);

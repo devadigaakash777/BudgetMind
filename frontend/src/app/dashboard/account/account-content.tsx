@@ -11,7 +11,7 @@ import { DailyBudgetForm } from '@/components/dashboard/account/set-budget-detai
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { updateUserBasicInfo, updateUserAvatar, updateUserSalaryInfo, resetAll } from '@/redux/thunks/profile-thunks';
+import { updateUserBasicInfo, updateUserAvatar, updateUserSalaryInfo, resetAll, reAllocateBudget } from '@/redux/thunks/profile-thunks';
 import { thunkUpdateSteadyWallet, thunkUpdateThreshold } from '@/redux/thunks/wallet-thunks';
 import { thunkUpdateDailyBudget } from '@/redux/thunks/budget-thunks';
 import FullScreenLoader from '@/components/dashboard/loader';
@@ -120,9 +120,9 @@ export default function AccountContent(): React.JSX.Element {
         </Grid>
         <Grid
           size={{
-            lg: 12,
-            md: 12,
-            xs: 12,
+            lg: 6,
+            md: 6,
+            xs: 6,
           }}
         >
           <Button
@@ -137,6 +137,21 @@ export default function AccountContent(): React.JSX.Element {
             onClose={() => setResetOpen(false)}
             onReset={(deleteExpenses) => dispatch(resetAll(deleteExpenses))}
           />
+        </Grid>
+        <Grid
+          size={{
+            lg: 6,
+            md: 6,
+            xs: 6,
+          }}
+        >
+          <Button
+            variant="outlined"
+            startIcon={<ArrowsClockwiseIcon />}
+            onClick={() => dispatch(reAllocateBudget())} 
+          >
+            Reset Budget
+          </Button>
         </Grid>
       </Grid>
     </Stack>

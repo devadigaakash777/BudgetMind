@@ -54,7 +54,7 @@ export const thunkDeleteFixedExpense = createAsyncThunk(
   'budget/deleteFixedExpense',
   async (id: string, { dispatch }) => {
     await axios.delete(`${BASE_URL}/budget/expenses/${id}`);
-    dispatch(deleteExpense(id));
+    await refetchAllUserData(dispatch as AppDispatch);
   }
 );
 

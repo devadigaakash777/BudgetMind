@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware.js';
 import Profile from '../models/profile.model.js';
 import User from '../models/User.js';
-import { finalizeProfile } from "../services/profile.service.js";
+import { allocateBudget, finalizeProfile } from "../services/profile.service.js";
 import { FixedExpense, BudgetSummary } from '../models/budget.model.js';
 import DailyExpense from '../models/expense.model.js';
 import { Wallet } from '../models/wallet.model.js';
@@ -143,3 +143,16 @@ export const resetUserData = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Failed to reset user data' });
   }
 };
+
+export const resetBudget = async (req: AuthRequest, res: Response) => {
+  const userId = (req as any).userId;
+  
+  try {
+        const userId = (req as any).userId; // from JWT or session
+        const newState = await allocateBudget(userId);
+        res.status(200).json({ message: newState });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to reallocate budget" });
+    }
+}

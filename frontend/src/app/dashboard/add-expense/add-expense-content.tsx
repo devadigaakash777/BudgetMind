@@ -131,14 +131,14 @@ export default function AddExpenseContent(): React.JSX.Element {
   const temp = previewState?.TemporaryWallet?.balance ?? walletState.TemporaryWallet.balance;
   const main = previewState?.MainWallet?.balance ?? walletState.MainWallet.balance;
   const fixed = previewState?.FixedExpenses?.totalSavedAmount ?? budgetState.FixedExpenses.totalSavedAmount;
-
+  const wishlistSaved = previewState?.Wishlist?.totalSavedAmount ?? wishlistState.totalSavedAmount;
 
   const dailyBudget = daily;
   const dailyBuffer = buffer;
   const tempWallet = dailyBuffer + temp;
   const mainWallet = tempWallet + main;
   const allWallet = mainWallet + fixed;
-  const impossible = allWallet + 1;
+  const impossible = allWallet + wishlistSaved + 1;
 
   const gaugeList={
       'Neutral': { value: 0, label:"Enter Value"},

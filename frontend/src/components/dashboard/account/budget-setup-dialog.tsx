@@ -13,9 +13,8 @@ type BudgetSetupDialogProps = {
   open: boolean;
   onClose: () => void;
   onComplete: (value: boolean) => void;
-
   salary: number;
-
+  remainDays: number;
   onTotalWealthSave: (value: number) => void;
   onSalarySave: (data: {
     hasSalary: boolean;
@@ -34,16 +33,17 @@ type BudgetSetupDialogProps = {
     minAmount: number;
     maxAmount: number;
   }) => void;
-  onCalculateBudget: () => void
+  onCalculateBudget: () => void;
 };
 
-const steps = ['Total Wealth', 'Salary Info', 'Daily Budget'];
+const steps = ['Total Wealth', 'Salary Info', 'Daily Budget', 'Confirmation'];
 
 export function BudgetSetupDialog({
   open,
   onClose,
   onComplete,
   salary,
+  remainDays,
   onTotalWealthSave,
   onSalarySave,
   onSteadySave,
@@ -55,8 +55,8 @@ export function BudgetSetupDialog({
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      console.log("onComplete is called");
-      onComplete(true);
+      onCalculateBudget();
+      // onComplete(true);
       onClose();
       setActiveStep(0);
     } else {
@@ -75,8 +75,7 @@ export function BudgetSetupDialog({
 
   const handleThresholdSave = (value: { threshold: number }) => {
     onThresholdSave(value);
-    // DO NOT call handleNext here directly
-    // We wait until salary or steady save is complete to advance step
+    // Do not call handleNext here directly
   };
 
   const handleDailyBudgetSave = (value: {
@@ -85,7 +84,6 @@ export function BudgetSetupDialog({
     maxAmount: number;
   }) => {
     onDailyBudgetSave(value);
-    onCalculateBudget();
     handleNext();
   };
 
@@ -119,13 +117,24 @@ export function BudgetSetupDialog({
         )}
 
         {activeStep === 2 && (
-          <DailyBudgetForm salary={salary} onSave={handleDailyBudgetSave} />
+          <DailyBudgetForm salary={salary} remainDays={remainDays} onSave={handleDailyBudgetSave} />
+        )}
+
+        {activeStep === 3 && (
+          <div style={{ textAlign: 'center', padding: '1rem' }}>
+            <p>Review your entries and finalize the setup.</p>
+          </div>
         )}
       </DialogContent>
 
       <DialogActions>
-        {/* <Button onClick={onClose}>Cancel</Button> */}
         {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
+
+        {activeStep === 3 ? (
+          <Button variant="contained" color="primary" onClick={handleNext}>
+            Finalize
+          </Button>
+        ) : null}
       </DialogActions>
     </Dialog>
   );

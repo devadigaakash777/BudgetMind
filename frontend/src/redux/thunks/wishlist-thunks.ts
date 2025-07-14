@@ -48,7 +48,7 @@ export const thunkDeleteWishlistItem = createAsyncThunk(
   'wishlist/deleteItem',
   async (id: string, { dispatch }) => {
     await axios.delete(`${BASE_URL}/${id}`);
-    dispatch(removeWishlistItem(id));
+    await refetchAllUserData(dispatch as AppDispatch);
   }
 );
 

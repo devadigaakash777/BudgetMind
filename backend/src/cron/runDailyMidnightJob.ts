@@ -15,27 +15,37 @@ export const runDailyMidnightJob = async () => {
     const wallet = wallets.find(w => w.userId.toString() === userId);
     if (!wallet) continue;
 
-    // 1. Wallet Top-Up Logic
+    // 1. Wallet Top-Up Logic with Progressive Fallback
     const mainBal = wallet.MainWallet.balance;
     const tempBal = wallet.TemporaryWallet.balance;
     const threshold = wallet.threshold;
 
     if (mainBal < threshold) {
       const needed = threshold - mainBal;
-      if (tempBal >= needed) {
-        await Wallet.updateOne(
-          { userId: profile.userId },
-          {
-            $inc: {
-              'MainWallet.balance': needed,
-              'TemporaryWallet.balance': -needed
+
+      // Fallback percentages (100%, 50%, 10%, 5%, 1%)
+      const fallbackPercents = [1, 0.5, 0.1, 0.05, 0.01]; // in order of attempt
+
+      for (const percent of fallbackPercents) {
+        const attemptAmount = needed * percent;
+
+        if (tempBal >= attemptAmount) {
+          await Wallet.updateOne(
+            { userId: profile.userId },
+            {
+              $inc: {
+                'MainWallet.balance': attemptAmount,
+                'TemporaryWallet.balance': -attemptAmount
+              }
             }
-          }
-        );
-        console.log(`Topped up MainWallet for user ${userId}`);
-      } else {
-        console.log(`Not enough in TemporaryWallet for user ${userId}`);
+          );
+          console.log(`Topped up MainWallet with ${Math.round(percent * 100)}% for user ${userId}`);
+          break;
+        }
       }
+
+      // If no fallback level succeeded
+      console.log(`Not enough in TemporaryWallet to meet any fallback level for user ${userId}`);
     }
 
     // 2. Salary Finalization Logic

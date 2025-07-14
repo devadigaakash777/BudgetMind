@@ -1,11 +1,11 @@
 import { BudgetSummary, FixedExpense } from "../models/budget.model.js";
 import Profile from "../models/profile.model.js";
-import { initializeState, monthlyAllocate } from "../utils/shared.js";
+import { initializeState, monthlyAllocate, reAllocateBudget } from "../utils/shared.js";
 import { mergeByExistingKeys } from "../utils/sanitizeByType.js";
 import { Wallet } from "../models/wallet.model.js";
-import { WishlistSummary, WishlistItem } from "../models/wishlist.model.js";
 import { processWithMutator } from "../utils/processWithMutator.js";
 import mongoose from 'mongoose';
+import DailyExpense from "../models/expense.model.js";
 
 export const finalizeProfile = async (userId: string) => {
     // 1. Fetch plain objects
@@ -75,11 +75,24 @@ export const finalizeSalary = async (userId: string) => {
         throw new Error(`Profile not found for user ${userId}`);
     }
 
+    const budgetDetails = await BudgetSummary.findOne({ userId }).lean();
+
     const walletDetails = await Wallet.findOne({ userId }).lean();
     if (!walletDetails) {
         throw new Error(`Wallet not found for user ${userId}`);
     }
     const salary = profileDetails.hasSalary ? profileDetails?.salary?.amount : walletDetails.SteadyWallet.monthlyAmount;
+    const userDailyBudget = budgetDetails?.DailyBudget?.setAmount === 0
+    ? null
+    : budgetDetails?.DailyBudget?.setAmount ?? null;
 
-    return await processWithMutator(userId, null, monthlyAllocate, new Date(), salary);
+    return await processWithMutator(userId, null, monthlyAllocate, new Date(), salary, userDailyBudget);
 };
+
+export const allocateBudget = async (userId: string) => {
+    const todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const existingExpenses = await DailyExpense.findOne({ userId, date: todayDate });
+
+    let hasBudgetPaid = existingExpenses ? true : false;
+    return await processWithMutator(userId, null, reAllocateBudget, hasBudgetPaid);
+}

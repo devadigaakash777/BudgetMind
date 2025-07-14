@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '@/lib/axiosInstance';
 import { setAvatar, handleModel, setSalaryAcknowledged, updateBasicInfo, updateSalaryInfo, setProfileDetails } from '../slices/user-slice';
-import type { RootState } from '../store';
+import type { RootState, AppDispatch } from '../store';
 import type { UserProfile } from '@/types/user'
+import { refetchAllUserData } from './global-refresh';
 
 
 const API_URL = 'http://localhost:5000/api/profile';
@@ -102,7 +103,7 @@ export const setProfileStatus = createAsyncThunk(
     try {
       const res = await axios.patch(`${API_URL}/status/profile`, { "isProfileComplete": isProfileComplete });
       console.debug("setProfileStatus "+res.status);
-      dispatch(handleModel(isProfileComplete));
+      await refetchAllUserData(dispatch as AppDispatch);
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Failed to update profile status');
     }
@@ -128,7 +129,7 @@ export const calculateBudget = createAsyncThunk(
     try {
       const res = await axios.post(`${API_URL}/calculate`);
       console.debug("calculateBudget "+res.status);
-      dispatch(fetchUserProfile());
+      await refetchAllUserData(dispatch as AppDispatch);
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Failed to calculate budget');
     }
@@ -137,12 +138,26 @@ export const calculateBudget = createAsyncThunk(
 
 export const resetAll = createAsyncThunk(
   'user/resetAll',
-  async (deleteDailyExpense: boolean, { rejectWithValue }) => {
+  async (deleteDailyExpense: boolean, { dispatch, rejectWithValue }) => {
     try {
       const res = await axios.post(`${API_URL}/reset`, { deleteDailyExpense });
+      await refetchAllUserData(dispatch as AppDispatch);
       console.debug("reset status "+res.status);
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Failed to reset');
+    }
+  }
+);
+
+export const reAllocateBudget = createAsyncThunk(
+  'user/reAllocateBudget',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${API_URL}/re-allocate-budget`);
+      await refetchAllUserData(dispatch as AppDispatch);
+      console.debug("reset status "+res.status);
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || 'Failed to re allocate budget');
     }
   }
 );

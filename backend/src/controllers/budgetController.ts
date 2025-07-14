@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { BudgetSummary, FixedExpense } from '../models/budget.model.js';
 import { AuthRequest } from '../middleware/authMiddleware.js';
-import { settlePayback } from '../utils/payback.js'
-import { updateFixedExpenseSavedAmount } from '../utils/updateFixedExpenseSavedAmount.js'
-import { collectAmount } from '../utils/processPayment.js'
+import { settlePayback } from '../utils/payback.js';
+import { updateFixedExpenseSavedAmount } from '../utils/updateFixedExpenseSavedAmount.js';
+import { collectAmount } from '../utils/processPayment.js';
 
 // --- Budget Summary ---
 
@@ -83,7 +83,7 @@ export const updateDailyBudget = async (req: AuthRequest, res: Response) => {
     },
     { new: true, upsert: true }
   );
-
+  console.log(summary);
   res.json(summary);
 };
 

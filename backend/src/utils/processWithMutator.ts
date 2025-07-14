@@ -14,7 +14,7 @@ export const processWithMutator = async (
 ) => {
   
   // Fetch all required data
-  const [budgetDetails, expenses, profileDetails, walletDetails, wishlistDetails, items] =
+  const [budgetDetails, expensesDetails, profileDetails, walletDetails, Wishlist, itemsDetails] =
     await Promise.all([
       BudgetSummary.findOne({ userId }).lean(),
       FixedExpense.find({ userId }).lean().then(expenses =>
@@ -35,8 +35,10 @@ export const processWithMutator = async (
   if (!budgetDetails) throw new Error(`BudgetSummary not found for user ${userId}`);
   if (!profileDetails) throw new Error(`Profile not found for user ${userId}`);
   if (!walletDetails) throw new Error(`Wallet not found for user ${userId}`);
-  if (!wishlistDetails) throw new Error(`WishlistSummary not found for user ${userId}`);
-  if (!expenses || !items) throw new Error(`Expenses or WishlistItems missing for ${userId}`);
+
+  const wishlistDetails = Wishlist ? Wishlist : { totalSavedAmount: 0 };
+  const expenses = expensesDetails ? expensesDetails : [];
+  const items = itemsDetails ? itemsDetails : [];
 
   const state = {
     User: profileDetails,
@@ -53,6 +55,8 @@ export const processWithMutator = async (
     }
   };
 
+  console.log("state when called");
+  console.log(state);
   const result = mutator(state, ...mutatorArgs);
   const newState = result.newState || result;
   console.log(newState);

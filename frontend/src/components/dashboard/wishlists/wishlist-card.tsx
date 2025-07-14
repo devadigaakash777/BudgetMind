@@ -17,6 +17,7 @@ import {
   StarIcon
 } from '@phosphor-icons/react/dist/ssr';
 import { CalendarDots, CalendarDotsIcon, SealIcon } from '@phosphor-icons/react';
+import PlaceholderImage from '../../../../public/assets/product-placeholder-blue.png';
 import { yellow } from '@mui/material/colors';
 
 export interface WishlistItem {
@@ -71,9 +72,15 @@ export function WishlistCard({
       <CardMedia
         component="img"
         height="150"
-        image={item.image}
+        image={item.image !== '' ? item.image : PlaceholderImage.src}
         alt={item.name}
-        sx={{ objectFit: 'contain' }}
+        sx={item.image !== '' ? { objectFit: 'contain' } : { objectFit: 'fill' }}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          if (target.src !== PlaceholderImage.src) {
+            target.src = PlaceholderImage.src;
+          }
+        }}
       />
 
       <Divider sx={{ mt: 1 }} />

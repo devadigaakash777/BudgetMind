@@ -21,6 +21,7 @@ import {
 
 export type DailyBudgetFormProps = {
   salary: number;
+  remainDays?: number | null;
   currentAmount?: number;
   setAmount?: number;
   minAmount?: number;
@@ -40,6 +41,7 @@ const getDaysInMonth = () => new Date(
 
 export function DailyBudgetForm({
   salary = 0,
+  remainDays = null,
   currentAmount = 0,
   setAmount = 0,
   minAmount = 0,
@@ -53,7 +55,9 @@ export function DailyBudgetForm({
     maxAmount,
   });
 
-  const maxAllowed = Math.floor(salary / getDaysInMonth());
+  const maxAllowed = remainDays? Math.floor(salary / remainDays) : Math.floor(salary / getDaysInMonth());
+  console.warn(salary, "and", remainDays);
+  console.warn("max allowed amount is ",maxAllowed);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

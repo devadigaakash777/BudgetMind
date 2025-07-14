@@ -21,6 +21,7 @@ import { thunkUpdateDailyBudget } from '@/redux/thunks/budget-thunks';
 import { setProfileStatus, updateUserSalaryInfo, calculateBudget } from '@/redux/thunks/profile-thunks';
 import { BudgetSetupDialog } from '@/components/dashboard/account/budget-setup-dialog';
 import FullScreenLoader from '@/components/dashboard/loader';
+import { getDaysUntilSalaryDay } from '@/utils/get-days';
 
 export default function DashboardContent(): React.JSX.Element {
   const walletState = useSelector((state: RootState) => state.wallet);
@@ -63,9 +64,11 @@ export default function DashboardContent(): React.JSX.Element {
     }
   }, [userState.isProfileComplete]);
 
-  const monthlyAmount = userState.hasSalary
-  ? userState.salary.amount
-  : walletState.SteadyWallet.monthlyAmount;
+  const monthlyAmount = Math.max((walletState.TotalWealth.amount - walletState.threshold), 0);
+
+  const daysLeft = getDaysUntilSalaryDay(userState.salary.date) + 1;  
+
+  console.warn(monthlyAmount, "and", daysLeft);
 
   //Daily expense Chart
   const filteredDailyExpenseState: DailyExpense[] = filterCurrentMonth(dailyExpenseState.data);
@@ -161,6 +164,7 @@ export default function DashboardContent(): React.JSX.Element {
               onClose={() => setOpen(false)}
               onComplete={(val) => dispatch(setProfileStatus(val))}
               salary={monthlyAmount}
+              remainDays={daysLeft}
               onTotalWealthSave={(val) => dispatch(thunkUpdateTotalWealth(val))}
               onSalarySave={(data) => dispatch(updateUserSalaryInfo(data))}
               onSteadySave={(data) => dispatch(thunkUpdateSteadyWallet(data))}

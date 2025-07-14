@@ -55,6 +55,7 @@ export function consumeFromMainPath(state, needed) {
   }
 
   const fx = deductFromFixedExpenses(state.FixedExpenses.expenses, needed - total);
+  console.debug('[consumeFromMainPath] after deductFromFixedExpenses fx amount is ',fx.amount,' and totalSavedAmount ',state.FixedExpenses.totalSavedAmount );
   state.FixedExpenses.totalSavedAmount -= fx.amount;
   total += fx.amount;
   sources.push(...fx.sources);
