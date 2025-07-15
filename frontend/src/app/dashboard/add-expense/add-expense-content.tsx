@@ -22,6 +22,8 @@ import { LatestProducts } from '@/components/dashboard/overview/latest-products'
 import { simulateMonthlyAllocation, calculateRequiredAmount } from '@/utils/preview-utils';
 import { thunkUpdateTempWallet } from '@/redux/thunks/wallet-thunks';
 import dayjs from 'dayjs';
+import { PlusMinusIcon } from '@phosphor-icons/react';
+import { getDaysUntilSalaryDay } from '@/utils/get-days';
 
 export default function AddExpenseContent(): React.JSX.Element {
 
@@ -99,7 +101,13 @@ export default function AddExpenseContent(): React.JSX.Element {
   const pieChartSeries = {
     'Secure Saving': previewState?.MainWallet?.balance ?? walletState.MainWallet.balance,
     'Spending Wallet': previewState?.TemporaryWallet?.balance ?? walletState.TemporaryWallet.balance,
-    'Monthly Allowance': previewState?.SteadyWallet?.balance ?? walletState.SteadyWallet.balance,
+    ...(userState.hasSalary === false ? {
+        'Monthly Allowance': previewState?.SteadyWallet?.balance ?? walletState.SteadyWallet.balance,
+      }:
+      {
+        'Monthly Budget': previewState?.MonthlyBudget?.amount ?? budgetState.MonthlyBudget.amount,
+      }
+    ),
     'Bill Saving': previewState?.FixedExpenses?.totalSavedAmount ?? budgetState.FixedExpenses.totalSavedAmount,
     'Wishlist Saving': previewState?.Wishlist?.totalSavedAmount ?? wishlistState.totalSavedAmount,
     'Daily Saving': previewState?.DailyBuffer?.balance ?? walletState.DailyBuffer.balance,
@@ -124,21 +132,33 @@ export default function AddExpenseContent(): React.JSX.Element {
     daysBetween = todayJS.diff(lastDate, 'day');
   }
 
+  // Minimum Budget Required until next salary
+  const monthlyBudget = budgetState.MonthlyBudget.amount;
+  const minDailyBudget = budgetState.DailyBudget.min;
+  const DailyBudget = budgetState.DailyBudget.amount;
+  const daysLeft = getDaysUntilSalaryDay(userState.salary.date);
+  
+  const minMonthlyBudget = minDailyBudget * daysLeft;
+  const budgetCanReduce = monthlyBudget - minMonthlyBudget - DailyBudget; 
+  console.log(monthlyBudget," and ",minMonthlyBudget);
 
-  //Gauge meter value
+  // Gauge meter value
   const daily = previewState?.DailyBudget?.amount ?? budgetState.DailyBudget.amount;
   const buffer = previewState?.DailyBuffer?.balance ?? walletState.DailyBuffer.balance;
   const temp = previewState?.TemporaryWallet?.balance ?? walletState.TemporaryWallet.balance;
   const main = previewState?.MainWallet?.balance ?? walletState.MainWallet.balance;
   const fixed = previewState?.FixedExpenses?.totalSavedAmount ?? budgetState.FixedExpenses.totalSavedAmount;
-  const wishlistSaved = previewState?.Wishlist?.totalSavedAmount ?? wishlistState.totalSavedAmount;
+  const wishlistSaved = wishlistState.totalSavedAmount;
+  
+  const originalTemp = walletState.TemporaryWallet.balance;
+  const originalDailyBudget = budgetState.DailyBudget.amount;
 
   const dailyBudget = daily;
   const dailyBuffer = buffer;
   const tempWallet = dailyBuffer + temp;
   const mainWallet = tempWallet + main;
-  const allWallet = mainWallet + fixed;
-  const impossible = allWallet + wishlistSaved + 1;
+  const allWallet = originalTemp + main + fixed + wishlistSaved + budgetCanReduce;
+  const impossible = allWallet + 1;
 
   const gaugeList={
       'Neutral': { value: 0, label:"Enter Value"},
@@ -154,7 +174,6 @@ export default function AddExpenseContent(): React.JSX.Element {
     const handleReset = () => {
       dispatch(syncPreview());
       const simulated = calculateRequiredAmount(previewState);
-      console.log("simulated "+simulated);
       const safe = temp >= simulated ? temp - simulated : 0;
       setMaximumSafeAmount(safe);
       setSourceSelections({ main: false, wishlist: false }); // 🔄 reset
@@ -217,7 +236,7 @@ export default function AddExpenseContent(): React.JSX.Element {
           </Box>
 
           <IconButton color="primary" onClick={handleWalletOpen}>
-            <ArrowCounterClockwiseIcon size={24} weight="bold" />
+            <PlusMinusIcon size={24} weight="bold" />
           </IconButton>
         </Box>
         <TempWalletForm
@@ -238,7 +257,8 @@ export default function AddExpenseContent(): React.JSX.Element {
         >
         { userState?.data?._id  && !todaysFirstExpense ?
           <AddExpenseForm 
-            userid={userState.data._id}
+            dailyBudget={originalDailyBudget}
+            budgetCanReduce={budgetCanReduce}
             maximumSafeAmount={maximumSafeAmount}
             restrictedDuration={daysBetween}
             onAdd={(payload) => dispatch(thunkGenerateAndAddExpenses(payload))}

@@ -3,7 +3,7 @@ import type { Viewport } from 'next';
 
 import '@/styles/global.css';
 import ClientProviders from './client-providers';
-import ChatbotFab from '@/components/common/chatbot-fab';
+import ChatbotFabWrapper from '@/components/common/chatbot-fab-wrapper';
 
 export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
 
@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
       <body>
         <ClientProviders>
           {children}
-          <ChatbotFab />
+          <ChatbotFabWrapper />
         </ClientProviders>
       </body>
     </html>

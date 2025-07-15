@@ -1,5 +1,5 @@
 import { processWithMutator } from "../utils/processWithMutator.js";
-import { handleTemporaryWalletRequest } from "../utils/shared.js";
+import { collectAmount } from "../utils/shared.js";
 
 export const handleTempWallet = async (
   userId: string,
@@ -9,5 +9,5 @@ export const handleTempWallet = async (
   canDecreaseBudget: boolean,
   hasBudgetPaid: boolean,
 ) => {
-  return await processWithMutator(userId, sourceID, handleTemporaryWalletRequest, amountRequested, sourcePreference, canDecreaseBudget, hasBudgetPaid);
+  return await processWithMutator(userId, sourceID, collectAmount, amountRequested, sourcePreference, canDecreaseBudget, hasBudgetPaid);
 };

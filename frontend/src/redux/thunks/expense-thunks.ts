@@ -5,8 +5,9 @@ import { setDailyExpense } from '../slices/daily-expenses-slice';
 import type { DailyExpense } from '@/types/daily-expense';
 import { refetchAllUserData } from '@/redux/thunks/global-refresh';
 import type { AppDispatch } from '@/redux/store';
+import { config } from '@/config';
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = config.apiBaseUrl;
 
 // Fetch all daily expenses of the logged-in user
 export const thunkFetchDailyExpenses = createAsyncThunk(

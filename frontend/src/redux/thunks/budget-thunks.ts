@@ -16,13 +16,14 @@ import {
 import type { Expense, ExpenseBase, BudgetState } from '@/types/budget';
 import { refetchAllUserData } from '@/redux/thunks/global-refresh';
 import type { AppDispatch } from '@/redux/store';
+import { config } from '@/config';
 
 interface BudgetSummaryResponse {
   summary: BudgetState;
   totalCount: number;
 }
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = config.apiBaseUrl;
 
 // Fetch budget summary (including fixed expenses)
 export const fetchBudgetSummary = createAsyncThunk(
@@ -45,7 +46,7 @@ export const thunkAddFixedExpense = createAsyncThunk(
   async (expense: ExpenseBase, { dispatch }) => {
     const res = await axios.post<Expense>(`${BASE_URL}/budget/expenses`, expense);
     console.debug("addFixedExpense "+res.status);
-    dispatch(addFixedExpense(res.data));
+    await refetchAllUserData(dispatch as AppDispatch);
   }
 );
 

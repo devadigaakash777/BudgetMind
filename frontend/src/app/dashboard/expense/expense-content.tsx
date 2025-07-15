@@ -17,10 +17,9 @@ import type { DailyExpense } from '@/types/daily-expense';
 
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
-import { Chip, FormControl, InputLabel, OutlinedInput, TextField, Tooltip } from '@mui/material';
 import { thunkDownloadExpensesExcel } from '@/redux/thunks/expense-thunks';
-import { FileXlsIcon } from '@phosphor-icons/react';
 import { showSnackbar } from '@/redux/slices/snackbar-slice';
+import DownloadExpenseCard from '@/components/dashboard/expense/download-expense-card';
 
 export default function ExpenseContent(): React.JSX.Element {
 
@@ -93,34 +92,6 @@ export default function ExpenseContent(): React.JSX.Element {
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Daily Expenses</Typography>
-          <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mt: 1 }}>
-            <FormControl fullWidth size="small" sx={{ minWidth: 150 }}>
-              <InputLabel shrink htmlFor="from-date">From Date</InputLabel>
-              <OutlinedInput
-                id="from-date"
-                type="date"
-                notched
-                label="From Date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-              />
-            </FormControl>
-
-            <FormControl fullWidth size="small" sx={{ minWidth: 150 }}>
-              <InputLabel shrink htmlFor="to-date">To Date</InputLabel>
-              <OutlinedInput
-                id="to-date"
-                type="date"
-                notched
-                label="To Date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-              />
-            </FormControl>
-            <Tooltip title="Download in Excel Format">
-              <Chip variant="filled" onClick={handleDownloadClick} color="success" icon={<FileXlsIcon size={20} />} label="Download Excel" />
-            </Tooltip>
-          </Stack>
         </Stack>
         <div>
           <Button 
@@ -132,6 +103,13 @@ export default function ExpenseContent(): React.JSX.Element {
           </Button>
         </div>
       </Stack>
+      <DownloadExpenseCard
+            fromDate={fromDate}
+            toDate={toDate}
+            setFromDate={setFromDate}
+            setToDate={setToDate}
+            onDownloadClick={handleDownloadClick}
+      />
       <DailyExpensesFilters />
       <DailyExpensesTable
         count={filteredDailyExpenses.length}

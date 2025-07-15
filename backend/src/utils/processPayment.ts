@@ -17,21 +17,16 @@ export async function collectAmount(userId: string, sourceID: string, cost: numb
     
     required = Math.max(required - tempWalletBudget, 0);
     console.log("required after deducting from temp wallet: ", required);
-    for(let i=0; i<2 ; i++){
-        if(required > 0){
-            const newState = await handleTempWallet(userId, sourceID, required, preference, reduceDailyBudget, hasBudgetPaid);
-            console.log("inside process payment ",newState);
-            required -= (newState.amountCollected - newState.freedBudget);
-            preference = (preference === 'main') ? 'wishlist' : 'main';
-            console.warn("Required ",required);
-        }
-    }
-    if(required > 0){
-        throw new Error("Insufficient balance");
-    }
 
-    const remaining = Math.max(tempWalletBudget - (cost - savedAmount), 0);
-    console.log("remaining ",remaining,"after calculating tempWalletBudget - (cost - savedAmount) ", tempWalletBudget - (cost - savedAmount));
+    const newState = await handleTempWallet(userId, sourceID, required, preference, reduceDailyBudget, hasBudgetPaid);
+
+    const updatedTempWallet = wallet.TemporaryWallet.balance;
+
+    if(updatedTempWallet < (cost - savedAmount)) throw new Error("Insufficient balance");
+
+    const remaining = Math.max(updatedTempWallet - (cost - savedAmount), 0);
+    console.log("remaining ",remaining," after calculating tempWalletBudget - (cost - savedAmount) ", tempWalletBudget - (cost - savedAmount));
+
     wallet.TemporaryWallet.balance = remaining;
     wallet.markModified('TemporaryWallet'); // <-- important!
     await wallet.save();

@@ -1,2 +1,2 @@
 // @ts-ignore
-export { logExtendedExpense, monthlyAllocate, handleTemporaryWalletRequest, initializeState, handleFixedExpensePayment, reAllocateBudget } from '../../../FunctionList/shared/shared/index.js';
+export { logExtendedExpense, monthlyAllocate, handleTemporaryWalletRequest, initializeState, handleFixedExpensePayment, reAllocateBudget, collectAmount } from '../../../FunctionList/shared/shared/index.js';

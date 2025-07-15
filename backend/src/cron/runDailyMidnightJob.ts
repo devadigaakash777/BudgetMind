@@ -1,30 +1,33 @@
 import Profile from '../models/profile.model.js';
 import { Wallet } from '../models/wallet.model.js';
 import { finalizeSalary } from '../services/profile.service.js';
-import mongoose from 'mongoose';
+import UserModel from '../models/User.js';
+import sendEmail from '../utils/sendEmail.js';
 
 export const runDailyMidnightJob = async () => {
-  const today = new Date().getDate();
+  const todayISO = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
 
-  // Fetch all profiles with linked wallets
+  // Fetch profiles and wallets
   const profiles = await Profile.find({ hasSalary: true }).lean();
-  const wallets = await Wallet.find().lean();
+  const walletsArray = await Wallet.find().lean();
+
+  // Optimize wallet lookup with Map
+  const wallets = new Map(walletsArray.map(w => [w.userId.toString(), w]));
 
   for (const profile of profiles) {
     const userId = profile.userId.toString();
-    const wallet = wallets.find(w => w.userId.toString() === userId);
+    const wallet = wallets.get(userId);
     if (!wallet) continue;
 
-    // 1. Wallet Top-Up Logic with Progressive Fallback
-    const mainBal = wallet.MainWallet.balance;
-    const tempBal = wallet.TemporaryWallet.balance;
-    const threshold = wallet.threshold;
+    const mainBal = wallet.MainWallet?.balance ?? 0;
+    const tempBal = wallet.TemporaryWallet?.balance ?? 0;
+    const threshold = wallet.threshold ?? 0;
 
+    // Wallet top-up logic
     if (mainBal < threshold) {
       const needed = threshold - mainBal;
-
-      // Fallback percentages (100%, 50%, 10%, 5%, 1%)
-      const fallbackPercents = [1, 0.5, 0.1, 0.05, 0.01]; // in order of attempt
+      const fallbackPercents = [1, 0.5, 0.1, 0.05, 0.01];
+      let success = false;
 
       for (const percent of fallbackPercents) {
         const attemptAmount = needed * percent;
@@ -40,25 +43,44 @@ export const runDailyMidnightJob = async () => {
             }
           );
           console.log(`Topped up MainWallet with ${Math.round(percent * 100)}% for user ${userId}`);
+          success = true;
           break;
         }
       }
 
-      // If no fallback level succeeded
-      console.log(`Not enough in TemporaryWallet to meet any fallback level for user ${userId}`);
+      if (!success) {
+        console.log(`Not enough in TemporaryWallet to meet any fallback level for user ${userId}`);
+      }
     }
 
-    // 2. Salary Finalization Logic
-    if (profile.salary?.date === today || (!profile.hasSalary && wallet.SteadyWallet.date == today)) {
+    // Salary finalization logic
+    const salaryDay = profile.salary?.date ?? null;
+    const steadyDay = wallet.SteadyWallet?.date ?? null;
+
+    const todayDay = new Date().getDate(); // still keep this for numeric comparison
+
+    if (salaryDay === todayDay || (!profile.hasSalary && steadyDay === todayDay)) {
       try {
         await finalizeSalary(userId);
+
         await Profile.updateOne(
           { userId: profile.userId },
           { $set: { isSalaryPaid: true } }
         );
+
         console.log(`Salary finalized for user ${userId}`);
+
+        const user = await UserModel.findOne({ userId });
+        if (user) {
+          await sendEmail(
+            user.email,
+            'Your Wallet Has Been Updated',
+            `<h3>Hi ${user.firstName},</h3>
+             <p>Today is your scheduled salary day. Your wallet has been successfully updated.</p>`
+          );
+        }
       } catch (err) {
-        console.error(`Error finalizing salary for ${userId}`, err);
+        console.error(`Error finalizing salary for user ${userId}`, err);
       }
     }
   }

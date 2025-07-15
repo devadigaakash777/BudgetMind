@@ -20,10 +20,12 @@ import {
 } from '@mui/material';
 
 import { WalletIcon, PiggyBankIcon, ChartPieSliceIcon } from '@phosphor-icons/react/dist/ssr';
+import { CalendarCheckIcon } from '@phosphor-icons/react';
 
 type RequestMoneyModalProps = {
   open: boolean;
   onClose: () => void;
+  budgetCanReduce: number;
   overage: number;
   statusList: Record<string, number>;
   onSelectSource: (value: 'main' | 'wishlist') => void;
@@ -34,6 +36,7 @@ type RequestMoneyModalProps = {
 export function RequestMoneyModal({
   open,
   onClose,
+  budgetCanReduce,
   overage,
   statusList,
   onSelectSource,
@@ -52,6 +55,7 @@ export function RequestMoneyModal({
   };
 
   const totalCostMain = statusList['Secure Saving'] + statusList['Bill Saving'];
+  const totalCostMainWithBudget = statusList['Secure Saving'] + statusList['Bill Saving'] + budgetCanReduce;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -120,6 +124,17 @@ export function RequestMoneyModal({
             <ListItemText
               primary="Secure Saving + Bill Saving (Use Main Wallet)"
               secondary={`Max: ₹${totalCostMain ?? 0}`}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar>
+                <CalendarCheckIcon size={20} />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary="Full Main Wallet Access (includes Daily Budget)"
+              secondary={`Up to ₹${totalCostMainWithBudget ?? 0} — Only available if 'Allow Budget Reduction' is enabled`}
             />
           </ListItem>
         </List>

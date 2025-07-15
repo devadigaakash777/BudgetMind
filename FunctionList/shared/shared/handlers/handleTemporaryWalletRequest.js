@@ -18,16 +18,6 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
   const newState = deepClone(state);
   const collected = { amountCollected: 0, freedBudget: 0, sources: [] };
   
-  // if (!newState.DailyBuffer.isSelected) {
-  //   const db = Math.min(newState.DailyBuffer.balance, amountRequested);
-  //   if (db > 0) {
-  //     newState.DailyBuffer.balance -= db;
-  //     collected.amountCollected += db;
-  //     amountRequested -= db;
-  //     collected.sources.push({ from: 'DailyBuffer', amount: db });
-  //   }
-  // }
-
   if(canDecreaseBudget && sourcePreference === 'main'){
         let salaryDay = newState.User.hasSalary ? newState.User.salary.date : newState.steadyWallet.date;
         if(hasBudgetPaid){
@@ -43,8 +33,6 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
           extraAmount = consumeFromMonthlyBudget(newState, null, salaryDate);
           console.warn("cant satisfy the request go with handleTemporaryWallet"); 
         }
-        // amount requirement changes after changing dailyBudget
-        // amountRequested -= extraAmount.totalRemaining;
         if(hasBudgetPaid){
           amountRequested -= extraAmount.totalRemaining;
           collected.amountCollected += extraAmount.totalRemaining;
@@ -55,12 +43,6 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
           amountRequested -= (extraAmount.totalRemaining - releasedAmount);
         }
   }
-  // const fromTemp = Math.min(newState.TemporaryWallet.balance, amountRequested);
-  // if (fromTemp > 0) {
-  //   newState.TemporaryWallet.balance -= fromTemp;
-  //   collected.amountCollected += fromTemp;
-  //   collected.sources.push({ from: 'TemporaryWallet', amount: fromTemp });
-  // }
 
   const shortfall = amountRequested;
   console.debug("[handleTemporaryWalletRequest] shortfall ",shortfall);
@@ -87,4 +69,53 @@ export function handleTemporaryWalletRequest(state, amountRequested, sourcePrefe
   newState.TemporaryWallet.balance += collected.amountCollected;
   console.debug('handleTemporaryWalletRequest returned:', collected);
   return { newState, ...collected };
+}
+
+/**
+ * Collect amount using temporary wallet with fallbacks.
+ * @param {object} state - User's full wallet state.
+ * @param {number} amountRequested - Total amount to collect.
+ * @param {'main' | 'wishlist'} preference - First source to try.
+ * @param {boolean} canDecreaseBudget - Whether daily budget can be adjusted.
+ * @param {boolean} hasBudgetPaid - Whether today’s daily budget was already paid.
+ * @returns {object} - Updated state with money collected or original state if failed.
+ */
+export function collectAmount(
+  state,
+  amountRequested,
+  preference = 'main',
+  canDecreaseBudget = false,
+  hasBudgetPaid = false
+) {
+  const originalState = deepClone(state);
+  let required = amountRequested;
+  let sourcePref = preference;
+  let currentState = deepClone(state);
+
+  for (let i = 0; i < 2; i++) {
+    if (required <= 0) break;
+
+    const result = handleTemporaryWalletRequest(
+      currentState,
+      required,
+      sourcePref,
+      canDecreaseBudget,
+      hasBudgetPaid
+    );
+
+    currentState = result.newState;
+    const collectedThisRound = result.amountCollected;
+
+    required -= collectedThisRound;
+    sourcePref = sourcePref === 'main' ? 'wishlist' : 'main';
+
+    console.debug(`[collectAmount] After round ${i + 1}, required:`, required);
+  }
+
+  if (required > 0) {
+    console.warn('[collectAmount] Insufficient balance. Returning original state.');
+    return originalState;
+  }
+
+  return currentState;
 }

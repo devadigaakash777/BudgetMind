@@ -17,22 +17,45 @@ export function reAllocateBudget(state, hasBudgetPaid) {
     const salaryDate = getNextSalaryDateISO(salaryDay);
     console.debug('[reAllocate] salaryDate:', salaryDate);
     const daysLeft = getDaysRemaining(salaryDate);
+    if(daysLeft === 0) throw new Error("No days left to allocate budget.")
     console.debug('[reAllocate] daysLeft:', daysLeft);
+    const predefinedBudget = newState.DailyBudget.setAmount;
+    console.debug('[reAllocate] predefined Budget:', predefinedBudget);
+
+    let remaining;
+    let monthlyBudget;
     let result;
     try{
         console.debug('[reAllocate] try called:');
-        result = smartBudget(newState, usableBudget, daysLeft);
+        if(predefinedBudget === 0){
+            result = smartBudget(newState, usableBudget, daysLeft);
+            remaining = result.remaining;
+            monthlyBudget = result.monthlyBudget;
+        }
+        else{
+            monthlyBudget = predefinedBudget * daysLeft;
+            console.debug('[reAllocate] monthlyBudget: ',monthlyBudget,' and usable budget ',usableBudget);
+            if(monthlyBudget <= usableBudget){
+                newState.DailyBudget.amount = predefinedBudget;
+                remaining = usableBudget - monthlyBudget;
+            }
+            else{
+                throw new Error("unable to set budget, try by decreasing min and max");
+            }
+        }
     }
     catch{
         newState.DailyBudget.min = 0;
         newState.DailyBudget.max = Math.floor(usableBudget / daysLeft);
         console.debug('[reAllocate] catch called:');
         result = smartBudget(newState, usableBudget, daysLeft);
+        remaining = result.remaining;
+        monthlyBudget = result.monthlyBudget;
     }
-    newState.TemporaryWallet.balance = result.remaining;
-    newState.MonthlyBudget.amount = result.monthlyBudget;
-    newState.MonthlyBudget.amountFunded = result.monthlyBudget;
-    console.log("[reAllocate] MonthlyBudget: ", result.monthlyBudget);
-    console.log("[reAllocate] TemporaryWallet: ", result.remaining);
+    newState.TemporaryWallet.balance = remaining;
+    newState.MonthlyBudget.amount = monthlyBudget;
+    newState.MonthlyBudget.amountFunded = monthlyBudget;
+    console.log("[reAllocate] MonthlyBudget: ", monthlyBudget);
+    console.log("[reAllocate] TemporaryWallet: ", remaining);
     return newState;
 }

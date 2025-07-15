@@ -9,8 +9,9 @@ import {
   updateWalletState
 } from '../slices/wallet-slice';
 import { WalletState } from '@/types/wallet';
+import { config } from '@/config';
 
-const BASE_URL = 'http://localhost:5000/api/wallet';
+const BASE_URL = `${config.apiBaseUrl}/wallet`;
 
 export const fetchWallet = createAsyncThunk(
   'wallet/fetchWallet',

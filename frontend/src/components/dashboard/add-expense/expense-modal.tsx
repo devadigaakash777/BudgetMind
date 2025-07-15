@@ -17,12 +17,14 @@ import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
 import {adjustGaugeList} from '@/utils/adjust-gauge-list';
 import {RequestMoneyModal } from '@/components/dashboard/add-expense/expense-request-model'
+import { california, kepple, neonBlue, nevada, redOrange, shakespeare, stormGrey } from '@/styles/theme/colors';
 
 type GaugeLimit = { value: number; label?: string };
 
 type AddExpenseFormProps = {
-  userid: string;
+  dailyBudget: number;
   maximumSafeAmount: number;
+  budgetCanReduce: number;
   restrictedDuration: number | null;
   onAdd: (payload: {
     totalAmount: number;
@@ -52,8 +54,9 @@ type AddExpenseFormProps = {
 };
 
 export function AddExpenseForm({
-  userid,
+  dailyBudget,
   maximumSafeAmount,
+  budgetCanReduce,
   restrictedDuration,
   onAdd,
   onAddPreview,
@@ -82,7 +85,7 @@ export function AddExpenseForm({
   React.useEffect(() => {
     if (sourceSelections.main && sourceSelections.wishlist) {
       setUsedBoth(true);
-      console.log("✅ Both 'main' and 'wishlist' have been selected at least once.");
+      console.log("Both 'main' and 'wishlist' have been selected at least once.");
     }
   }, [sourceSelections]);
 
@@ -129,8 +132,9 @@ export function AddExpenseForm({
     });
   };
 
-  const secureSaving = adjustGaugeList(gaugeList, formData.numberOfDays)
+  const secureSaving = adjustGaugeList(gaugeList, formData.numberOfDays, dailyBudget)
   const moneyToAsk = secureSaving['Spending Wallet'].value;
+
 
   const safeAmount = moneyToAsk - maximumSafeAmount;
   
@@ -141,6 +145,7 @@ export function AddExpenseForm({
         <RequestMoneyModal
           open={open}
           onClose={handleClose}
+          budgetCanReduce={budgetCanReduce}
           statusList={pieChartSeries}
           overage={
             formData.numberOfDays > 0
@@ -234,6 +239,7 @@ export function AddExpenseForm({
               )}
 
             </Grid>
+            {maximumSafeAmount !== 0 && (
             <Grid size={{
               lg: 12,
               md: 12,
@@ -258,15 +264,15 @@ export function AddExpenseForm({
                   color="black"
                   style={{ marginTop: 4 }} // bright yellow fill
                 />
-
-                <Typography variant="body2" color="text.secondary">
-                  <strong>Tip:</strong> You can use Maximum <strong>₹{safeAmount}</strong> this today <br />
-                  without affecting your daily budget, wishlist savings, or bill payments on next month.
-                  <br />
-                  Staying within this limit helps avoid delays or missed expenses.
-                </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Tip:</strong> You can use up to <strong>₹{safeAmount}</strong> today <br />
+                    without affecting your daily budget, wishlist savings, or upcoming bill payments.
+                    <br />
+                    Staying within this limit helps avoid delays or missed expenses.
+                  </Typography>
               </Box>
             </Grid>
+            )}
             <Grid size={{
               lg: 6,
               md: 6,
@@ -277,6 +283,7 @@ export function AddExpenseForm({
                 setCanSave={handleSaveOn}
                 setCanNotSave={handleSaveOff}
                 list={gaugeList}
+                dailyBudget={dailyBudget}
                 days={Math.max(formData.numberOfDays, 1)}
                 value={ formData.amount }
               />

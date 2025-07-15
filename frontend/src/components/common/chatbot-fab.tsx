@@ -2,17 +2,29 @@
 
 import * as React from 'react';
 import { Fab, Box, Fade, Typography } from '@mui/material';
-import { ChatCircleDotsIcon } from '@phosphor-icons/react/dist/ssr';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { paths } from '@/paths';
 
 export default function ChatbotFab() {
   const [showWelcome, setShowWelcome] = React.useState(true);
+  const pathname = usePathname();
 
+  // ✅ Always call hooks before conditional return
   React.useEffect(() => {
     const timer = setTimeout(() => setShowWelcome(false), 10000);
     return () => clearTimeout(timer);
   }, []);
+
+  // ✅ This condition now comes AFTER all hooks
+  const hiddenPaths = [
+    '/auth/sign-in',
+    '/auth/sign-up',
+    '/auth/reset-password',
+    '/auth/forgot-password',
+    '/auth/verify-email',
+  ];
+  if (hiddenPaths.some((path) => pathname.startsWith(path))) return null;
 
   return (
     <>
@@ -54,17 +66,16 @@ export default function ChatbotFab() {
         }}
       >
         <Box
-            component="img"
-            src="/assets/smart-pig.avif"
-            alt="Chatbot"
-            sx={{
+          component="img"
+          src="/assets/smart-pig.avif"
+          alt="Chatbot"
+          sx={{
             width: 40,
             height: 40,
             borderRadius: '50%',
-            }}
+          }}
         />
       </Fab>
     </>
   );
 }
-

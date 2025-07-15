@@ -2,8 +2,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "@/lib/axiosInstance";
 import { RootState } from "../store";
+import { config } from '@/config';
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = config.apiBaseUrl;
 
 export const sendChatbotMessage = createAsyncThunk<
   string,

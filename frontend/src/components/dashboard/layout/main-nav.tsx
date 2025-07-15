@@ -19,6 +19,8 @@ import { UserPopover } from './user-popover';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { Button } from '@mui/material';
+import { ArrowsClockwiseIcon } from '@phosphor-icons/react';
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
@@ -28,6 +30,12 @@ export function MainNav(): React.JSX.Element {
   const userState = useSelector((state: RootState) => state.user);
 
   const avatar = userState.data?.avatar ?? '';
+
+  const handleRefresh = () => {
+    // Example: reload the page without full browser reload
+    window.location.reload();
+  };
+
   
   return (
     <React.Fragment>
@@ -56,24 +64,16 @@ export function MainNav(): React.JSX.Element {
               <ListIcon />
             </IconButton>
             <Tooltip title="Search">
-              <IconButton>
-                <MagnifyingGlassIcon />
-              </IconButton>
+              <Button
+                variant="outlined"
+                startIcon={<ArrowsClockwiseIcon />}
+                onClick={handleRefresh}
+              >
+                Refresh
+              </Button>
             </Tooltip>
           </Stack>
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-            <Tooltip title="Contacts">
-              <IconButton>
-                <UsersIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Notifications">
-              <Badge badgeContent={4} color="success" variant="dot">
-                <IconButton>
-                  <BellIcon />
-                </IconButton>
-              </Badge>
-            </Tooltip>
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}

@@ -4,9 +4,10 @@ import { setAvatar, handleModel, setSalaryAcknowledged, updateBasicInfo, updateS
 import type { RootState, AppDispatch } from '../store';
 import type { UserProfile } from '@/types/user'
 import { refetchAllUserData } from './global-refresh';
+import { config } from '@/config';
 
 
-const API_URL = 'http://localhost:5000/api/profile';
+const API_URL = `${config.apiBaseUrl}/profile`;
 
 export const fetchUserProfile = createAsyncThunk(
   'user/fetchUserProfile',

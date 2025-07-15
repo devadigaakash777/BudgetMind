@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
+import { neonBlue } from '@/styles/theme/colors';
 import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import type { ApexOptions } from 'apexcharts';
@@ -22,20 +23,14 @@ export interface WalletChartProps {
 
 export function WalletChart({ chartSeries, labels, sx }: WalletChartProps): React.JSX.Element {
   //Chart color
-  const theme = useTheme();
   const paletteMapping = [
-    theme.palette.primary.main,
-    theme.palette.success.main,
-    theme.palette.warning.main,
-    theme.palette.error.main,
-    theme.palette.primary.dark,
-    theme.palette.success.dark,
-    theme.palette.warning.dark,
-    theme.palette.error.dark,
-    theme.palette.info.main,
-    theme.palette.secondary.main,
+    neonBlue[300],
+    neonBlue[400],
+    neonBlue[500],
+    neonBlue[600],
+    neonBlue[700],
+    neonBlue[800],
   ];
-
   const chartOptions = useChartOptions(labels, paletteMapping);
 
   return (

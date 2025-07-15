@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { generateAccessToken, generateRefreshToken } from '../utils/generateTokens.js';
-import UserModel from '../models/User.js'; // Mongoose User model
+import UserModel from '../models/User.js'; 
 import sendEmail from '../utils/sendEmail.js';
 
 const EMAIL_SECRET = process.env.EMAIL_SECRET || "email-secret-key";

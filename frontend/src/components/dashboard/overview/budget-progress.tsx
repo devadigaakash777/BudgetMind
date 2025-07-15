@@ -25,7 +25,7 @@ export function BudgetProgress({ value, sx }: BudgetProgressProps): React.JSX.El
               </Typography>
               <Typography variant="h4">{value}%</Typography>
             </Stack>
-            <Avatar sx={{ backgroundColor: 'var(--mui-palette-warning-main)', height: '56px', width: '56px' }}>
+            <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '56px', width: '56px' }}>
               <CalendarDotsIcon fontSize="var(--icon-fontSize-lg)" />
             </Avatar>
           </Stack>

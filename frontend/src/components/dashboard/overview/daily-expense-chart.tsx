@@ -40,7 +40,7 @@ export function DailyExpenseChart({ chartSeries, sx }: DailyExpenseProps): React
       <CardContent>
         <Box sx={{ overflowX: 'auto' }}>
           <Box sx={{ minWidth: 600 }}>
-            <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
+            <Chart height={600} options={chartOptions} series={chartSeries} type="bar" width="100%" />
           </Box>
         </Box>
       </CardContent>

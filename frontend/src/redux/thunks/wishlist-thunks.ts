@@ -14,13 +14,14 @@ import {
 import type { WishlistItem, WishlistItemBase } from '@/types/wishlist';
 import { refetchAllUserData } from '@/redux/thunks/global-refresh';
 import type { AppDispatch } from '@/redux/store';
+import { config } from '@/config';
 
 interface WishlistResponse {
   items: WishlistItem[];
   totalSavedAmount: number;
 }
 
-const BASE_URL = 'http://localhost:5000/api/wishlist';
+const BASE_URL = `${config.apiBaseUrl}/wishlist`;
 
 // Fetch all wishlist items
 export const fetchWishlist = createAsyncThunk(
@@ -39,7 +40,7 @@ export const thunkAddWishlistItem = createAsyncThunk(
   'wishlist/addItem',
   async (item: WishlistItemBase, { dispatch }) => {
     const res = await axios.post<WishlistItem>(BASE_URL, item);
-    dispatch(addWishlistItem(res.data));
+    await refetchAllUserData(dispatch as AppDispatch);
   }
 );
 

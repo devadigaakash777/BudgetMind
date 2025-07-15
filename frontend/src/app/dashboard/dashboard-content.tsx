@@ -49,12 +49,15 @@ export default function DashboardContent(): React.JSX.Element {
   const pieChartSeries = {
     'Secure Saving': walletState.MainWallet.balance,
     'Spending Wallet': walletState.TemporaryWallet.balance,
-    ...(userState.hasSalary === false && {
-    'Monthly Allowance': walletState.SteadyWallet.balance,
+    ...(userState.hasSalary === false ? {
+      'Monthly Allowance': walletState.SteadyWallet.balance,
+     } :
+     {
+      'Monthly Budget': budgetState.MonthlyBudget.amount,
      }),
     'Budget Leftover': walletState.DailyBuffer.balance,
     'Wishlist Saving': wishlist.totalSavedAmount,
-    'Bill Saving': budgetState.FixedExpenses.totalSavedAmount
+    'Bill Saving': budgetState.FixedExpenses.totalSavedAmount,
   };
 
   // Ensure `handleOpen()` is called only once when isProfileComplete === false

@@ -108,7 +108,7 @@ export function DailyBudgetForm({
                   label="Minimum Amount"
                   type="number"
                 />
-                <FormHelperText>Whole number between 0 and {maxAllowed}</FormHelperText>
+                <FormHelperText>Whole number between 1 and {maxAllowed}</FormHelperText>
               </FormControl>
             </Grid>
 
@@ -126,7 +126,7 @@ export function DailyBudgetForm({
                   label="Maximum Amount"
                   type="number"
                 />
-                <FormHelperText>Whole number between 0 and {maxAllowed}</FormHelperText>
+                <FormHelperText>Whole number between 1 and {maxAllowed}</FormHelperText>
               </FormControl>
             </Grid>
 
@@ -161,7 +161,7 @@ export function DailyBudgetForm({
                   <InputLabel>Set Amount</InputLabel>
                   <OutlinedInput
                     name="setAmount"
-                    value={formData.setAmount || ''}
+                    value={formData.setAmount}
                     onChange={handleInputChange}
                     label="Set Amount"
                     type="number"

@@ -20,6 +20,8 @@ export const simulateMonthlyAllocation = (state: PreviewState): number => {
   const salary = state.User?.salary.amount;
   const dailyBudget = state.DailyBudget?.amount;
 
+  console.warn(state.DailyBudget?.amount);
+
   const newState = monthlyAllocate(
     state,
     new Date(salaryDayISO),
@@ -63,7 +65,14 @@ export const calculateRequiredAmount = (state: PreviewState): number => {
     billsCost += bill.amount;
   }
 
-  const monthlyBudget = state.MonthlyBudget?.amountFunded || 0;
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth(); // 0-indexed: Jan = 0
+
+  // Create a date for the 0th day of the month *after next* — that gives last day of next month
+  const nextMonthDate = new Date(year, month + 2, 0);
+
+  const DailyBudget = state.DailyBudget?.amount || 0;
+  const monthlyBudget = DailyBudget * nextMonthDate.getDate();
   const totalExpense = monthlyBudget + billsCost + itemsCost;
   const safeAccess = Math.max(totalMoneySource - totalExpense, 0); 
 

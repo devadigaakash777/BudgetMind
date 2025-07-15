@@ -7,7 +7,7 @@ import { config } from '@/config';
 import { Notifications } from '@/components/dashboard/chatbot/notifications';
 import ChatbotComponent from '@/components/dashboard/chatbot/chatbot-widget';
 
-export const metadata = { title: `Settings | Dashboard | ${config.site.name}` } satisfies Metadata;
+export const metadata = { title: `ChatBot | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 export default function Page(): React.JSX.Element {
   return (
