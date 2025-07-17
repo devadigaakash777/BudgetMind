@@ -6,6 +6,7 @@ import { Wallet } from "../models/wallet.model.js";
 import { processWithMutator } from "../utils/processWithMutator.js";
 import mongoose from 'mongoose';
 import DailyExpense from "../models/expense.model.js";
+import { getDaysSinceLastExpense } from "../utils/expensePending.js";
 
 export const finalizeProfile = async (userId: string) => {
     // 1. Fetch plain objects
@@ -94,5 +95,6 @@ export const allocateBudget = async (userId: string) => {
     const existingExpenses = await DailyExpense.findOne({ userId, date: todayDate });
 
     let hasBudgetPaid = existingExpenses ? true : false;
-    return await processWithMutator(userId, null, reAllocateBudget, hasBudgetPaid);
+    const daysBetween = await getDaysSinceLastExpense(userId) || 0;
+    return await processWithMutator(userId, null, reAllocateBudget, daysBetween);
 }

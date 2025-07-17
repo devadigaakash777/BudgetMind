@@ -40,7 +40,7 @@ export interface FixedExpenseProps {
 export function FixedExpense({ expenses = [], sx }: FixedExpenseProps): React.JSX.Element {
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest orders" />
+      <CardHeader title="Bills" />
       <Divider />
       <Box sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: 800 }}>

@@ -32,7 +32,7 @@ export interface LatestProductsProps {
 export function LatestProducts({ products = [], sx }: LatestProductsProps): React.JSX.Element {
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest products" />
+      <CardHeader title="Wishlist Items" />
       <Divider />
       <List>
         {products.map((product, index) => (

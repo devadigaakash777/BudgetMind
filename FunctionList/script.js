@@ -90,21 +90,21 @@ window.state = {
     isProfileComplete: true,
     isSalaryPaid: false,
     jobTitle: 'Senior Developer',
-    salary: { amount: 3000, date: 2 },
+    salary: { amount: 3000, date: 1 },
     phone: '9876543210'
   },
   _id: '68638fc3f6e180b1f3d76961',
   userId: '686115e1a30a4213cafd297a',
-  MainWallet: { balance: 0 },
-  TemporaryWallet: { balance: 0 },
+  MainWallet: { balance: 19 },
+  TemporaryWallet: { balance: 50 },
   SteadyWallet: { balance: 0, month: 5, date: 15, monthlyAmount: 3000 },
-  DailyBuffer: { balance: 0 },
+  DailyBuffer: { balance: 20 },
   TotalWealth: { amount: 70000 },
   PendingPayments: { amount: 0 },
   threshold: 50000,
   __v: 0,
-  MonthlyBudget: { amount: 1700, amountFunded: 4998 },
-  DailyBudget: { amount: 100, setAmount: 0, min: 100, max: 1500 },
+  MonthlyBudget: { amount: 2100, amountFunded: 4650 },
+  DailyBudget: { amount: 150, setAmount: 0, min: 100, max: 1500 },
   FixedExpenses: {
     expenses: [ {
       _id: '6867bf7e5ac13c14bd0148dc',
@@ -117,7 +117,7 @@ window.state = {
       isPermanent: true,
       isFunded: false,
       durationInMonths: 1,
-      amountToFund: 1000,
+      amountToFund: 3000,
       __v: 0
     },
    {
@@ -131,11 +131,11 @@ window.state = {
       isPermanent: true,
       isFunded: false,
       durationInMonths: 1,
-      amountToFund: 5000,
+      amountToFund: 4999,
       __v: 0
     } 
    ],
-    totalSavedAmount: 2000
+    totalSavedAmount: 1
   },
   Wishlist: {
     items: [{
@@ -144,14 +144,14 @@ window.state = {
       name: 'Mobile',
       description: 'Gaming mobile',
       image: 'https://res.cloudinary.com/ddmlou0da/image/upload/v1751368444/py8gjmvmvnxtlpijo7ej.jpg',
-      savedAmount: 5000,
+      savedAmount: 2010,
       priority: 7,
       cost: 49999,
       monthLeft: 9,
       isFunded: false,
       __v: 0
     } ],
-    totalSavedAmount: 5000
+    totalSavedAmount: 2010
   }
 }
 

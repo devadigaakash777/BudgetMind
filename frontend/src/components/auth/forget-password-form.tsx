@@ -52,7 +52,7 @@ export function ResetPasswordForm(): React.JSX.Element {
 
       setIsPending(false);
 
-      setSuccessMessage("✅ We sent a recovery link to your email. Please check your inbox!");
+      setSuccessMessage(" We sent a recovery link to your email. Please check your inbox!");
 
     },
     [setError, router]

@@ -12,7 +12,9 @@ import { splitAmountByDays } from '../utils/splitAmountByDays.js'
  * @returns {object} Updated state object
  */
 export function logExtendedExpense(state, expense, currentDate, userId, details, restrictedDuration) {
+  console.debug("[logExtendedExpense ] before state: ",state);
   const newState = structuredClone(state);
+  console.debug("[logExtendedExpense ] newState: ",newState);
   const dailyBudget = newState.DailyBudget.amount;
 
   const givenDuration = (typeof expense.duration === 'number' && expense.duration > 0) ? expense.duration : 1;
@@ -86,5 +88,6 @@ export function logExtendedExpense(state, expense, currentDate, userId, details,
 
   newState.DailyBuffer.balance += Math.max(dailyTotal - expense.amount, 0);
   console.debug("[logExtendedExpense] Final state:", newState);
+  console.debug("[logExtendedExpense] data :", data);
   return {newState, overage, data};
 }

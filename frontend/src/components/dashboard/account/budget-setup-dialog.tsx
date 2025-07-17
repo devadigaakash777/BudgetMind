@@ -3,11 +3,14 @@
 import * as React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Stepper, Step, StepLabel
+  Button, Stepper, Step, StepLabel,
+  Box,
+  Typography
 } from '@mui/material';
 import { TotalWealthForm } from '@/components/dashboard/account/total-wealth';
 import { AccountSalaryForm } from '@/components/dashboard/account/account-salary-form';
 import { DailyBudgetForm } from '@/components/dashboard/account/set-budget-details';
+import { GearSixIcon } from '@phosphor-icons/react';
 
 type BudgetSetupDialogProps = {
   open: boolean;
@@ -117,13 +120,19 @@ export function BudgetSetupDialog({
         )}
 
         {activeStep === 2 && (
-          <DailyBudgetForm salary={salary} remainDays={remainDays} onSave={handleDailyBudgetSave} />
+          <DailyBudgetForm salary={salary} remainDays={remainDays} showSetAmount={false}  onSave={handleDailyBudgetSave} />
         )}
 
         {activeStep === 3 && (
-          <div style={{ textAlign: 'center', padding: '1rem' }}>
-            <p>Review your entries and finalize the setup.</p>
-          </div>
+          <Box textAlign="center" py={3}>
+            <GearSixIcon size={64} weight="duotone" color="#3f51b5" />
+            <Typography variant="h6" fontWeight="bold" gutterBottom mt={1}>
+              Ready to Calculate Your Budget
+            </Typography>
+            <Typography variant="body2" color="text.secondary" maxWidth={400} mx="auto">
+              Your details are set. We’ll now calculate your ideal allocations across Secure Saving, Spending Wallet, Monthly Budget and more.
+            </Typography>
+          </Box>
         )}
       </DialogContent>
 

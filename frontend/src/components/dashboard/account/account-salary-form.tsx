@@ -15,6 +15,7 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date';
+import { FormHelperText } from '@mui/material';
 
 export type AccountSalaryFormProps = {
   hasSalary?: boolean;
@@ -272,7 +273,7 @@ export function AccountSalaryForm({
                 xs: 12,
               }}
             >
-              <FormControl fullWidth required>
+               <FormControl fullWidth required>
                 <InputLabel>Threshold</InputLabel>
                 <OutlinedInput
                   name="threshold"
@@ -281,6 +282,9 @@ export function AccountSalaryForm({
                   label="Threshold"
                   type="number"
                 />
+                <FormHelperText>
+                  This is your safety amount. We'll try to always keep this much safe in your Secure Saving.
+                </FormHelperText>
               </FormControl>
             </Grid>
           </Grid>

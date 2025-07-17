@@ -26,6 +26,7 @@ export type DailyBudgetFormProps = {
   setAmount?: number;
   minAmount?: number;
   maxAmount?: number;
+  showSetAmount?: boolean;
   onSave?: (values: {
     setAmount: number;
     minAmount: number;
@@ -46,6 +47,7 @@ export function DailyBudgetForm({
   setAmount = 0,
   minAmount = 0,
   maxAmount = 0,
+  showSetAmount = true,
   onSave,
 }: DailyBudgetFormProps): React.JSX.Element {
   const [canEditAmount, setCanEditAmount] = React.useState<boolean>(false);
@@ -129,7 +131,7 @@ export function DailyBudgetForm({
                 <FormHelperText>Whole number between 1 and {maxAllowed}</FormHelperText>
               </FormControl>
             </Grid>
-
+            { showSetAmount &&
             <Grid size={{
                     md: 6,
                     xs: 12,
@@ -150,6 +152,7 @@ export function DailyBudgetForm({
                 )}
               </FormGroup>
             </Grid>
+            }
 
             {canEditAmount && (
               <Grid size={{

@@ -133,7 +133,7 @@ export function RequestMoneyModal({
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary="Full Main Wallet Access (includes Daily Budget)"
+              primary="Full Secure Saving Access (includes Daily Budget)"
               secondary={`Up to ₹${totalCostMainWithBudget ?? 0} — Only available if 'Allow Budget Reduction' is enabled`}
             />
           </ListItem>

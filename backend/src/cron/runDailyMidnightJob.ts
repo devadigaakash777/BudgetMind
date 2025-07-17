@@ -3,6 +3,8 @@ import { Wallet } from '../models/wallet.model.js';
 import { finalizeSalary } from '../services/profile.service.js';
 import UserModel from '../models/User.js';
 import sendEmail from '../utils/sendEmail.js';
+import { getDaysSinceLastExpense } from '../utils/expensePending.js';
+import { processDailyExpense } from '../services/dailyExpense.service.js';
 
 export const runDailyMidnightJob = async () => {
   const todayISO = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
@@ -81,6 +83,63 @@ export const runDailyMidnightJob = async () => {
         }
       } catch (err) {
         console.error(`Error finalizing salary for user ${userId}`, err);
+      }
+    }
+  }
+};
+
+
+
+export const triggerPreSalaryActions = async () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowDay = tomorrow.getDate(); // 1–31
+
+  const profiles = await Profile.find({}).lean();
+  const wallets = await Wallet.find().lean();
+  const walletMap = new Map(wallets.map(w => [w.userId.toString(), w]));
+
+  for (const profile of profiles) {
+    const userId = profile?.userId?.toString?.();
+    if (!userId) {
+      console.warn('Skipping profile with invalid userId');
+      continue;
+    }
+
+    const isSalaried = profile.hasSalary === true;
+    const salaryDay = profile.salary?.date ?? null;
+    const wallet = walletMap.get(userId);
+    const steadyDay = wallet?.SteadyWallet?.date ?? null;
+
+    const targetDay = isSalaried ? salaryDay : steadyDay;
+
+    if (targetDay === tomorrowDay) {
+      try {
+        const user = await UserModel.findOne({ userId });
+
+        if (user) {
+          console.log(`Triggering pre-salary action for user ${userId}`);
+
+          const pendingDays = await getDaysSinceLastExpense(userId) || 0;
+
+          if (pendingDays > 0) {
+            const expense = { amount: 0, duration: pendingDays };
+            await processDailyExpense(expense, new Date(), userId, "Unpaid Expense", pendingDays);
+          }
+
+          await sendEmail(
+            user.email,
+            'Daily Expenses Updated',
+            `<h3>Hi ${user.firstName},</h3>
+             <p>Tomorrow is your scheduled salary day. We have automatically updated your daily expenses for the past ${pendingDays} day(s). All pending expenses have been recorded as ₹0, and any leftover daily budget has been allocated to your wallet.</p>
+             <p>No action is required from your side.</p>
+             <p><strong>– BudgetMind Team</strong></p>`
+          );
+        } else {
+          console.warn(`No user found for userId ${userId}`);
+        }
+      } catch (err) {
+        console.error(`Error processing pre-salary for user ${userId}:`, err);
       }
     }
   }

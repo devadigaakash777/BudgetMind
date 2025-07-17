@@ -12,7 +12,6 @@ import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import  AddWishlistModal from '@/components/dashboard/wishlists/wishlist-model'
 import { WishlistCard } from '@/components/dashboard/wishlists/wishlist-card';
-import { CompaniesFilters } from '@/components/dashboard/wishlists/integrations-filters';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';

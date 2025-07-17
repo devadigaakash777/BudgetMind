@@ -86,6 +86,5 @@ export const calculateRequiredAmount = (state: PreviewState): number => {
     totalExpense,
     safeAccess
   }
-  console.log(result);
   return safeAccess;
 };

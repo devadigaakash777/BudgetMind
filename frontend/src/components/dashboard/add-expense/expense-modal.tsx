@@ -25,7 +25,7 @@ type AddExpenseFormProps = {
   dailyBudget: number;
   maximumSafeAmount: number;
   budgetCanReduce: number;
-  restrictedDuration: number | null;
+  restrictedDuration: number;
   onAdd: (payload: {
     totalAmount: number;
     details: string;
@@ -71,7 +71,7 @@ export function AddExpenseForm({
   
   const [formData, setFormData] = React.useState({
     amount: 0,
-    numberOfDays: 1,
+    numberOfDays: restrictedDuration,
     details: ''
   });
 
@@ -85,7 +85,7 @@ export function AddExpenseForm({
   React.useEffect(() => {
     if (sourceSelections.main && sourceSelections.wishlist) {
       setUsedBoth(true);
-      console.log("Both 'main' and 'wishlist' have been selected at least once.");
+      // console.log("Both 'main' and 'wishlist' have been selected at least once.");
     }
   }, [sourceSelections]);
 
@@ -115,7 +115,7 @@ export function AddExpenseForm({
     onAdd({
       totalAmount: formData.amount,
       details: formData.details,
-      numberOfDays: restrictedDuration? Math.min(formData.numberOfDays, restrictedDuration): formData.numberOfDays,
+      numberOfDays: restrictedDuration,
       source: selectedSource,
       canReduceBudget: canReduceBudget,
       usedBoth: usedBoth
@@ -127,7 +127,7 @@ export function AddExpenseForm({
     // Optional reset:
     setFormData({
       amount: 0,
-      numberOfDays: 1,
+      numberOfDays: restrictedDuration,
       details: ''
     });
   };
@@ -196,21 +196,16 @@ export function AddExpenseForm({
                 <InputLabel>Number of Days</InputLabel>
                 <OutlinedInput
                   name="numberOfDays"
-                  value={formData.numberOfDays === 0 ? '' : formData.numberOfDays}
+                  value={restrictedDuration}
                   onChange={handleInputChange}
                   label="Number of Days"
                   type="number"
                   inputProps={{ 
                     min: 1, 
-                    ...(restrictedDuration !== null && { max: restrictedDuration }),
+                    max: restrictedDuration,
                   }}
-                  error={restrictedDuration !== null && formData.numberOfDays > restrictedDuration}
+                  readOnly
                 />
-                <FormHelperText>
-                  {restrictedDuration !== null && formData.numberOfDays > restrictedDuration
-                    ? `Max allowed days is ${restrictedDuration}`
-                    : ' '}
-                </FormHelperText>
               </FormControl>
             </Grid>
             <Grid size={{

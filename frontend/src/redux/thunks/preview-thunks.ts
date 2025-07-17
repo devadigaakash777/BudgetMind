@@ -47,16 +47,16 @@ export const addPreviewExpense = function (expense: ExpenseInput) {
       newState.DailyBudget.amount = Math.max(0, newState.DailyBudget.amount - expense.amount);
     }
     console.log(newState);
-    dispatch(setPreview(newState));
+    dispatch(setPreview(newState)); 
   };
 };
 
 
 // eslint-disable-next-line unicorn/consistent-function-scoping
-export const requestMoney = function (amount: number, source: string, canDecrease: boolean) {
+export const requestMoney = function (amount: number, source: string, canDecrease: boolean, unpaidDays: number) {
   return function (dispatch: AppDispatch, getState: () => RootState) {
     const state = getState().preview;
-    const { newState } = handleTemporaryWalletRequest(state, amount, source, canDecrease, false) as requestMoneyResult;
+    const { newState } = handleTemporaryWalletRequest(state, amount, source, canDecrease, false, unpaidDays) as requestMoneyResult;
     console.log(newState);
     dispatch(setPreview(newState));
   };

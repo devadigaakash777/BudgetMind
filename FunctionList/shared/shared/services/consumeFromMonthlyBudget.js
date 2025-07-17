@@ -1,62 +1,58 @@
 import { getDaysRemaining } from '../utils/dateUtils.js';
-import { addToTemporaryWallet } from './deductTemporaryWallet.js';
 import { smartBudget } from './smartBudget.js';
 
 /**
- * Consumes amount from the monthly budget based on remaining days in the month.
- * If requiredAmount is provided, tries to deduct it from the monthly budget.
- * Any leftover daily budget is added to TemporaryWallet. Smart budget is applied.
+ * Consumes amount from the monthly budget based on remaining days.
+ * If requiredAmount is provided, deducts it from the monthly budget.
+ * Recalculates smart budget and updates DailyBudget and MonthlyBudget.
  *
- * @param {object} state - The application state object.
+ * @param {object} state - The application state object (mutated).
  * @param {number|null} requiredAmount - Amount to consume, or null to recalculate only.
- * @param {string|null} dateStr - Optional target date in ISO format (e.g., "2025-06-30").
- * @return {number} - Amount get from the Monthly budget
+ * @param {string|null} dateStr - Optional ISO date string (e.g., "2025-06-30").
+ * @returns {object} - Contains { totalRemaining, smartDailyBudget }
  */
-export function consumeFromMonthlyBudget(state, requiredAmount = null, dateStr = null) {
-  const daysLeft = getDaysRemaining(dateStr);
-  console.debug('[consumeFromMonthlyBudget] daysLeft:', daysLeft);
-  const dailyMin = state.DailyBudget.min;
-  const dailyActual = state.DailyBudget.amount;
+export function consumeFromMonthlyBudget(state, unpaidDuration, requiredAmount = null, dateStr = null) {
+  const daysLeft = getDaysRemaining(dateStr) + unpaidDuration;
+  console.debug('[consumeFromMonthlyBudget] Days remaining:', daysLeft);
 
-  const calculatedMonthlyBudget = dailyMin * daysLeft;
-
-  let usableBudget = state.MonthlyBudget.amount;
-
-  // Case: If no requiredAmount, update MonthlyBudget to calculated
-  if (requiredAmount === null) {
-    usableBudget = calculatedMonthlyBudget;
-  } else {
-    if (requiredAmount <= usableBudget) {
-      usableBudget -= requiredAmount;
-    } else {
-      throw new Error("consumeFromMonthlyBudget: Requested amount exceeds budget.");
-    }
+  if (daysLeft <= 0) {
+    throw new Error("Invalid days remaining. Date may be past salary reset.");
   }
 
-  // Apply updates
+  const dailyMin = state.DailyBudget.min;
+  const dailyActual = state.DailyBudget.amount;
+  const calculatedMonthlyBudget = dailyMin * daysLeft;
 
-  const expectedDailyTotal = dailyActual * daysLeft;
-  const extraAmount = expectedDailyTotal - usableBudget;
+  let availableBudget = state.MonthlyBudget.amount;
 
-  console.debug('[consumeFromMonthlyBudget] usableBudget:', usableBudget);
-  console.debug('[consumeFromMonthlyBudget] extraAmount:', extraAmount);
+  // Deduct requiredAmount if provided
+  if (requiredAmount !== null) {
+    if (requiredAmount > availableBudget) {
+      throw new Error("Requested amount exceeds monthly budget.");
+    }
+    availableBudget -= requiredAmount;
+  } else {
+    availableBudget = calculatedMonthlyBudget;
+  }
 
-  const result = smartBudget(state, usableBudget, daysLeft);
+  // Smart budgeting
+  const expectedTotal = dailyActual * daysLeft;
+  const extraBeforeSmart = expectedTotal - availableBudget;
 
-  state.MonthlyBudget.amount = result.monthlyBudget;
+  const { monthlyBudget, remaining } = smartBudget(state, availableBudget, daysLeft);
+  const smartDailyBudget = monthlyBudget / daysLeft;
 
-  const smartDailyBudget =  result.monthlyBudget / daysLeft;
-  const totalRemaining = extraAmount + result.remaining;
+  state.MonthlyBudget.amount = monthlyBudget;
 
-  // state.TemporaryWallet.balance += result.remaining;
+  const totalRemaining = extraBeforeSmart + remaining;
 
-  console.debug('[consumeFromMonthlyBudget] Result From smart budget: ', result);
-  console.debug('[consumeFromMonthlyBudget] extraAmount:', extraAmount);
-  console.debug('[consumeFromMonthlyBudget] totalRemaining:', totalRemaining);
+  console.debug('[consumeFromMonthlyBudget] Usable Budget:', availableBudget);
+  console.debug('[consumeFromMonthlyBudget] Result from smartBudget:', {
+    monthlyBudget,
+    remaining,
+    smartDailyBudget,
+    totalRemaining
+  });
 
-  // if (extraAmount > 0) {
-  //   addToTemporaryWallet(state, extraAmount);
-  // }
-
-  return {totalRemaining, smartDailyBudget};
+  return { totalRemaining, smartDailyBudget };
 }

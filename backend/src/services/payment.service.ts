@@ -8,6 +8,7 @@ export const handleTempWallet = async (
   sourcePreference: 'wishlist' | 'main',
   canDecreaseBudget: boolean,
   hasBudgetPaid: boolean,
+  unpaidDays: number,
 ) => {
-  return await processWithMutator(userId, sourceID, collectAmount, amountRequested, sourcePreference, canDecreaseBudget, hasBudgetPaid);
+  return await processWithMutator(userId, sourceID, collectAmount, amountRequested, sourcePreference, canDecreaseBudget, hasBudgetPaid, unpaidDays);
 };

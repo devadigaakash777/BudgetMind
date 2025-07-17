@@ -30,8 +30,6 @@ export default function DashboardContent(): React.JSX.Element {
   const dailyExpenseState = useSelector((state: RootState) => state.expense); 
   const userState = useSelector((state: RootState) => state.user);
 
-  console.log(userState);
-
   //Budget setup for first time
   const dispatch = useDispatch<AppDispatch>();
 

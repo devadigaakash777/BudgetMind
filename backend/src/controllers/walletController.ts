@@ -45,9 +45,42 @@ export const updateTotalWealth = async (req: AuthRequest, res: Response) => {
   res.sendStatus(200);
 };
 
-export const updateThreshold = async (req: AuthRequest, res: Response) => {
-  const wallet = await getOrCreateWallet(req.userId!);
-  wallet.threshold = req.body.threshold;
-  await wallet.save();
-  res.sendStatus(200);
+export const updateThreshold = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const threshold = req.body.threshold;
+    if (typeof threshold !== 'number' || threshold < 0) {
+      res.status(400).json({ error: "Invalid threshold value" });
+      return;
+    }
+
+    const wallet = await getOrCreateWallet(req.userId!);
+    const prevThreshold = wallet.threshold;
+    const mainBal = wallet.MainWallet.balance;
+    const tempBal = wallet.TemporaryWallet.balance;
+
+    // Update threshold
+    wallet.threshold = threshold;
+
+    if (threshold < mainBal) {
+      // Threshold decreased – move extra to temp wallet
+      const surplus = mainBal - threshold;
+      wallet.MainWallet.balance = threshold;
+      wallet.TemporaryWallet.balance += surplus;
+
+    } else if (prevThreshold === mainBal && threshold > mainBal) {
+      // Threshold increased – only proceed if MainWallet == previous threshold
+      const needed = threshold - mainBal;
+      if (tempBal >= needed) {
+        wallet.MainWallet.balance += needed;
+        wallet.TemporaryWallet.balance -= needed;
+      } // else ignore (not enough funds in temp)
+    }
+
+    await wallet.save();
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("Error updating threshold:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
+

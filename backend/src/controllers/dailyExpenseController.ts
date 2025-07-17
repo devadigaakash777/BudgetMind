@@ -7,6 +7,7 @@ import { processDailyExpense, handleTempWallet } from "../services/dailyExpense.
 import { Wallet } from "../models/wallet.model.js";
 import XLSX from "xlsx";
 import dayjs from 'dayjs';
+import { getDaysSinceLastExpense } from '../utils/expensePending.js';
 
 // 1. Fetch user expenses
 export const getUserDailyExpenses = async (req: AuthRequest, res: Response) => {
@@ -57,20 +58,8 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response): P
       usedBoth: boolean;
     } = req.body;
     
-     // ✅ Reject if expenses already exist for today
-    const lastExpense = await DailyExpense.findOne({ userId }).sort({ date: -1 });
-
-    let daysBetween: number | null = null;
-
-    if (lastExpense) {
-      const today = dayjs().startOf('day');
-      const lastDate = dayjs(lastExpense.date, 'YYYY-MM-DD');
-
-      daysBetween = today.diff(lastDate, 'day');
-      console.log('Days between:', daysBetween);
-    } else {
-      console.log('No expenses found for this user.');
-    }
+     //  Reject if expenses already exist for today
+    const daysBetween = await getDaysSinceLastExpense(userId);
 
     if (daysBetween !== null && daysBetween === 0) {
       res.status(400).json({
@@ -103,12 +92,13 @@ export const generateAndAddExpenses = async (req: AuthRequest, res: Response): P
 
     if(totalAmount > totalBudget){
       let required = totalAmount - totalBudget;
+      const unpaidDays = daysBetween || 0;
       for(let i=0; i<count ; i++){
-        const newState = await handleTempWallet(userId, required, preference, canReduceBudget, false);
+        const newState = await handleTempWallet(userId, required, preference, canReduceBudget, false, unpaidDays);
         required -= (newState.amountCollected - newState.freedBudget);
         preference = (preference === 'main') ? 'wishlist' : 'main';
         console.warn("Required ",required);
-      }
+      } 
       if(required > 0){
         throw new Error("Insufficient balance");
       }
