@@ -18,7 +18,7 @@ export async function refreshTokenIfNeeded(): Promise<string | null> {
         store.dispatch(clearUser());
         return null;
       }
-    } catch (err) {
+    } catch {
       store.dispatch(clearUser());
       return null;
     }

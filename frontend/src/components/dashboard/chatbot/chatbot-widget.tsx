@@ -2,14 +2,13 @@
 
 import React from "react";
 import ChatBot from "react-chatbotify";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import { sendChatbotMessage } from "@/redux/thunks/chatbot-thunks";
 import { addMessage } from "@/redux/slices/chatbot-slice";
 import removeMarkdown from "remove-markdown";
 
 const ChatbotComponent = () => {
   const dispatch = useAppDispatch();
-  const history = useAppSelector((state) => state.chatbot.history);
 
   const settings = {
     general: {
@@ -66,7 +65,7 @@ const ChatbotComponent = () => {
       path: "loop",
     },
     loop: {
-      message: async (params: any) => {
+      message: async (params: { userInput: string }) => {
         const userMessage = params.userInput;
 
         // Add user message to Redux

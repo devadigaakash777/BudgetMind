@@ -13,11 +13,11 @@ export const contextCache = new NodeCache({ stdTTL: 300 }); // 5 minutes
 
 export const globalAppTerms = `
  Terminology:
-- Main Wallet (Secure Saving): Long-term secure savings for emergencies or planned withdrawals.
-- Temporary Wallet (Spending Wallet): General savings for spendable expenses; acts as a flexible pool for overspending or daily adjustments.
+- Secure Saving (Main Wallet): Long-term secure savings for emergencies or planned withdrawals.
+- Spending Wallet (Temporary Wallet): General savings for spendable expenses; acts as a flexible pool for overspending or daily adjustments.
 - Steady Wallet: For non-salaried users, acts as a virtual salary wallet for daily and monthly budgets.
 - Wishlist Saving: Saved funds allocated for wishlist items. Each item accumulates monthly contributions based on its cost and months left.
-- Fixed Wallet (Bill Saving): Saved amount for recurring or one-time bills (e.g., EMI, utilities, subscriptions).
+- Bill Saving (Fixed Wallet): Saved amount for recurring or one-time bills (e.g., EMI, utilities, subscriptions).
 - Daily Budget: Amount allocated for daily spending between the minimum and maximum thresholds.
 - Salary Date: The day when user income is received; triggers budget recalculations and wallet distributions.
 - Buffer Wallet: Captures unspent daily budget amounts and transfers them into temporary savings at salary cycle end.
@@ -27,7 +27,7 @@ export const globalAppTerms = `
 
  Guidelines:
  Wallets and Budget Management:
-- When salary arrives, funds are distributed automatically into wallets (Main, Temporary, Wishlist, Fixed).
+- When salary arrives, funds are distributed automatically into wallets (Monthly Budget, Wishlist Items, Bills) and remaining amount kept in spending wallet.
 - For non-salaried users, Steady Wallet distributes virtual income daily or monthly.
 
  Wishlist and Bill Payments:
@@ -46,11 +46,40 @@ export const globalAppTerms = `
 - Expenses beyond budget limits require fallback to wallets or wishlist funds.
 
  Automatic Actions:
-- On midnight of salary day:
-  • Distribute salary across wallets.
-  • Allocate funds to Wishlist and Bills based on priorities.
-  • Adjust Daily Budget for next salary cycle.
-- Threshold checks ensure secure savings aren’t drained unnecessarily.
+
+ Midnight Salary Day Processing:
+- At midnight on the user’s salary day, the system automatically:
+  • Distributes the received salary across all wallets:
+    -  Main Wallet (Secure Savings)
+    -  Spending Wallet (Temporary Wallet)
+    -  Fixed Wallet (Bill Saving)
+    -  Wishlist Savings (for wishlist items)
+  • Reallocates funds for:
+    - Upcoming Bills (based on their duration and saved status).
+    - Wishlist items (according to priority and months left).
+  • Adjusts the user’s Daily Budget for the next salary cycle:
+    - Considers minimum and maximum daily budget settings.
+    - Accounts for any unpaid bills or wishlist items.  
+
+ Threshold Checks:
+- If Secure Savings (Main Wallet) is below its set threshold:
+  • The system attempts to refill it from:
+    - Temporary Wallet (Spending Wallet)
+    - Wishlist Savings (if enabled by user)
+  • Refills are performed in stages:
+    - 100% of threshold if possible
+    - If not, 50%, then 10%, 5%, and finally 1%.
+  • If threshold cannot be met immediately, system retries on subsequent midnights.
+
+ Buffer Wallet Handling:
+- Any **unused daily budget** at the end of the day is moved to the Buffer Wallet.  
+- On salary day, the Buffer Wallet is cleared into Temporary Wallet for flexible use.
+
+ Auto-Fallback Logic:
+- If there are insufficient funds in Spending Wallet for a required payment:
+  • System pulls from Main Wallet (if allowed).
+  • Or deducts from Wishlist Savings or adjusts Daily Budget down to minimum/zero.
+
 
  Reset Options:
 - Reset: Clears all app data except personal information.
@@ -61,23 +90,47 @@ export const globalAppTerms = `
 - Daily spending indicators show: Overspent, On Budget, Underspent.
 
  Strict Rules:
-- Missed expense days cannot be edited later; users must log daily.
+- Missed expense days can be edited later until previous day of salary day at 11:45 PM ; users must log at least previous day of salary day.
 - Deleting wishlist/bill items redistributes saved amounts back to Spending Wallet.
 
  Visual Insights:
-- Charge Meter: Shows available funds for new expenses.
-- Pie Charts: Illustrate wallet distribution.
-- Gozometer & Costmeter: Help users make safer financial decisions.
+  - Bar Chart: Displays current month expenses for each category, helping users track where their money is going.  
+  - Pie Charts: Illustrate wallet distribution (Main Wallet, Spending Wallet, Wishlist Savings, Fixed Wallet, etc.) for a clear financial overview.  
+  - Gozometer & Costmeter: Risk indicators that guide users to make safer spending decisions based on available funds and priorities.  
 
- Edge Cases:
-- If Main Wallet, Wishlist, and Daily Budget cannot fulfill a payment:
-  • System gradually reduces Daily Budget (to min or zero) and attempts fallback.
-  • If insufficient, prompts the user to manually adjust wallets.
+  Tip Box:  
+  - Advises users on the **maximum safe amount** they can spend from the Spending Wallet to:  
+    Avoid unpaid bill payments.  
+    Prevent delays in Wishlist item purchases.  
+    Maintain at least their current Daily Budget.  
 
- Tips for Users:
-- Prioritize wishlist items to avoid delays in purchase timelines.
-- Use Buffer Wallet to smoothen unexpected expenses.
-- Regularly review Pie Charts and Gozometer insights for better financial health.
+   Note:  
+  - If the user can access **all funds in the Spending Wallet without restrictions**, the Tip Box will not appear.  
+
+
+  Edge Cases:  
+- If the system cannot fulfill a payment from Spending Wallet:  
+   It does NOT automatically pull from:  
+    • Main Wallet (Secure Saving)  
+    • Wishlist Savings  
+    • Daily Budget  
+
+ Instead, the user is prompted with manual options to decide fallback sources:  
+   Take funds from Main Wallet (Secure Saving).  
+   Take funds from Wishlist Savings (with priority rules applied).  
+  
+  Tips for Users:  
+-  Prioritize Wishlist items: Assign priorities to Wishlist products carefully. Lower priority items will have their saved funds used first if you need to pull from Wishlist Savings.  
+-  Track timelines: Stick to system recommendations to avoid delays in purchasing Wishlist items within the target month.  
+-  Use the Buffer Wallet wisely: Unspent daily budgets accumulate here and help with unexpected expenses later.  
+-  Monitor Bar Charts: Review monthly expense trends to understand where most of your spending goes.  
+-  Follow Tip Box advice: Spend within the safe limit suggested in the Tip Box to avoid:  
+  • Unpaid bills.  
+  • Delays in Wishlist funding.  
+  • Reduction in your Daily Budget.  
+-  Avoid excessive manual withdrawals from Secure Saving and Wishlist Saving unless absolutely necessary. These are designed for long-term goals.  
+-  Adjust your salary, thresholds, or budget settings if your financial situation changes.  
+
 `;
 
 

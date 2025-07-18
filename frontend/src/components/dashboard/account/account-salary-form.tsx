@@ -283,7 +283,7 @@ export function AccountSalaryForm({
                   type="number"
                 />
                 <FormHelperText>
-                  This is your safety amount. We'll try to always keep this much safe in your Secure Saving.
+                  This is your safety amount. We&apos;ll try to always keep this much safe in your Secure Saving.
                 </FormHelperText>
               </FormControl>
             </Grid>

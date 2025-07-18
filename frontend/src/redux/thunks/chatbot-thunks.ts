@@ -1,6 +1,6 @@
 // src/redux/thunks/chatbot-thunks.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "@/lib/axiosInstance";
+import axios from "@/lib/axios-instance";
 import { RootState } from "../store";
 import { config } from '@/config';
 

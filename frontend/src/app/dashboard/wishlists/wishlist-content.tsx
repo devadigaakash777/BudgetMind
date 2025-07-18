@@ -6,9 +6,7 @@ import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import  AddWishlistModal from '@/components/dashboard/wishlists/wishlist-model'
 import { WishlistCard } from '@/components/dashboard/wishlists/wishlist-card';

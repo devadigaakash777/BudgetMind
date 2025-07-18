@@ -1,13 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '@/lib/axiosInstance';
+import axios from '@/lib/axios-instance';
 import {
-  setWishlistItems,
-  setWishlistSummary
-} from '../slices/wishlist-slice';
-import {
-  addFixedExpense,
-  deleteExpense,
-  payExpense,
   increaseDuration,
   decreaseDuration,
   updateBudgetState,

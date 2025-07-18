@@ -1,9 +1,9 @@
-import { getNextSalaryDateISO } from '@/utils/shared';
-import { monthlyAllocate } from '@/utils/shared';
+import { getNextSalaryDateISO, monthlyAllocate } from '@/utils/shared';
 import type { PreviewState } from '@/types/preview';
+import type { WalletState } from '@/types/wallet';
 
 type newBudgetResult = {
-  TemporaryWallet: any;
+  TemporaryWallet: WalletState['TemporaryWallet'];
   newState: PreviewState;
 };
 
@@ -20,7 +20,7 @@ export const simulateMonthlyAllocation = (state: PreviewState): number => {
   const salary = state.User?.salary.amount;
   const dailyBudget = state.DailyBudget?.amount;
 
-  console.warn(state.DailyBudget?.amount);
+  console.debug(state.DailyBudget?.amount);
 
   const newState = monthlyAllocate(
     state,
@@ -75,16 +75,6 @@ export const calculateRequiredAmount = (state: PreviewState): number => {
   const monthlyBudget = DailyBudget * nextMonthDate.getDate();
   const totalExpense = monthlyBudget + billsCost + itemsCost;
   const safeAccess = Math.max(totalMoneySource - totalExpense, 0); 
-
-  const result = {
-    tempWallet,
-    salary,
-    totalMoneySource,
-    itemsCost,
-    billsCost,
-    monthlyBudget,
-    totalExpense,
-    safeAccess
-  }
+  
   return safeAccess;
 };

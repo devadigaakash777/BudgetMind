@@ -11,13 +11,12 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { Box, FormHelperText, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import { VaultIcon, EyeIcon, LightbulbFilamentIcon } from '@phosphor-icons/react/dist/ssr';
 import { WalletChart } from '@/components/dashboard/overview/wallet-chart';
 import GaugeSpeedometer from '@/components/dashboard/add-expense/expense-gauge-chart';
 import {adjustGaugeList} from '@/utils/adjust-gauge-list';
 import {RequestMoneyModal } from '@/components/dashboard/add-expense/expense-request-model'
-import { california, kepple, neonBlue, nevada, redOrange, shakespeare, stormGrey } from '@/styles/theme/colors';
 
 type GaugeLimit = { value: number; label?: string };
 
@@ -132,7 +131,7 @@ export function AddExpenseForm({
     });
   };
 
-  const secureSaving = adjustGaugeList(gaugeList, formData.numberOfDays, dailyBudget)
+  const secureSaving = adjustGaugeList(gaugeList, formData.numberOfDays)
   const moneyToAsk = secureSaving['Spending Wallet'].value;
 
 

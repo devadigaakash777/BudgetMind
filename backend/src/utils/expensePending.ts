@@ -11,7 +11,7 @@ export const getDaysSinceLastExpense = async (userId: string): Promise<number | 
 
   if (!lastExpense) {
     console.log('No expenses found for this user.');
-    return null;
+    return 1;
   }
 
   const today = dayjs().startOf('day');

@@ -1,24 +1,17 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { Alert, AlertTitle, Button,ButtonGroup, CardActions, CardContent, CardMedia, Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import {InsufficientFundDialog} from '@/components/dashboard/layout/Insufficient-fund-dialog';
+import {InsufficientFundDialog} from '@/components/dashboard/layout/request-fund-dialog';
 import {
-  CheckCircleIcon,
-  XCircleIcon,
   TrashIcon,
   ShoppingCartIcon,
-  StarIcon
 } from '@phosphor-icons/react/dist/ssr';
-import { CalendarDots, CalendarDotsIcon, SealIcon } from '@phosphor-icons/react';
+import { SealIcon } from '@phosphor-icons/react';
 import PlaceholderImage from '../../../../public/assets/product-placeholder-blue.png';
-import { yellow } from '@mui/material/colors';
 
 export interface WishlistItem {
   _id?: string;
@@ -72,9 +65,9 @@ export function WishlistCard({
       <CardMedia
         component="img"
         height="150"
-        image={item.image !== '' ? item.image : PlaceholderImage.src}
+        image={item.image === '' ? PlaceholderImage.src : item.image}
         alt={item.name}
-        sx={item.image !== '' ? { objectFit: 'contain' } : { objectFit: 'fill' }}
+        sx={item.image === '' ? { objectFit: 'fill' } : { objectFit: 'contain' }}
         onError={(e) => {
           const target = e.target as HTMLImageElement;
           if (target.src !== PlaceholderImage.src) {
@@ -82,6 +75,7 @@ export function WishlistCard({
           }
         }}
       />
+
 
       <Divider sx={{ mt: 1 }} />
       {/* Main Content */}

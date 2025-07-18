@@ -1,15 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '@/lib/axiosInstance';
+import axios from '@/lib/axios-instance';
 import {
   setWishlistItems,
-  addWishlistItem,
-  deleteWishlistItem as removeWishlistItem,
   updateFundingStatus as updateFunding,
   changePriority as reorderItem,
   increaseMonth,
   decreaseMonth,
   setWishlistSummary,
-  buyItem as completePurchase
 } from '../slices/wishlist-slice';
 import type { WishlistItem, WishlistItemBase } from '@/types/wishlist';
 import { refetchAllUserData } from '@/redux/thunks/global-refresh';
@@ -40,6 +37,7 @@ export const thunkAddWishlistItem = createAsyncThunk(
   'wishlist/addItem',
   async (item: WishlistItemBase, { dispatch }) => {
     const res = await axios.post<WishlistItem>(BASE_URL, item);
+    console.debug(res);
     await refetchAllUserData(dispatch as AppDispatch);
   }
 );

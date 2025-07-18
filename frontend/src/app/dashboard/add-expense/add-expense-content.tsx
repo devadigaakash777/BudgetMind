@@ -120,8 +120,7 @@ export default function AddExpenseContent(): React.JSX.Element {
     .filter(expense => expense.date === today) // Keep only today's expenses
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]; // Get the earliest one
 
-  const lastExpense = expenseState.data
-  .slice()
+  const lastExpense = [...expenseState.data]
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
   const todayJS = dayjs().startOf('day'); // today's date at 00:00
@@ -130,6 +129,9 @@ export default function AddExpenseContent(): React.JSX.Element {
   if (lastExpense) {
     const lastDate = dayjs(lastExpense.date, 'YYYY-MM-DD');
     daysBetween = todayJS.diff(lastDate, 'day');
+  }
+  else{
+    daysBetween = 1;
   }
 
   const unpaidDays = daysBetween || 0;
@@ -141,12 +143,10 @@ export default function AddExpenseContent(): React.JSX.Element {
   const daysLeft = getDaysUntilSalaryDay(userState.salary.date);
   
   const minMonthlyBudget = minDailyBudget * daysLeft;
-  const budgetCanReduce = monthlyBudget - minMonthlyBudget - DailyBudget; 
 
   // amount remaining after reducing to minimum amount
   const savingsFromBudget = monthlyBudget - minMonthlyBudget - (DailyBudget * unpaidDays)
 
-  // console.log(monthlyBudget," and ",minMonthlyBudget);
   // original value of state
   const actualBuffer = walletState.DailyBuffer.balance;
   const actualTemp = walletState.TemporaryWallet.balance;
@@ -154,15 +154,11 @@ export default function AddExpenseContent(): React.JSX.Element {
   const actualFixed = budgetState.FixedExpenses.totalSavedAmount;
   const actualWishlistSaved = wishlistState.totalSavedAmount;
 
-  console.log("preview state in add expense ",previewState);
-
   // Gauge meter value
   const daily = previewState?.DailyBudget?.amount ?? DailyBudget;
   const buffer = previewState?.DailyBuffer?.balance ?? actualBuffer;
   const temp = previewState?.TemporaryWallet?.balance ?? actualTemp;
   const main = previewState?.MainWallet?.balance ?? actualMain;
-  const fixed = previewState?.FixedExpenses?.totalSavedAmount ?? actualFixed;
-  
 
   const dailyBudget = daily;
   const dailyBuffer = buffer;

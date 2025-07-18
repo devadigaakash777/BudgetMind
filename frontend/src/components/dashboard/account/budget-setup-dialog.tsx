@@ -15,7 +15,6 @@ import { GearSixIcon } from '@phosphor-icons/react';
 type BudgetSetupDialogProps = {
   open: boolean;
   onClose: () => void;
-  onComplete: (value: boolean) => void;
   salary: number;
   remainDays: number;
   onTotalWealthSave: (value: number) => void;
@@ -44,7 +43,6 @@ const steps = ['Total Wealth', 'Salary Info', 'Daily Budget', 'Confirmation'];
 export function BudgetSetupDialog({
   open,
   onClose,
-  onComplete,
   salary,
   remainDays,
   onTotalWealthSave,

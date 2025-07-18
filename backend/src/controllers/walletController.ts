@@ -67,7 +67,7 @@ export const updateThreshold = async (req: AuthRequest, res: Response): Promise<
       wallet.MainWallet.balance = threshold;
       wallet.TemporaryWallet.balance += surplus;
 
-    } else if (prevThreshold === mainBal && threshold > mainBal) {
+    } else if (threshold > mainBal) {
       // Threshold increased – only proceed if MainWallet == previous threshold
       const needed = threshold - mainBal;
       if (tempBal >= needed) {

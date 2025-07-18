@@ -20,9 +20,9 @@ type AccountInfoProps = {
 };
 
 export function AccountInfo({
-  name = "User1",
+  name = "unknown",
   avatar = '',
-  jobTitle = 'Developer',
+  jobTitle = '',
   city = '',
   country = '',
   timezone = '',
@@ -81,8 +81,8 @@ export function AccountInfo({
                 } else {
                   console.error("Cloudinary upload failed", result);
                 }
-              } catch (err) {
-                console.error("Upload error:", err);
+              } catch (error) {
+                console.error("Upload error:", error);
               }
             }}
           />

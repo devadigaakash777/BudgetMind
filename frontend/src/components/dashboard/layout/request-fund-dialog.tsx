@@ -24,13 +24,16 @@ export function InsufficientFundDialog({ open, onClose, onConfirm }: FundDialogP
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Insufficient Funds</DialogTitle>
       <DialogContent>
-        <p>You don't have enough saved funds. Choose how to proceed:</p>
+        <p>
+          You don&apos;t have enough saved funds. The remaining amount will be deducted from your Spending Wallet.
+          If that&apos;s still insufficient, please choose which wallet to use first to cover the rest:
+        </p>
         <FormControl>
           <RadioGroup
             value={preference}
             onChange={(e) => setPreference(e.target.value as 'main' | 'wishlist')}
           >
-            <FormControlLabel value="main" control={<Radio />} label="Use from Main Wallet" />
+            <FormControlLabel value="main" control={<Radio />} label="Use from Secure Saving" />
             <FormControlLabel value="wishlist" control={<Radio />} label="Use from Wishlist Savings" />
           </RadioGroup>
         </FormControl>

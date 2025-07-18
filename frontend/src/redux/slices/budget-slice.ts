@@ -1,17 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { BudgetState, Expense } from '@/types/budget'; // or same file
-import { stat } from 'fs';
 
 const initialState: BudgetState = {
   MonthlyBudget: {
-    amount: 200,
-    amountFunded: 3000
+    amount: 0,
+    amountFunded: 0
   },
   DailyBudget: {
-    amount: 100,
-    setAmount: 100,
-    min: 10,
-    max: 200
+    amount: 0,
+    setAmount: 0,
+    min: 0,
+    max: 0
   },
   FixedExpenses: {
     expenses: [
@@ -29,7 +28,7 @@ const initialState: BudgetState = {
       }
     ],
     rowsPerPage: 3,
-    totalSavedAmount: 7200,
+    totalSavedAmount: 0,
   }
 };
 

@@ -10,6 +10,7 @@ import snackbarReducer from "./slices/snackbar-slice";
 import chatbotReducer from "./slices/chatbot-slice";
 import { snackbarMiddleware } from './middleware/snackbar-middleware';
 
+/* eslint-disable-next-line unicorn/prefer-spread */
 const store = configureStore({
   reducer: {
     user: userReducer,
@@ -23,6 +24,7 @@ const store = configureStore({
     chatbot: chatbotReducer,
   },
   middleware: (getDefaultMiddleware) =>
+    /* eslint-disable-next-line unicorn/prefer-spread */
     getDefaultMiddleware().concat(snackbarMiddleware),
 });
 

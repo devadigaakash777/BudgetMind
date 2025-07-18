@@ -10,13 +10,13 @@ export default function ChatbotFab() {
   const [showWelcome, setShowWelcome] = React.useState(true);
   const pathname = usePathname();
 
-  // ✅ Always call hooks before conditional return
+  //  Always call hooks before conditional return
   React.useEffect(() => {
-    const timer = setTimeout(() => setShowWelcome(false), 10000);
+    const timer = setTimeout(() => setShowWelcome(false), 10_000);
     return () => clearTimeout(timer);
   }, []);
 
-  // ✅ This condition now comes AFTER all hooks
+  // This condition now comes AFTER all hooks
   const hiddenPaths = [
     '/auth/sign-in',
     '/auth/sign-up',

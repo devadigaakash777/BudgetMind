@@ -2,6 +2,11 @@
 
 import type { User } from '@/types/user';
 
+import { config } from '@/config';
+
+const BASE_URL = config.apiBaseUrl;
+
+
 export interface SignUpParams {
   firstName: string;
   lastName: string;
@@ -24,9 +29,8 @@ export interface ResetPasswordParams {
 
 class AuthClient {
   async signUp(params: SignUpParams): Promise<{ error?: string }> {
-    console.log(params);
     try {
-      const res = await fetch('http://localhost:5000/api/register', {
+      const res = await fetch(`${BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
@@ -46,7 +50,7 @@ class AuthClient {
 
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ data?: User; accessToken?: string; error?: string }> {
     try {
-      const res = await fetch('http://localhost:5000/api/login', {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
@@ -67,8 +71,7 @@ class AuthClient {
 
   async getUser(accessToken: string): Promise<{ data?: User | null; error?: string }> {
     try {
-      console.log("Access token sent to /me: ", accessToken);
-      const res = await fetch('http://localhost:5000/api/me', {
+      const res = await fetch(`${BASE_URL}/me`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -85,7 +88,7 @@ class AuthClient {
 
   async refresh(): Promise<{ accessToken?: string; error?: string }> {
     try {
-      const res = await fetch('http://localhost:5000/api/refresh', {
+      const res = await fetch(`${BASE_URL}/refresh`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -101,7 +104,7 @@ class AuthClient {
 
   async signOut(): Promise<{ error?: string }> {
     try {
-      await fetch('http://localhost:5000/api/logout', {
+      await fetch(`${BASE_URL}/logout`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -113,7 +116,7 @@ class AuthClient {
 
   async resetPassword(token: string, newPassword: string): Promise<{ success?: boolean; error?: string }> {
     try {
-      const res = await fetch(`http://localhost:5000/api/reset-password/${token}`, {
+      const res = await fetch(`${BASE_URL}/reset-password/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ newPassword }),
@@ -133,7 +136,7 @@ class AuthClient {
 
   async forgotPassword(email: string): Promise<{ success?: boolean; error?: string }> {
     try {
-      const res = await fetch(`http://localhost:5000/api/forgot-password`, {
+      const res = await fetch(`${BASE_URL}/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -153,7 +156,7 @@ class AuthClient {
 
   async resendVerification(email: string): Promise<{ error?: string }> {
     try {
-      const res = await fetch('http://localhost:5000/api/resend-verification', {
+      const res = await fetch(`${BASE_URL}/resend-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

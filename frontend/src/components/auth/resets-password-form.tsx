@@ -39,7 +39,6 @@ export function ResetPasswordForm(): React.JSX.Element {
   const {
     control,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
@@ -62,7 +61,7 @@ export function ResetPasswordForm(): React.JSX.Element {
         router.push('/auth/sign-in'); // Redirect to login page
       }, 2000);
     },
-    [setError, token, router]
+    [token, router]
   );
 
   return (

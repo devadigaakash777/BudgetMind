@@ -52,7 +52,7 @@ export function ResetAllDialog({
             <Divider />
             <CardContent>
               <Alert severity="warning" sx={{ mb: 2 }}>
-                This will erase all saved financial data. Proceed only if you're sure.
+                This will erase all saved financial data. Proceed only if you&apos;re sure.
               </Alert>
               <DialogContentText sx={{ mb: 2 }}>
                 Do you also want to delete daily expense records?

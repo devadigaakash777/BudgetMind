@@ -58,8 +58,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
 
       dispatch(setUser(data));
-    } catch (err) {
-      logger.error('checkSession error', err);
+    } catch (error) {
+      logger.error('checkSession error', error);
       dispatch(clearUser());
     } finally {
       setState((prev) => ({ ...prev, isLoading: false }));
@@ -82,7 +82,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       if (document.visibilityState === 'visible') {
         refreshTokenIfNeeded()
           .then(() => console.warn("refreshed inside"))
-          .catch((err) => console.error("refresh failed", err));
+          .catch((error) => console.error("refresh failed", error));
       }
     };
 

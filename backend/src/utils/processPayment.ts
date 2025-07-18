@@ -22,15 +22,19 @@ export async function collectAmount(userId: string, sourceID: string, cost: numb
 
     const newState = await handleTempWallet(userId, sourceID, required, preference, reduceDailyBudget, true, daysBetween);
 
-    const updatedTempWallet = wallet.TemporaryWallet.balance;
+    const updatedWallet = await Wallet.findOne({ userId });
+    if (!updatedWallet) throw new Error(`Wallet not found for user ${userId}`);
+    const updatedTempWallet = updatedWallet.TemporaryWallet.balance;
+
+    console.log("updatedTempWallet is ",updatedTempWallet);
 
     if(updatedTempWallet < (cost - savedAmount)) throw new Error("Insufficient balance");
 
     const remaining = Math.max(updatedTempWallet - (cost - savedAmount), 0);
-    console.log("remaining ",remaining," after calculating tempWalletBudget - (cost - savedAmount) ", tempWalletBudget - (cost - savedAmount));
+    console.log("remaining ",remaining," after calculating updatedTempWallet - (cost - savedAmount) ", updatedTempWallet - (cost - savedAmount));
 
-    wallet.TemporaryWallet.balance = remaining;
-    wallet.markModified('TemporaryWallet'); // <-- important!
-    await wallet.save();
+    updatedWallet.TemporaryWallet.balance = remaining;
+    updatedWallet.markModified('TemporaryWallet');
+    await updatedWallet.save();
     console.log("updated value of temp wallet budget is ",remaining);
 }

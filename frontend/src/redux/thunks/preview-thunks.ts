@@ -3,7 +3,7 @@
 import { AppDispatch, RootState } from '../store';
 import { setPreview } from '../slices/preview-slice';
 import type { BudgetState } from '@/types/budget';
-import { logExtendedExpense, handleTemporaryWalletRequest, monthlyAllocate, getNextSalaryDateISO } from '@/utils/shared';
+import { logExtendedExpense, handleTemporaryWalletRequest } from '@/utils/shared';
 import { PreviewState } from '@/types/preview'
 
 type ExpenseInput = {
@@ -46,7 +46,6 @@ export const addPreviewExpense = function (expense: ExpenseInput) {
     if (newState.DailyBudget) {
       newState.DailyBudget.amount = Math.max(0, newState.DailyBudget.amount - expense.amount);
     }
-    console.log(newState);
     dispatch(setPreview(newState)); 
   };
 };
@@ -57,7 +56,6 @@ export const requestMoney = function (amount: number, source: string, canDecreas
   return function (dispatch: AppDispatch, getState: () => RootState) {
     const state = getState().preview;
     const { newState } = handleTemporaryWalletRequest(state, amount, source, canDecrease, false, unpaidDays) as requestMoneyResult;
-    console.log(newState);
     dispatch(setPreview(newState));
   };
 };

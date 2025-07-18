@@ -9,7 +9,7 @@ import {
 import { LockIcon } from '@phosphor-icons/react/dist/ssr';
 import { FixedExpenseCard } from '@/components/dashboard/bills/bill-card';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date';
-import { Expense, ExpenseBase } from '@/types/budget';
+import { ExpenseBase } from '@/types/budget';
 
 const steps = ['Basic Info', 'Amount & Duration', 'Finish'];
 

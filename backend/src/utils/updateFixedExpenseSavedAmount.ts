@@ -6,7 +6,7 @@ export const updateFixedExpenseSavedAmount = async (userId: string) => {
 
   // Calculate total funded amount (only for funded expenses)
   const totalFunded = expenses.reduce((sum, expense) => {
-    if (expense.isFunded) return sum + (expense.amount - expense.amountToFund);
+    if (expense.isFunded && !expense.isPaid) return sum + (expense.amount - expense.amountToFund);
     return sum;
   }, 0);
 

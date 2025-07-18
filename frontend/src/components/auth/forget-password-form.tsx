@@ -11,7 +11,6 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Controller, useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { z as zod } from 'zod';
 
 import { authClient } from '@/lib/auth/client';
@@ -27,8 +26,6 @@ const defaultValues = { email: '' } satisfies Values;
 export function ResetPasswordForm(): React.JSX.Element {
   const [isPending, setIsPending] = React.useState<boolean>(false);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
-
-  const router = useRouter();
 
   const {
     control,
@@ -55,7 +52,7 @@ export function ResetPasswordForm(): React.JSX.Element {
       setSuccessMessage(" We sent a recovery link to your email. Please check your inbox!");
 
     },
-    [setError, router]
+    [setError]
   );
 
   return (

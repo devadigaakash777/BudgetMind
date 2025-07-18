@@ -75,7 +75,7 @@ export function initializeState(initialState, totalWealth, threshold) {
                       
   const maxAllowed = Math.floor(salary / getDaysInMonth());
 
-  state.DailyBudget.min = 0;
+  state.DailyBudget.min = maxAllowed;
   state.DailyBudget.max = maxAllowed;
 
   state.User.isProfileComplete = true;

@@ -40,14 +40,13 @@ export default function GaugeChart({
   setCanSave,
   setCanNotSave,
   list,
-  dailyBudget,
   days,
   value,
   title = 'Gauge Chart'
 }: GaugeChartProps): React.JSX.Element {
   const theme = useTheme();
 
-  list = adjustGaugeList(list, days, dailyBudget);
+  list = adjustGaugeList(list, days);
 
   React.useEffect(() => {
     if (list['Spending Wallet'].value >= value) {

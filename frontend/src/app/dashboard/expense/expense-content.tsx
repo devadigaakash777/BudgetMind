@@ -3,9 +3,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
@@ -14,12 +12,17 @@ import FullScreenLoader from '@/components/dashboard/loader';
 import { DailyExpensesFilters } from '@/components/dashboard/expense/expenses-filters';
 import { DailyExpensesTable } from '@/components/dashboard/expense/expenses-table';
 import type { DailyExpense } from '@/types/daily-expense';
-
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
 import { thunkDownloadExpensesExcel } from '@/redux/thunks/expense-thunks';
 import { showSnackbar } from '@/redux/slices/snackbar-slice';
 import DownloadExpenseCard from '@/components/dashboard/expense/download-expense-card';
+
+const statusLabelMap = {
+    above: "overspent",
+    below: "underspent",
+    equal: "on budget"
+  };
 
 export default function ExpenseContent(): React.JSX.Element {
 
@@ -63,12 +66,7 @@ export default function ExpenseContent(): React.JSX.Element {
   const rowsPerPage = expenseState.rowsPerPage;
 
   const searchText = expenseState.searchText.toLowerCase();
-  const statusLabelMap = {
-    above: "overspent",
-    below: "underspent",
-    equal: "on budget"
-  };
-
+  
   const filteredDailyExpenses = React.useMemo(() => {
     return dailyExpenses.filter((expense) =>
       statusLabelMap[expense.amountStatus]?.toLowerCase().includes(searchText) ||

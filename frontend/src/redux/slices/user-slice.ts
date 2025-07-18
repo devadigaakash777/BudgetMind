@@ -4,20 +4,20 @@ import type { UserState, User } from '@/types/user';
 const initialState: UserState = {
   data: null,
   accessToken: null,
-  phone: '8973456898',
-  jobTitle: 'Senior Developer',
+  phone: '',
+  jobTitle: '',
   address: [
     {
-      city: 'Udupi',
-      state: 'karnataka',
-      country: 'India',
-      timezone: 'GMT-7'
+      city: '',
+      state: '',
+      country: '',
+      timezone: ''
     }
   ],
   isProfileComplete: null,
   isSalaryPaid: true,
   hasSalary: true,
-  salary: { amount: 10_000, date: 1 }
+  salary: { amount: 0, date: 1 }
 };
 
 const userSlice = createSlice({

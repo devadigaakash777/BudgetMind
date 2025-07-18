@@ -6,8 +6,9 @@ import MuiAlert, { AlertColor } from "@mui/material/Alert";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { hideSnackbar } from "@/redux/slices/snackbar-slice";
+import type { AlertProps } from '@mui/material/Alert';
 
-const Alert = React.forwardRef<HTMLDivElement, any>(function Alert(props, ref) {
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 

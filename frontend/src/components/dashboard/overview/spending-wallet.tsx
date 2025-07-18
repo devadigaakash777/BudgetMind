@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { WalletIcon, PlusIcon } from '@phosphor-icons/react/dist/ssr';
+import { WalletIcon } from '@phosphor-icons/react/dist/ssr';
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react';
 
 export interface SpendingWalletProps {

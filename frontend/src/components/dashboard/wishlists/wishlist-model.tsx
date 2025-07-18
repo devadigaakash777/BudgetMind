@@ -121,8 +121,8 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
 
                     const result = await res.json();
                     setFormData(prev => ({ ...prev, image: result.secure_url }));
-                  } catch (err) {
-                    console.error("Upload failed", err);
+                  } catch (error) {
+                    console.error("Upload failed", error);
                   }
                 }}
               />

@@ -9,8 +9,8 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { convertExpenseDueDate } from '@/utils/convert-expense-due-date'
-import { CheckCircleIcon, XCircleIcon, TrashIcon, CalendarIcon, MoneyIcon } from '@phosphor-icons/react/dist/ssr';
-import {InsufficientFundDialog} from '@/components/dashboard/layout/Insufficient-fund-dialog';
+import { CheckCircleIcon, TrashIcon, CalendarIcon, MoneyIcon } from '@phosphor-icons/react/dist/ssr';
+import {InsufficientFundDialog} from '@/components/dashboard/layout/request-fund-dialog';
 
 const statusMap = {
   "pending": { label: 'Pending', color: 'warning' },

@@ -7,8 +7,7 @@ export type GaugeList = {
   [key: string]: GaugeItem;
 };
 
-export function adjustGaugeList(original: GaugeList, days: number, dailyBudget: number): GaugeList {
-  // console.warn("when function called with ",original['Impossible'].value);
+export function adjustGaugeList(original: GaugeList, days: number): GaugeList {
 
   const goodValue = original['Good'].value * days;
 
@@ -16,8 +15,6 @@ export function adjustGaugeList(original: GaugeList, days: number, dailyBudget: 
     ...original[key],
     value: original[key].value + goodValue,
   });
-
-  // console.warn("called with ",original['Impossible'].value," and ",goodValue);
 
   return {
     'Neutral': original['Neutral'],

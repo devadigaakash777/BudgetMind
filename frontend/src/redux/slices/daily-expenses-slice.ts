@@ -2,9 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { DailyExpense, DailyExpenseState } from '@/types/daily-expense';
 
 const initialState: DailyExpenseState = {
-  data: [
-    { _id: "16", userId: "1", amount: 50,  date: '2025-06-08', details: '', balance: 700, amountStatus: 'below', amountDifference: 50 }
-  ],
+  data: [],
   page: 0,
   rowsPerPage: 5,
   selectedIds: [],

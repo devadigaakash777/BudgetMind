@@ -16,7 +16,6 @@ import {
   Grid,
   InputLabel,
   OutlinedInput,
-  Typography,
 } from '@mui/material';
 
 export type DailyBudgetFormProps = {
@@ -43,7 +42,6 @@ const getDaysInMonth = () => new Date(
 export function DailyBudgetForm({
   salary = 0,
   remainDays = null,
-  currentAmount = 0,
   setAmount = 0,
   minAmount = 0,
   maxAmount = 0,
@@ -58,8 +56,6 @@ export function DailyBudgetForm({
   });
 
   const maxAllowed = remainDays? Math.floor(salary / remainDays) : Math.floor(salary / getDaysInMonth());
-  console.warn(salary, "and", remainDays);
-  console.warn("max allowed amount is ",maxAllowed);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -154,6 +150,20 @@ export function DailyBudgetForm({
             </Grid>
             }
 
+            {!showSetAmount && (
+              <FormGroup sx={{ mb: 2 }}>
+                <FormControlLabel
+                  control={<Checkbox checked disabled />}
+                  label="Min/Max entered above are only for current month"
+                />
+                <FormHelperText>
+                  Next month&#39;s Min/Max will be auto-allocated based on your salary.
+                  To change this behavior, go to <strong>Profile &gt; Daily Budget Info</strong>.
+                </FormHelperText>
+              </FormGroup>
+            )}
+
+
             {canEditAmount && (
               <Grid size={{
                     md: 6,
@@ -173,6 +183,7 @@ export function DailyBudgetForm({
                 </FormControl>
               </Grid>
             )}
+            
           </Grid>
         </CardContent>
         <Divider />

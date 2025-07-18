@@ -1,15 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '@/lib/axiosInstance';
+import axios from '@/lib/axios-instance';
 import {
   updateMainWallet,
   updateTempWallet,
   updateSteadyWallet,
-  setThreshold,
   setTotalWealth,
   updateWalletState
 } from '../slices/wallet-slice';
 import { WalletState } from '@/types/wallet';
 import { config } from '@/config';
+import { refetchAllUserData } from './global-refresh';
+import { AppDispatch } from '../store';
 
 const BASE_URL = `${config.apiBaseUrl}/wallet`;
 
@@ -56,7 +57,7 @@ export const thunkUpdateThreshold = createAsyncThunk(
   async (threshold: number, { dispatch }) => {
     const res = await axios.post(`${BASE_URL}/threshold`, { threshold });
     console.debug("updateThreshold "+res.status);
-    dispatch(setThreshold({ threshold }));
+    await refetchAllUserData(dispatch as AppDispatch);
   }
 );
 
