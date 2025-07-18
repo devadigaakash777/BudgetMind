@@ -33,6 +33,10 @@ app.use('/api/budget', budgetRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/expense', dailyExpenseRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.get('/time', (req, res) => {
+  const now = new Date();
+  res.send(`Server time: ${now}`);
+});
 
 
 const PORT = process.env.PORT || 5000;
