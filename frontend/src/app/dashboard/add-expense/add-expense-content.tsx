@@ -262,7 +262,7 @@ export default function AddExpenseContent(): React.JSX.Element {
             xs: 12,
           }}
         >
-        { userState?.data?._id  && !todaysFirstExpense ?
+        { !todaysFirstExpense ?
           <AddExpenseForm 
             dailyBudget={DailyBudget}
             budgetCanReduce={savingsFromBudget}
