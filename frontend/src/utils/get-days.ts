@@ -4,21 +4,21 @@ export function getDaysUntilSalaryDay(salaryDay: number): number {
   if (salaryDay < 1 || salaryDay > 31) throw new Error('Invalid salary day');
 
   const today = dayjs();
-  const currentMonth = today.month();
-  const currentYear = today.year();
+  const currentMonthDays = today.daysInMonth();
+  const clampedDay = Math.min(salaryDay, currentMonthDays);
 
-  // Try to set salary day in current month
-  let target = dayjs(`${currentYear}-${currentMonth + 1}-${salaryDay}`, 'YYYY-M-D', true);
+  // Build target date for this month
+  const thisMonthTarget = dayjs(`${today.year()}-${today.month() + 1}-${clampedDay}`, 'YYYY-M-D');
 
-  // If invalid (e.g., Feb 30) or already passed today → try next month
-  if (!target.isValid() || target.isBefore(today, 'day')) {
+  // If salary day is today or earlier → use next month
+  if (!thisMonthTarget.isValid() || !thisMonthTarget.isAfter(today, 'day')) {
     const nextMonth = today.add(1, 'month');
-    const nextMonthDays = nextMonth.daysInMonth();
+    const nextClampedDay = Math.min(salaryDay, nextMonth.daysInMonth());
+    const nextMonthTarget = dayjs(`${nextMonth.year()}-${nextMonth.month() + 1}-${nextClampedDay}`, 'YYYY-M-D');
 
-    // Clamp salaryDay to last valid day of that month
-    const clampedDay = Math.min(salaryDay, nextMonthDays);
-    target = dayjs(`${nextMonth.year()}-${nextMonth.month() + 1}-${clampedDay}`, 'YYYY-M-D');
+    return nextMonthTarget.diff(today, 'day');
   }
 
-  return target.diff(today, 'day');
+  // Use this month's salary day
+  return thisMonthTarget.diff(today, 'day');
 }

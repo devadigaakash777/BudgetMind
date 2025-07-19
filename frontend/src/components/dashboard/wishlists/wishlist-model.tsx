@@ -3,7 +3,8 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, TextField, Stepper, Step, StepLabel,
   FormControl, InputLabel, OutlinedInput, InputAdornment,
-  Stack, ToggleButtonGroup, ToggleButton
+  Stack, ToggleButtonGroup, ToggleButton,
+  Alert
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -36,14 +37,14 @@ const steps = ['Basic Info', 'Priority & Cost', 'Finish'];
 
 export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: AddWishlistModalProps) {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [priorityMode, setPriorityMode] = React.useState<'none' | 'low' | 'custom' | 'high'>('none');
+  const [priorityMode, setPriorityMode] = React.useState<'none' | 'low' | 'custom' | 'high'>('low');
 
   const [formData, setFormData] = React.useState<WishlistItemBase>({
     name: '',
     description: '',
     image: '',
     savedAmount: 0,
-    priority: 0,
+    priority: 1,
     cost: 0,
     monthLeft: 1,
     isFunded: false
@@ -155,9 +156,10 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
             <TextField
               label="Months Left"
               type="number"
-              value={formData.monthLeft === 0 ? '' : formData.monthLeft}
+              value={formData.priority === 0 ? 1 : formData.monthLeft}
               onChange={(e) => setFormData({ ...formData, monthLeft: Number(e.target.value) })}
               inputProps={{ min: 1 }}
+              disabled={formData.priority === 0}
             />
 
             <ToggleButtonGroup
@@ -186,6 +188,11 @@ export default function AddWishlistModal({ open, onClose, onAdd, maxPriority }: 
                 value={formData.priority === 0 ? '' : formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
               />
+            )}
+            {priorityMode === 'none' && (
+              <Alert severity="warning" sx={{ mt: 2 }}>
+                This item has 0 priority and will be excluded from automatic funding during salary distribution.
+              </Alert>
             )}
           </Stack>
         )}

@@ -21,3 +21,29 @@ export function getNextSalaryDateISO(salaryDate, baseDate = new Date()) {
   const date = new Date(year, month, salaryDay);
   return date.toISOString().split('T')[0];
 }
+
+export function getDaysUntilDate(targetDay){
+  if (targetDay < 1 || targetDay > 31) throw new Error('Invalid target day');
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth(); // 0-indexed
+
+  const daysInCurrentMonth = new Date(year, month + 1, 0).getDate();
+  const clampedDay = Math.min(targetDay, daysInCurrentMonth);
+
+  const thisMonthTarget = new Date(year, month, clampedDay);
+
+  if (thisMonthTarget <= today) {
+    // target date has passed or is today → go to next month
+    const nextMonth = (month + 1) % 12;
+    const nextYear = month === 11 ? year + 1 : year;
+    const daysInNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
+    const nextClampedDay = Math.min(targetDay, daysInNextMonth);
+
+    const nextMonthTarget = new Date(nextYear, nextMonth, nextClampedDay);
+    return Math.ceil((nextMonthTarget.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  return Math.ceil((thisMonthTarget.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+}

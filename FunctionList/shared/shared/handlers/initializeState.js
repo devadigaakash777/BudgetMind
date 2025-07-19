@@ -1,7 +1,6 @@
 import { smartBudget } from '../services/smartBudget.js';
 import { deepClone } from '../utils/deepClone.js';
-import { getDaysRemaining } from '../utils/dateUtils.js';
-import { getNextSalaryDateISO } from '../utils/convertToDate.js';
+import {  getDaysUntilDate } from '../utils/convertToDate.js';
 
 
 /**
@@ -47,15 +46,15 @@ export function initializeState(initialState, totalWealth, threshold) {
 
     // If today is not salary day or steady day, do nothing
     try{
-      if (!(isSalaryDay || isSteadyDay)) {
+      // if (!(isSalaryDay || isSteadyDay)) {
         const salaryDay = state.User.hasSalary ? state.User.salary.date : state.SteadyWallet.date;
-        const salaryDate = getNextSalaryDateISO(salaryDay);
-        const daysLeft = getDaysRemaining(salaryDate);
+        // const salaryDate = getNextSalaryDateISO(salaryDay);
+        const daysLeft = getDaysUntilDate(salaryDay);
         const result = smartBudget(state ,remaining, daysLeft);
         state.MonthlyBudget.amount = result.monthlyBudget;
         state.MonthlyBudget.amountFunded = result.monthlyBudget;
         state.TemporaryWallet.balance = result.remaining;
-      }   
+      // }   
     }
     catch(error){
       state.User.isProfileComplete = false;

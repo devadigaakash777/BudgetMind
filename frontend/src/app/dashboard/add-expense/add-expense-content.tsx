@@ -262,7 +262,9 @@ export default function AddExpenseContent(): React.JSX.Element {
             xs: 12,
           }}
         >
-        { !todaysFirstExpense ?
+        { todaysFirstExpense ?
+          <FullScreenLoader text='Expense added Successfully' />
+          :
           <AddExpenseForm 
             dailyBudget={DailyBudget}
             budgetCanReduce={savingsFromBudget}
@@ -280,8 +282,6 @@ export default function AddExpenseContent(): React.JSX.Element {
             sourceSelections={sourceSelections}
             setSourceSelections={setSourceSelections}
           />
-          :
-          <FullScreenLoader text='Expense added Successfully' />
         }
         </Grid>
         <Grid

@@ -40,7 +40,7 @@ export function TotalWealthForm({
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <CardHeader title="Total Wealth" subheader="Tell us how much you currently have in total" />
+        <CardHeader title="Total Wealth" subheader="How much money do you have right now? Include your salary if it’s payday!" />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>

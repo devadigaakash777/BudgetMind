@@ -19,6 +19,6 @@ export const config: Config = {
     themeColor: '#090a0b',
     url: getSiteURL(),
   },
-  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api',
+  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://budgetmind-backend.onrender.com/api',
   logLevel: (process.env.NEXT_PUBLIC_LOG_LEVEL as keyof typeof LogLevel) ?? LogLevel.ALL,
 };
