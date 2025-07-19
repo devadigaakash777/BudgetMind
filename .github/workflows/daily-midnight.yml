@@ -9,26 +9,32 @@ jobs:
   run-daily-job:
     runs-on: ubuntu-latest
 
+    env: # Pass environment variables securely from GitHub Secrets
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      EMAIL_SECRET: ${{ secrets.EMAIL_SECRET }}
+      REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+      ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
+
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🛠️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: |
           cd backend
           npm ci
 
-      - name: Build TypeScript
+      - name: 🏗️ Build TypeScript
         run: |
           cd backend
           npm run build
 
-      - name: Run Daily Midnight Job
+      - name: 🚀 Run Daily Midnight Job
         run: |
           cd backend
           npm run start:daily
