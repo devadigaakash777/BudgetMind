@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { runDailyMidnightJob, triggerPreSalaryActions } from './runDailyMidnightJob.js';
+import { runDailyMidnightJob, triggerPreSalaryActions } from './cron/runDailyMidnightJob.js';
 
 // Ensure environment variables are loaded
 import dotenv from 'dotenv';

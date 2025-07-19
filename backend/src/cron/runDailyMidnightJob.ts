@@ -1,10 +1,10 @@
-import Profile from './models/profile.model.js';
-import { Wallet } from './models/wallet.model.js';
-import { finalizeSalary } from './services/profile.service.js';
-import UserModel from './models/User.js';
-import sendEmail from './utils/sendEmail.js';
-import { getDaysSinceLastExpense } from './utils/expensePending.js';
-import { processDailyExpense } from './services/dailyExpense.service.js';
+import Profile from '../models/profile.model.js';
+import { Wallet } from '../models/wallet.model.js';
+import { finalizeSalary } from '../services/profile.service.js';
+import UserModel from '../models/User.js';
+import sendEmail from '../utils/sendEmail.js';
+import { getDaysSinceLastExpense } from '../utils/expensePending.js';
+import { processDailyExpense } from '../services/dailyExpense.service.js';
 
 export const runDailyMidnightJob = async () => {
   // const todayISO = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
