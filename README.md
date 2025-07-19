@@ -86,15 +86,24 @@ BudgetMind introduces **smart priority handling** for wishlist items to ensure i
 
 ---
 
-## 🛠 Tech Stack
 
-- **Frontend:** React.js (with Material UI)
-- **Backend:** Node.js + Express.js
-- **Database:** MongoDB
-- **Authentication:** JWT (with refresh tokens)
-- **Caching:** NodeCache for faster user context retrieval
-- **Export:** Excel export for expense history
+## 🛠️ Tech Stack
 
----
+**Frontend:**
+- Next.js (React framework for server-rendered apps)
+- React.js with component-based architecture
+- Material UI for consistent and elegant design
+- Axios for API handling
+- React Context API for state management
 
-## 📂 Project Structure
+**Backend:**
+- Node.js with Express.js for RESTful APIs
+- MongoDB as the database (via Mongoose ORM)
+- JWT for authentication & refresh token management
+
+**Others:**
+- Cloudinary for media handling
+- ExcelJS for report generation (user expense download)
+- NodeCache for faster user context retrieval
+
+
