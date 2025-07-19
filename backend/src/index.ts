@@ -22,7 +22,10 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',             // for local development
+    'https://budgetmind.onrender.com',   // for production frontend
+  ],
   credentials: true,
 }));
 

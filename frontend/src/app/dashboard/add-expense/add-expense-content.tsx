@@ -173,7 +173,7 @@ export default function AddExpenseContent(): React.JSX.Element {
       'Slightly over': { value: dailyBuffer, label:"Your expense slightly exceeds your budget, but don't worry — you can manage it using leftover funds or past savings."},
       'Spending Wallet': { value: tempWallet, label:"Your budget isn't enough. This amount will be taken from your Spending Wallet. Please spend wisely."},
       'Savings Access': { value: mainWallet, label:"This expense is high and exceeds your spending limit. It will be deducted from your Main Wallet (savings). Please fill out the form above for tracking."},
-      'High Risk': { value: allWallet, label:"Warning: This is a risky expense. It significantly exceeds your usual limits and requires funds from your Main Wallet. Proceed with caution."},
+      'High Risk': { value: allWallet, label:"Maximum amount accessible. Includes all wallets and savings. Spending here is risky and could disrupt wishlist timelines or unpaid bills. Proceed with caution."},
       'Impossible': { value: impossible, label:"This expense is too high. It's not possible to proceed. Please update the available funds above if you still wish to spend."},
     }
 
