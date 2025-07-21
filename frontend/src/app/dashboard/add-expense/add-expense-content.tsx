@@ -114,25 +114,22 @@ export default function AddExpenseContent(): React.JSX.Element {
 
   };
 
-  const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  const today = dayjs().startOf('day');
+  const formattedToday = today.format('YYYY-MM-DD');
 
+  // Get today's first expense
   const todaysFirstExpense = expenseState.data
-    .filter(expense => expense.date === today) // Keep only today's expenses
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]; // Get the earliest one
+    .filter(expense => expense.date === formattedToday)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
 
+  // Get the most recent expense
   const lastExpense = [...expenseState.data]
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
-  const todayJS = dayjs().startOf('day'); // today's date at 00:00
-  let daysBetween = null;
-
-  if (lastExpense) {
-    const lastDate = dayjs(lastExpense.date, 'YYYY-MM-DD');
-    daysBetween = todayJS.diff(lastDate, 'day');
-  }
-  else{
-    daysBetween = 1;
-  }
+  // Calculate days between today and last expense
+  const daysBetween = lastExpense
+    ? today.diff(dayjs(lastExpense.date, 'YYYY-MM-DD'), 'day')
+    : 1;
 
   const unpaidDays = daysBetween || 0;
 
