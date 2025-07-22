@@ -3,10 +3,10 @@
 import * as React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Stepper, Step, StepLabel,
-  Box,
-  Typography
+  Button, Stepper, Step, StepLabel, Box, Typography,
+  useMediaQuery
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { TotalWealthForm } from '@/components/dashboard/account/total-wealth';
 import { AccountSalaryForm } from '@/components/dashboard/account/account-salary-form';
 import { DailyBudgetForm } from '@/components/dashboard/account/set-budget-details';
@@ -54,10 +54,12 @@ export function BudgetSetupDialog({
 }: BudgetSetupDialogProps) {
   const [activeStep, setActiveStep] = React.useState(0);
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
       onCalculateBudget();
-      // onComplete(true);
       onClose();
       setActiveStep(0);
     } else {
@@ -76,7 +78,6 @@ export function BudgetSetupDialog({
 
   const handleThresholdSave = (value: { threshold: number }) => {
     onThresholdSave(value);
-    // Do not call handleNext here directly
   };
 
   const handleDailyBudgetSave = (value: {
@@ -89,7 +90,11 @@ export function BudgetSetupDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog 
+    open={open} 
+    onClose={onClose} 
+    maxWidth="sm" fullWidth fullScreen={fullScreen} 
+    >
       <DialogTitle>Setup Budget Plan</DialogTitle>
       <DialogContent>
         <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 2 }}>
@@ -110,15 +115,18 @@ export function BudgetSetupDialog({
               onSalarySave(data);
               handleNext();
             }}
-            onSteadySave={(data) => {
-              onSteadySave(data);
-            }}
+            onSteadySave={onSteadySave}
             onThresholdSave={handleThresholdSave}
           />
         )}
 
         {activeStep === 2 && (
-          <DailyBudgetForm salary={salary} remainDays={remainDays} showSetAmount={false}  onSave={handleDailyBudgetSave} />
+          <DailyBudgetForm
+            salary={salary}
+            remainDays={remainDays}
+            showSetAmount={false}
+            onSave={handleDailyBudgetSave}
+          />
         )}
 
         {activeStep === 3 && (
@@ -128,7 +136,8 @@ export function BudgetSetupDialog({
               Ready to Calculate Your Budget
             </Typography>
             <Typography variant="body2" color="text.secondary" maxWidth={400} mx="auto">
-              Your details are set. We’ll now calculate your ideal allocations across Secure Saving, Spending Wallet, Monthly Budget and more.
+              Your details are set. We’ll now calculate your ideal allocations across Secure Saving,
+              Spending Wallet, Monthly Budget and more.
             </Typography>
           </Box>
         )}
@@ -136,12 +145,11 @@ export function BudgetSetupDialog({
 
       <DialogActions>
         {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
-
-        {activeStep === 3 ? (
+        {activeStep === 3 && (
           <Button variant="contained" color="primary" onClick={handleNext}>
             Finalize
           </Button>
-        ) : null}
+        )}
       </DialogActions>
     </Dialog>
   );

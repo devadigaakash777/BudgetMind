@@ -65,11 +65,18 @@ export default function DashboardContent(): React.JSX.Element {
     }
   }, [userState.isProfileComplete]);
 
-  const monthlyAmount = Math.max((walletState.TotalWealth.amount - walletState.threshold), 0);
+  let SteadyBalance = 0;
+  if(!userState.hasSalary) {
+    const SteadyMonthlyBudget = walletState.SteadyWallet.monthlyAmount;
+    const SteadyMonth = walletState.SteadyWallet.month;
+    SteadyBalance = SteadyMonthlyBudget * SteadyMonth;
+  }
+
+  const monthlyAmount = Math.max((walletState.TotalWealth.amount - walletState.threshold - SteadyBalance), 0);
 
   const daysLeft = getDaysUntilSalaryDay(userState.salary.date) + 1;  
 
-  console.warn(monthlyAmount, "and", daysLeft);
+  // console.warn(monthlyAmount, "and", daysLeft);
 
   //Daily expense Chart
   const filteredDailyExpenseState: DailyExpense[] = filterCurrentMonth(dailyExpenseState.data);

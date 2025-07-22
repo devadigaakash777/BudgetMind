@@ -108,7 +108,7 @@ BudgetMind introduces **smart priority handling** for wishlist items to ensure i
 <img src="./asset/bills-budget-mind.png" alt="Bills" />
 
 ### 👤 Account Settings
-<img src="./asset/account-budget-mind.png" alt="Account" />
+<img src="./asset/account-budget-mind..png" alt="Account" />
 
 ### ➕ Add Expense (Before Filling)
 <img src="./asset/add-expense-budget-mind.png" alt="Add Expense Before" />

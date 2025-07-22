@@ -11,7 +11,7 @@ import { getNextSalaryDateISO } from '../utils/convertToDate.js';
  */
 export function tryConsumeFromMonthlyBudget(state, amountRequested, hasBudgetPaid, collected, unpaidDuration) {
   const originalBudget = state.DailyBudget.amount;
-  let salaryDay = state.User.hasSalary ? state.User.salary.date : state.steadyWallet.date;
+  let salaryDay = state.User.hasSalary ? state.User.salary.date : state.SteadyWallet.date;
   salaryDay -= 1;
 
   const salaryDate = getNextSalaryDateISO(salaryDay);

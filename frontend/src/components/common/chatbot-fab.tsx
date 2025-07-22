@@ -42,7 +42,7 @@ export default function ChatbotFab() {
             borderRadius: 2,
             boxShadow: 3,
             fontSize: 14,
-            zIndex: 1500,
+            zIndex: 1300,
             maxWidth: 240,
           }}
         >
@@ -59,7 +59,7 @@ export default function ChatbotFab() {
           position: 'fixed',
           bottom: 24,
           right: 24,
-          zIndex: 1500,
+          zIndex: 1300,
           width: 56,
           height: 56,
           boxShadow: 4,

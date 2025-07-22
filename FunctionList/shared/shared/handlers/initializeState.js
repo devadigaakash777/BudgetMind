@@ -32,7 +32,7 @@ export function initializeState(initialState, totalWealth, threshold) {
       const required = state.SteadyWallet.monthlyAmount * state.SteadyWallet.month;
       if (required > remaining) {
         console.warn("Insufficient funds to cover SteadyWallet monthly allocation.");
-        return null;
+        throw new Error("Insufficient funds to cover SteadyWallet monthly allocation.");
       } else {
         state.SteadyWallet.balance = required;
         remaining -= required;

@@ -7,5 +7,5 @@ export const navItems = [
   { key: 'wishlists', title: 'Wishlists', href: paths.dashboard.wishlists, icon: 'heartIcon' },
   { key: 'bill', title: 'Bills', href: paths.dashboard.bills, icon: 'receipt' },
   { key: 'account', title: 'Account', href: paths.dashboard.account, icon: 'user' },
-  { key: 'addExpense', title: 'Add Expense', href: paths.dashboard.addExpense, icon: 'user' },
+  { key: 'addExpense', title: 'Add Expense', href: paths.dashboard.addExpense, icon: 'addExpense' },
 ] satisfies NavItemConfig[];

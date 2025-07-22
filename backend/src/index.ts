@@ -10,6 +10,7 @@ import profileRoutes from './routes/profileRoutes.js';
 import dailyExpenseRoutes from './routes/dailyExpenseRoutes.js';
 import connectDB from './config/db.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use(cors({
 }));
 
 app.use('/api', authRoutes);
+app.use("/api/feedback", feedbackRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/budget', budgetRoutes);

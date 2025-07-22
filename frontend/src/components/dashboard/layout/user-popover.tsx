@@ -18,6 +18,8 @@ import { logger } from '@/lib/default-logger';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '@/redux/slices/user-slice';
 import { RootState } from '@/redux/store';
+import { ChatTextIcon } from '@phosphor-icons/react/dist/ssr/ChatText';
+import FeedbackDialog from '@/components/common/feedback';
 
 export interface UserPopoverProps {
   anchorEl: Element | null;
@@ -29,6 +31,8 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
   const userState = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   const router = useRouter();
+
+   const [isFeedbackOpen, setIsFeedbackOpen] = React.useState(false);
 
   const handleSignOut = React.useCallback(async (): Promise<void> => {
     try {
@@ -48,6 +52,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
   }, [dispatch, router]);
 
   return (
+    <>
     <Popover
       anchorEl={anchorEl}
       anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
@@ -69,6 +74,17 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           </ListItemIcon>
           Profile
         </MenuItem>
+        <MenuItem
+            onClick={() => {
+              setIsFeedbackOpen(true);
+              onClose(); // also close the popover
+            }}
+          >
+            <ListItemIcon>
+              <ChatTextIcon fontSize="var(--icon-fontSize-md)" />
+            </ListItemIcon>
+            Feedback
+        </MenuItem>
         <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
@@ -77,5 +93,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
         </MenuItem>
       </MenuList>
     </Popover>
+     <FeedbackDialog open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+    </>
   );
 }
