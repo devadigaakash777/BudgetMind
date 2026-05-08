@@ -99,7 +99,7 @@ export const buyItem = async (req: AuthRequest, res: Response): Promise<void> =>
     }
 
     const userId = req.userId!;
-    const itemId = req.params.id;
+    const itemId = req.params.id as string;
 
     console.log("item id is: ",itemId);
 

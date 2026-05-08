@@ -119,7 +119,7 @@ export const deleteFixedExpense = async (req: AuthRequest, res: Response): Promi
 
 export const payFixedExpense = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId!;
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { preference, reduceDailyBudget } = req.body;
 
   const expense = await FixedExpense.findOne({ _id: id, userId });
