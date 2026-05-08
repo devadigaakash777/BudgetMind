@@ -108,13 +108,13 @@ export const processWithMutator = async (
 
     await BudgetSummary.updateOne(
       { userId },
-      { $set: budgetToUpdate as Record<string, any> },  // ✅ fixed
+      { $set: budgetToUpdate as Record<string, any> },  
       { session }
     );
 
     await Wallet.updateOne(
       { userId },
-      { $set: walletToUpdate as Record<string, any> },  // ✅ fixed
+      { $set: walletToUpdate as Record<string, any> },  
       { session }
     );
 
