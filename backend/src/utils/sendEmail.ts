@@ -1,11 +1,18 @@
-// utils/sendEmail.ts
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from 'nodemailer';
 
 const sendEmail = async (to: string, subject: string, html: string): Promise<void> => {
-  await resend.emails.send({
-    from: 'BudgetMind <onboarding@resend.dev>',
+  const transporter = nodemailer.createTransport({
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.BREVO_USER!,
+      pass: process.env.BREVO_SMTP_KEY!,
+    },
+  });
+
+  await transporter.sendMail({
+    from: '"Budget Mind" <process.env.EMAIL_USER>',
     to,
     subject,
     html,
