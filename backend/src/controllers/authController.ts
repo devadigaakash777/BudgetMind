@@ -194,7 +194,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
   const { newPassword } = req.body;
 
   try {
-    const decoded = jwt.verify(token, EMAIL_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, EMAIL_SECRET) as unknown as { userId: string };
 
     const user = await UserModel.findById(decoded.userId);
     if (!user) {
@@ -233,7 +233,7 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
   const { token } = req.params;
 
   try {
-    const decoded = jwt.verify(token, EMAIL_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, EMAIL_SECRET) as unknown as { userId: string };
 
     const user = await UserModel.findById(decoded.userId);
     if (!user) {
