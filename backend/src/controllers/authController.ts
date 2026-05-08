@@ -79,8 +79,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+    const accessToken = generateAccessToken(String(user.id));
+    const refreshToken = generateRefreshToken(String(user.id));
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -207,8 +207,8 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     await user.save();
 
     // ✅ Issue new tokens and log in user automatically
-    const accessToken = generateAccessToken(user.id as string);
-const refreshToken = generateRefreshToken(user.id as string);
+    const accessToken = generateAccessToken(String(user.id));
+    const refreshToken = generateRefreshToken(String(user.id));
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
