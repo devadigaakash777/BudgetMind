@@ -73,7 +73,7 @@ export const processWithMutator = async (
     return {
       updateOne: {
         filter: { _id },
-        update: { $set: rest }
+        update: { $set: rest as Record<string, any> }  // ✅ fixed
       }
     };
   });
@@ -87,7 +87,7 @@ export const processWithMutator = async (
     return {
       updateOne: {
         filter: { _id },
-        update: { $set: rest }
+        update: { $set: rest as Record<string, any> }  // ✅ fixed
       }
     };
   });
@@ -108,13 +108,13 @@ export const processWithMutator = async (
 
     await BudgetSummary.updateOne(
       { userId },
-      { $set: budgetToUpdate },
+      { $set: budgetToUpdate as Record<string, any> },  // ✅ fixed
       { session }
     );
 
     await Wallet.updateOne(
       { userId },
-      { $set: walletToUpdate },
+      { $set: walletToUpdate as Record<string, any> },  // ✅ fixed
       { session }
     );
 
